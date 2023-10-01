@@ -1,16 +1,24 @@
-import React, { useState } from 'react'
+import React, { useState, useEffect } from 'react'
 import { FaPlus } from 'react-icons/fa'
+import { useLocation } from 'react-router-dom';
+import axios from 'axios';
+import { useNavigate } from "react-router-dom"
 
 const AddOpeningStock = () => {
+    const Navigate = useNavigate ();
 
+    const location = useLocation();
+    const formDataFromPreviousPage = location.state?.formData;
+    console.log(formDataFromPreviousPage)
+    const [unitData, setUnitData] = useState([]);
 
     const [formData, setFormData] = useState({
-
+        ...formDataFromPreviousPage,
         location: " Eziline Software House (Pvt.) Ltd (BL0001)",
         openingStock: [{
-            productName: "",
+            productName: "",//
             quantityRemaining: 0,
-            unit: "",
+            unit: "",//
             unitCostBfrTx: 0,
             lotNumber: "",
             subTotalBfrTax: 0,
@@ -48,11 +56,41 @@ const AddOpeningStock = () => {
         setFormData({ ...formData, openingStock: newArray })
       }
 
-    const handleSaveorEdit = () => {
+      const fetchUnitsById = async () => {
 
+        try {
+            // const token = localStorage.getItem('token');
+            const response = await axios.get(`http://localhost:8000/admin/units/${formDataFromPreviousPage.unit}`);
+            console.log(response)
+            setUnitData(response.data);
+
+        } catch (error) {
+            console.error('Error fetching Selling price Group:', error);
+        }
+    };
+    const addProduct = async () => {
+
+        try {
+          // const token = localStorage.getItem('token');
+          // console.log(formData)
+          const response = await axios.post(`http://localhost:8000/admin/products`, formData);
+          // console.log(response)
+          if (response.status === 201) {
+            Navigate("/home/products");
+        }
+        } catch (error) {
+          console.error('Error Adding Product:', error);
+        }
+      };
+
+      const handleSaveorEdit = () => {
+        addProduct()
         console.log("Handle Save", formData)
 
     }
+    useEffect(() => {
+        fetchUnitsById()
+    }, []);
 
     return (
         <div className='flex flex-col w-full px-5 bg-white '>
@@ -62,8 +100,8 @@ const AddOpeningStock = () => {
             <div className='flex flex-col p-5 bg-gray-100'>
                 <div className='flex'>
                     <h1 className=' font-semibold text-start '>Location:</h1>
-                    <h1 className=' font-semibold text-start mx-1 '>{formData.productName}</h1>
-                    <h1 className=' font-semibold text-start mx-1'>({formData.productId})</h1>
+                    <h1 className=' font-semibold text-start mx-1 '>{formDataFromPreviousPage.businessLocation}</h1>
+                    {/* <h1 className=' font-semibold text-start mx-1'>({formData.productId})</h1> */}
 
                 </div>
                 <table className="table-auto mt-5  w-full  items-start">
@@ -101,12 +139,12 @@ const AddOpeningStock = () => {
                         {formData.openingStock.map((val, index) => {
                             return <tr key={index}>
                                 <td className='w-[10%] px-1'>
-                                    <h1>{val.productName}</h1>
+                                    <h1>{formDataFromPreviousPage.productName}</h1>
                                 </td>
                                 <td className='w-[20%] px-1'>
                                     <div className='flex w-full '>
                                         <input type='number' name='quantityRemaining' value={val.quantityRemaining} onChange={(e) => { handleChange(e, index) }} className='border-[1px] px-2 py-1 w-3/4 border-gray-400 focus:outline-none' />
-                                        <input type='text' value={val.unit} readOnly className='border-[1px] px-2 py-1 border-gray-400 focus:outline-none w-1/4' />
+                                        <input type='text' value={unitData.shortName} readOnly className='border-[1px] px-2 py-1 border-gray-400 focus:outline-none w-1/4' />
                                     </div>
                                 </td>
                                 <td className='w-[10%] px-1'>

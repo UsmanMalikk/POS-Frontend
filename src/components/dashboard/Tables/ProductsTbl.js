@@ -1,4 +1,4 @@
-import React, { useRef, useState } from 'react'
+import React, { useRef, useState, useEffect } from 'react'
 import { AiFillCaretDown } from 'react-icons/ai'
 import { FaColumns, FaDownload, FaEdit, FaEnvelope, FaEye, FaFileCsv, FaFileExcel, FaFilePdf, FaPrint, FaSearch, FaTrash, FaTruck } from 'react-icons/fa'
 import { useReactToPrint } from 'react-to-print';
@@ -11,10 +11,11 @@ import { Link } from 'react-router-dom';
 import ViewPurchaseOrder from '../Purchases/ViewPurchaseOrder';
 import EditShipping from '../sell/EditShipping';
 import EditStatus from '../Purchases/EditStatus';
+import axios from 'axios';
 
 
 const ProductsTbl = () => {
-    const dummyData = [
+    const [dummyData,setDummyData] = useState([
         {
             id: 1,
             Username: "username",
@@ -64,7 +65,34 @@ const ProductsTbl = () => {
             Role: "Admin",
             Email: "username6@gmail.com"
         }
-    ]
+    ])
+
+    const handleChange = (e)=>{
+        const {name, checked} = e.target
+        if(name === "allSelect"){
+            const checkedValue = dummyData.map((val)=>{
+                return{
+                    ...val, isChecked: checked
+                }
+            })
+            setDummyData(checkedValue)
+        }
+    }
+
+    const handleSingle = (e,index)=>{
+        const { checked} = e.target
+        
+            const checkedValue = dummyData.map((val,ind)=>{
+                if(ind === index){
+                    return{
+                        ...val, isChecked: checked
+                    }
+                }
+               return val
+            })
+            setDummyData(checkedValue)
+        
+    }
     const printRef = useRef()
     let xlDatas = []
     //Export to Excel
@@ -92,13 +120,14 @@ const ProductsTbl = () => {
             });
 
     }
+    const [productsData, setProductsData] = useState([]);
 
     const [crpage, setCrpage] = useState(1)
     const rcrdprpg = 5
     const lasIndex = crpage * rcrdprpg
     const frstIndex = lasIndex - rcrdprpg
-    const record = dummyData.slice(frstIndex, lasIndex)
-    const npage = Math.ceil(dummyData.length / rcrdprpg)
+    const record = productsData.slice(frstIndex, lasIndex)
+    const npage = Math.ceil(productsData.length / rcrdprpg)
     const numbers = [...Array(npage + 1).keys()].slice(1)
 
     const [colvis, setColvis] = useState(false)
@@ -131,7 +160,7 @@ const ProductsTbl = () => {
 
     const csvData = [
         ["Username", "Name", "Role", "Email"],
-        ...dummyData.map(({ Username, Name, Role, Email }) => [
+        ...productsData.map(({ Username, Name, Role, Email }) => [
             Username,
             Name,
             Role,
@@ -167,7 +196,21 @@ const ProductsTbl = () => {
         }
     }
 
+    const fetchProducts = async () => {
 
+        try {
+            // const token = localStorage.getItem('token');
+            const response = await axios.get(`http://localhost:8000/admin/products`);
+            console.log(response)
+            setProductsData(response.data);
+        } catch (error) {
+            console.error('Error fetching units:', error);
+        }
+    };
+    useEffect(() => {
+        // Make an API call to fetch user's user records
+        fetchProducts();
+    }, []);
 
     return (
         <div>
@@ -197,7 +240,7 @@ const ProductsTbl = () => {
 
                         </CSVLink>
                     </button>
-                    <button onClick={() => { handleExportExcl(dummyData) }} className='flex border-[1px] px-2 py-1 hover:bg-gray-400 border-gray-600 bg-gray-200 '>
+                    <button onClick={() => { handleExportExcl(productsData) }} className='flex border-[1px] px-2 py-1 hover:bg-gray-400 border-gray-600 bg-gray-200 '>
                         <FaFileExcel size={15} className=' mt-1 pr-[2px]' />
                         <h1 className='text-sm'>Export to Excle</h1>
                     </button>
@@ -240,26 +283,29 @@ const ProductsTbl = () => {
             </div>
             
             <div className='flex flex-col  overflow-x-scroll  mt-5 mx-5' ref={printRef} >
-                <table id='usertbl' className="table-fixed w-full  mb-10   px-5 ">
+                <table id='usertbl' className="table-auto w-full  mb-10   px-5 ">
                     <thead>
                         <tr className='h-[50px] bg-gray-100'>
-                            <th className='flex items-center justify-center'><input type='checkbox' /> </th>
+                            <th className='flex items-center justify-center'><input type='checkbox' name='allSelect' onChange={(e)=>{handleChange(e)}} /> </th>
                             {col1 && <th className=" py-2 title-font w-[60px]  tracking-wider font-medium text-gray-900 text-sm"></th>}
                             {col2 && <th className=" py-2 title-font w-[70px]  tracking-wider font-medium text-gray-900 text-sm">Action</th>}
-                            {col3 && <th className=" py-2 title-font w-[75px]  tracking-wider font-medium text-gray-900 text-sm">Reference No</th>}
-                            {col4 && <th className=" py-2 title-font w-[101px]  tracking-wider font-medium text-gray-900 text-sm">Location</th>}
-                            {col5 && <th className=" py-2 title-font w-[57px]  tracking-wider font-medium text-gray-900 text-sm">Supplier</th>}
-                            {col6 && <th className=" py-2 title-font w-[79px]  tracking-wider font-medium text-gray-900 text-sm">Status</th>}
-                            {col7 && <th className=" py-2 title-font w-[75px]  tracking-wider font-medium text-gray-900 text-sm">Quantity Remaining</th>}
-                            {col8 && <th className=" py-2 title-font w-[55px]  tracking-wider font-medium text-gray-900 text-sm">Payment Status</th>}
-                            {col9 && <th className=" py-2 title-font w-[107px]  tracking-wider font-medium text-gray-900 text-sm">Added By</th>}
+                            {col3 && <th className=" py-2 title-font w-[75px]  tracking-wider font-medium text-gray-900 text-sm">Product</th>}
+                            {col4 && <th className=" py-2 title-font w-[101px]  tracking-wider font-medium text-gray-900 text-sm">Business Location</th>}
+                            {col5 && <th className=" py-2 title-font w-[57px]  tracking-wider font-medium text-gray-900 text-sm">Unit Purchase Price</th>}
+                            {col6 && <th className=" py-2 title-font w-[79px]  tracking-wider font-medium text-gray-900 text-sm">Selling Price</th>}
+                            {col7 && <th className=" py-2 title-font w-[75px]  tracking-wider font-medium text-gray-900 text-sm">Current Stock</th>}
+                            {col8 && <th className=" py-2 title-font w-[55px]  tracking-wider font-medium text-gray-900 text-sm">Product type</th>}
+                            {col9 && <th className=" py-2 title-font w-[107px]  tracking-wider font-medium text-gray-900 text-sm">Categoryy</th>}
+                            {col10 && <th className=" py-2 title-font w-[75px]  tracking-wider font-medium text-gray-900 text-sm">Brand</th>}
+                            {col11 && <th className=" py-2 title-font w-[55px]  tracking-wider font-medium text-gray-900 text-sm">Tax</th>}
+                            {col12 && <th className=" py-2 title-font w-[107px]  tracking-wider font-medium text-gray-900 text-sm">SKU</th>}
 
                         </tr>
                     </thead>
                     <tbody >
                         {record.map((value, index) => {
-                            return <tr key={index} className={`${(index + 1) % 2 === 0 ? "bg-gray-200" : ""}`}>
-                                <td className='flex justify-center items-center'><input type='checkbox' /> </td>
+                            return <tr key={index} className={`${(index + 1) % 2 === 0 ? "bg-gray-200" : ""} ${value.isChecked ? "bg-blue-800/60":""}`}>
+                                <td className='flex justify-center items-center'><input type='checkbox' name={index} checked={value?.isChecked || false} onChange={(e)=>{handleSingle(e,index)}} /> </td>
                                 {col1 && <td className="px-1 py-1 text-sm mx-1">
                                     <div className='flex items-center justify-center'>
                                         <img src='' alt='imagee' />
@@ -319,23 +365,31 @@ const ProductsTbl = () => {
                                         }
                                     </div>
                                 </td>}
-                                {col3 && <td className="px-1 py-1 text-sm">{value.Username}</td>}
-                                {col4 && <td className="px-1 py-1"> {value.Name}</td>}
+                                {col3 && <td className="px-1 py-1 text-sm">{value.productName}</td>}
+                                {col4 && <td className="px-1 py-1"> {value.businessLocation}</td>}
                                 {col5 && <td className=" py-1 px-1">{value.Name}</td>}
                                 {col6 && <td className=" py-1 px-1">{value.Name}</td>}
-                                {col7 && <td className="px-1 py-1 text-sm">{value.Username}</td>}
-                                {col8 && <td className=" py-1 px-1">{value.Name}</td>}
+                                {col7 && <td className="px-1 py-1 text-sm">{value.openingStock[0].quantityRemaining}</td>}
+                                {col8 && <td className=" py-1 px-1">{value.productType}</td>}
                                 {col9 && <td className="px-1 py-1">{value.Role}</td>}
                                 {col10 && <td className=" py-1 px-1">{value.Name}</td>}
                                 {col11 && <td className="px-1 py-1">{value.Role}</td>}
-                                {col12 && <td className=" py-1 px-1">{value.Name}</td>}
-                            </tr>
+                                {col12 && <td className=" py-1 px-1">{value.sku}</td>}
+                           </tr>
                         })}
 
 
                     </tbody>
 
                 </table>
+            </div>
+            <div className='flex w-1/2 ml-10'>
+                <button className='bg-red-500 px-1 text-xs text-white mx-2 rounded-md py-1'>Delete Selected</button>
+                <button className='bg-green-500 px-1 text-xs text-white mx-2 rounded-md py-1'>Delete Selected</button>
+                <button className='bg-blue-500 px-1 text-xs text-white mx-2 rounded-md py-1'>Delete Selected</button>
+                <button className='bg-orange-500 px-1 text-xs mx-2 rounded-md py-1'>Delete Selected</button>
+                <button className='bg-yellow-500 px-1 text-xs mx-2 rounded-md py-1'>Delete Selected</button>
+            
             </div>
             {isCliked &&
                 <div className='absolute top-0 flex flex-col items-center  justify-center right-0 bg-black/70 w-full min-h-screen'>

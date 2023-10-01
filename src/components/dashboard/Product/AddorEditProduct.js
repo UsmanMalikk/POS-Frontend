@@ -1,15 +1,16 @@
-import React, { useRef, useState } from 'react'
+import React, { useRef, useState, useEffect } from 'react'
 import { BiChevronDown } from 'react-icons/bi';
 import { FaInfoCircle, FaMinus, FaPlus, FaPlusCircle, FaSearch, FaTimes, FaTrash } from 'react-icons/fa';
 import JoditEditor from 'jodit-react';
 import { AiTwotoneFolderOpen } from 'react-icons/ai';
 import { useNavigate, useParams } from 'react-router-dom';
+import axios from 'axios';
 
 
 const AddorEditProduct = () => {
   const editor = useRef(null)
   const params = useParams()
-  const id = params.id
+  const _id = params.id
 
 
   const dummyData = [
@@ -63,6 +64,9 @@ const AddorEditProduct = () => {
       Email: "username6@gmail.com"
     }
   ]
+  const [unitsData, setUnitsData] = useState([]);
+  const [productsData, setProductsData] = useState([]);
+  const [variationData, setVariationData] = useState([]);
 
   const [skuInfor, setSkuInfor] = useState(false)
   const [skuInfor1, setSkuInfor1] = useState(false)
@@ -70,11 +74,11 @@ const AddorEditProduct = () => {
   const [infor, setInfor] = useState(false)
   const [open, setOpen] = useState(false)
   const [isOpen1, setIsOpen1] = useState(false)
-  const [productImei, setProductImei] = useState(false)
-  const [isSelling, setIsSelling] = useState(false)
+  // const [productImei, setProductImei] = useState(false)
+  // const [isSelling, setIsSelling] = useState(false)
   const inpuRef = useRef()
   const inpuRef1 = useRef()
-  const [isWoocommerce, setIsWoocommerce] = useState(false)
+  // const [isWoocommerce, setIsWoocommerce] = useState(false)
   const [variationValue1, setVariationValue1] = useState([])
   const [inputValue, setInputValue] = useState('')
   const [inputValue1, setInputValue1] = useState('')
@@ -83,6 +87,8 @@ const AddorEditProduct = () => {
   const [isAdSlngPrcGrp, setIsAdSlngPrcGrp] = useState(false)
   const [isOpeningStock, setIsOpeningStock] = useState(false)
   const [isAddOther, setIsAddOther] = useState(false)
+  const [isSave, setIsSave] = useState(false)
+
   const navigate = useNavigate()
   const [formData, setFormData] = useState({
     productName: "",
@@ -135,7 +141,7 @@ const AddorEditProduct = () => {
       }
       return item;
     });
-    console.log(updatedData)
+    // console.log(updatedData)
     setFormData({ ...formData, variationType: updatedData });
   }
   const handleComboCahange = (index, e) => {
@@ -196,33 +202,159 @@ const AddorEditProduct = () => {
 
 
 
-  
+  const fetchUnits = async () => {
+
+    try {
+      // const token = localStorage.getItem('token');
+      const response = await axios.get(`http://localhost:8000/admin/units`);
+      // console.log(response)
+      setUnitsData(response.data);
+    } catch (error) {
+      console.error('Error fetching units:', error);
+    }
+  };
+
+  const fetchVariations = async () => {
+
+    try {
+      // const token = localStorage.getItem('token');
+      const response = await axios.get(`http://localhost:8000/admin/variations/all-records`);
+      console.log(response.data)
+      setVariationData(response.data);
+      // console.log(variationData)
+
+    } catch (error) {
+      console.error('Error fetching variations:', error);
+    }
+  };
+
+  const fetchProducts = async () => {
+
+    try {
+      // const token = localStorage.getItem('token');
+      const response = await axios.get(`http://localhost:8000/admin/products`);
+      // console.log(response)
+      setProductsData(response.data);
+    } catch (error) {
+      console.error('Error fetching products:', error);
+    }
+  };
+  const fetchProductById = async () => {
+
+    try {
+      // const token = localStorage.getItem('token');
+      const response = await axios.get(`http://localhost:8000/admin/products/${_id}`);
+      // console.log(response)
+      setFormData(response.data);
+
+    } catch (error) {
+      console.error('Error fetching Product:', error);
+    }
+  };
+  useEffect(() => {
+    // Make an API call to fetch SPG's records
+    if (_id) {
+      fetchUnits()
+      fetchProducts()
+      fetchProductById();
+      fetchVariations()
+    }
+    else {
+      fetchUnits()
+      fetchProducts()
+      fetchVariations()
+    }
+
+
+  }, []);
+
+  const addProduct = async () => {
+
+    try {
+      // const token = localStorage.getItem('token');
+      // console.log(formData)
+      const response = await axios.post(`http://localhost:8000/admin/products`, formData);
+      // console.log(response)
+      if (response.status === 201) {
+        console.log("Success")
+      }
+    } catch (error) {
+      console.error('Error Adding Product:', error);
+    }
+  };
+
+  const addProductById = async () => {
+
+    try {
+      // const token = localStorage.getItem('token');
+      // console.log(formData)
+      const response = await axios.put(`http://localhost:8000/admin/products/${_id}`, formData);
+      console.log(response)
+
+    } catch (error) {
+      console.error('Error Adding Product:', error);
+    }
+  };
   const [isserror, setIsserror] = useState(false)
   const handleClick = () => {
 
     if (formData.productName.length === 0 ||
-      formData.barcodeType.length === 0 ||
+      // formData.barcodeType.length === 0 ||
       formData.unit.length === 0 ||
       formData.productType.length === 0
     ) {
       setIsserror(true)
       console.log(isserror)
-    } else if (id) {
-      console.log("Handle Update", formData)
-    } else {
-      console.log("Handle save ", formData)
     }
-    if (isAdSlngPrcGrp) {
-      navigate("/home/products/add-selling-prices/1")
-      setIsAdSlngPrcGrp(false)
-    } else if (isOpeningStock) {
-      navigate("/home/opening-stock/add/1" )
-    }else if (isAddOther){
-      setTimeout(() => {
-        navigate("/home/products/create")
-      }, 1000);
+    else if (_id) {
+      // // Check if isOpeningStock is true
+      // if (isOpeningStock) {
+      //   // Navigate to the opening stock page and pass the formData as state
+      //   navigate("/home/opening-stock/add", { state: { formData } });
+      // }
+      // else if (isAdSlngPrcGrp) {
+      //   navigate("/home/products/add-selling-prices", { state: { formData } })
+      //   setIsAdSlngPrcGrp(false)
+      // }
+      // else {
+      // addProductById()
+      //   console.log("Handle Update", formData)
 
+      // }
     }
+    else {
+      // Check if isOpeningStock is true
+      if (isOpeningStock) {
+        // Navigate to the opening stock page and pass the formData as state
+        navigate("/home/opening-stock/add", { state: { formData } });
+      }
+      else if (isAdSlngPrcGrp) {
+        navigate("/home/products/add-selling-prices", { state: { formData } })
+        setIsAdSlngPrcGrp(false)
+      }
+      else if (isAddOther) {
+        setTimeout(() => {
+          navigate("/home/products/create")
+        }, 1000)
+      }
+      else if(isSave) {
+        // addProduct()
+        console.log("Handle save ", formData);
+      }
+      else {
+        console.log("Error")
+      }
+    }
+
+    // if (isAdSlngPrcGrp) {
+    //   navigate("/home/products/add-selling-prices")
+    //   setIsAdSlngPrcGrp(false)
+    // }
+    // else if (isOpeningStock) {
+    //   navigate("/home/opening-stock/add" )}
+
+
+    // }
   }
   return (
     <div className='w-full flex flex-col bg-gray-100 p-5 min-h-screen'>
@@ -346,26 +478,26 @@ const AddorEditProduct = () => {
                       className="placeholder:text-gray-700 p-1 outline-none border-[1px] border-gray-500"
                     />
                   </div>
-                  {dummyData?.map((data) => (
+                  {unitsData?.map((data) => (
                     <li
-                      key={data?.Name}
+                      key={data?._id}
                       className={`p-2 text-sm hover:bg-sky-600 hover:text-white
-                                        ${data?.Name?.toLowerCase() === formData.unit?.toLowerCase() &&
+                                        ${data?.name?.toLowerCase() === formData.unit?.toLowerCase() &&
                         "bg-sky-600 text-white"
                         }
-                                         ${data?.Name?.toLowerCase().startsWith(inputValue)
+                                         ${data?.name?.toLowerCase().startsWith(inputValue)
                           ? "block"
                           : "hidden"
                         }`}
                       onClick={() => {
-                        if (data?.Name?.toLowerCase() !== formData.unit.toLowerCase()) {
-                          setFormData({ ...formData, unit: data?.Name })
+                        if (data?.name?.toLowerCase() !== formData.unit.toLowerCase()) {
+                          setFormData({ ...formData, unit: data?._id })
                           setOpen(false);
                           setInputValue("");
                         }
                       }}
                     >
-                      {data?.Name}
+                      {data?.name + ' ' + data?.shortName}
                     </li>
                   ))}
                 </ul>
@@ -590,9 +722,11 @@ const AddorEditProduct = () => {
                       <td className='flex flex-col'>
 
                         <select value={val.variationTempleateID} onChange={(e) => { handleChange(e, index) }} type='text' className='border-[1px] px-2 py-1 border-gray-400 focus:outline-none'>
-                          <option value={"Please Select"}>Please Select</option>
-                          <option value={"Test Variation"}>Test Variation</option>
-                          <option value={"Size"}>Size</option>
+                          {variationData.map((variations) => (
+                            <option key={variations._id} value={variations._id}>
+                              {variations.variationName}
+                            </option>
+                          ))}
 
                         </select>
 
@@ -600,23 +734,26 @@ const AddorEditProduct = () => {
                           <div className='mt-5'>
                             <h1 className='font-semibold text-xs text-start'>Selecet Variation Values</h1>
                             <select value={''} onChange={(e) => { handleValues(e, index) }} className='w-full border-[1px] border-black py-1 px-1 focus:outline-none' >
-                              {val.variationTempleateID === "Test Variation" ?
-                                <>
-                                  <option value={""}>Please Select</option>
-                                  <option value={"Small"}>Small</option>
-                                  <option value={"Medium"}>Medium</option>
-                                  <option value={"Large"}>Large</option>
-                                </>
-                                :
-                                <>
-                                  <option value={""}>Please Select</option>
-                                  <option value={"7"}>7</option>
-                                  <option value={"8"}>8</option>
-                                  <option value={"9"}>9</option>
-                                  <option value={"10"}>10</option>
+                              {variationData.map((variations) => (
 
-                                </>
-                              }
+                                val.variationTempleateID === variations._id ?
+                                  <>
+                                    {variations.variationValues.map((values) => (
+
+                                      <option>
+                                        {values}
+                                      </option>
+                                    ))}
+
+                                  </>
+                                  :
+                                  <>
+
+
+                                  </>
+
+                              ))}
+
                             </select>
                           </div>
                         }
@@ -716,28 +853,28 @@ const AddorEditProduct = () => {
                       className={`bg-white w-full    border-[1px]   z-10 absolute top-8 border-gray-600  ${isClicked ? "max-h-60" : "max-h-0"} `}
                     >
 
-                      {dummyData?.map((data) => (
+                      {productsData?.map((data) => (
                         <li
-                          key={data?.Name}
+                          key={data?._id}
                           className={`p-1 px-9 text-start text-sm hover:bg-sky-600 hover:text-white
-                          ${data?.Name?.toLowerCase() === inputValue2?.toLowerCase() &&
+                          ${data?.productName?.toLowerCase() === inputValue2?.toLowerCase() &&
                             "bg-sky-600 text-white"
                             }
-                           ${data?.Name?.toLowerCase().startsWith(inputValue2)
+                           ${data?.productName?.toLowerCase().startsWith(inputValue2)
                               ? "block"
                               : "hidden"
                             }`}
                           onClick={() => {
-                            if (data?.Name?.toLowerCase() !== inputValue2.toLowerCase()) {
-                              setInputValue1(data?.Name)
-                              let name = data?.Name
+                            if (data?.productName?.toLowerCase() !== inputValue2.toLowerCase()) {
+                              setInputValue1(data?.productName)
+                              let name = data?.productName
                               addToArray(name)
                               setInputValue2('')
                               setIsClicked(!isClicked);
                             }
                           }}
                         >
-                          {data?.Name}
+                          {data?.productName}
                         </li>
                       ))}
                     </ul>
@@ -827,7 +964,7 @@ const AddorEditProduct = () => {
         <button onClick={() => { handleClick(); setIsOpeningStock(true) }} className='bg-blue-500 text-lg px-2 py-2 text-white items-center justify-center flex'>Save & Add Opening Stock</button>
         <button onClick={() => { handleClick(); setIsAddOther(true) }} className='bg-red-500 text-lg px-2 py-2 text-white items-center justify-center flex'>Save & Add Another</button>
 
-        <button onClick={handleClick} className='bg-green-500 text-lg px-2 py-2 items-center justify-center flex'>Save</button>
+        <button onClick={() => {handleClick(); setIsSave(true)}}className='bg-green-500 text-lg px-2 py-2 items-center justify-center flex'>Save</button>
       </div>
     </div>
   )

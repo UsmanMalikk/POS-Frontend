@@ -1,13 +1,15 @@
 import React, { useState } from 'react'
 import { FaInfoCircle } from 'react-icons/fa'
+import { useLocation } from 'react-router-dom';
 
 const AddorEditSellingPriceGrps = () => {
     const [info, setInfo] = useState(false)
     const [info1, setInfo1] = useState(false)
     const [info2, setInfo2] = useState(false)
     const [info3, setInfo3] = useState(false)
-
+   
     const [formData, setFormData] = useState({
+        // ...formDataFromPreviousPage,
         productName: "Fetch From Data Base",
         productId: '',
         dfltSlngPrice: "1200.00",

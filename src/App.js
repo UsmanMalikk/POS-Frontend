@@ -46,6 +46,9 @@ import Brand from './components/dashboard/Product/brands/Brand';
 import Warranties from './components/dashboard/Product/warranties/Warranties';
 import AddorEditSellingPriceGrps from './components/dashboard/Product/AddorEditSellingPriceGrps';
 import AddOpeningStock from './components/dashboard/Product/openingStock/AddOpeningStock';
+import Sells from './components/dashboard/sell/Sells';
+import Draft from './components/dashboard/draft/Draft';
+import Quotations from './components/dashboard/quotations/Quotations';
 
 
 function App() {
@@ -109,8 +112,17 @@ function App() {
             <Route path='/home/taxonomies/product' element={<Categories />} />
             <Route path='/home/brands' element={<Brand />} />
             <Route path='/home/warranties' element={<Warranties />} />
-            <Route path='/home/products/add-selling-prices/:id' element={<AddorEditSellingPriceGrps />} />
-            <Route path='/home/opening-stock/add/:id' element={<AddOpeningStock/>} />
+            <Route path='/home/products/add-selling-prices' element={<AddorEditSellingPriceGrps />} />
+            <Route path='/home/opening-stock/add' element={<AddOpeningStock/>} />
+            <Route path='/home/sells' element={<Sells/>} />
+            <Route path='/home/sells/draft' element={<Draft/>} />
+            <Route path='/home/sells/quotations' element={<Quotations/>} />
+            
+            
+            <Route path='/home/sell/create' element={<AddorEditSell/>} />
+            <Route path='/home/sell/create/:type' element={<AddorEditSell/>} />
+
+            <Route path='/home/sells/:type/edit/:id' element={<AddorEditSell/>} />
             
             
  
