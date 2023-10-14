@@ -5,6 +5,9 @@ import {BiSolidUser} from "react-icons/bi"
 import {BsFillLockFill} from "react-icons/bs"
 import axios from 'axios';
 import { useNavigate } from "react-router-dom"
+import { Link } from 'react-router-dom'
+
+
 
 const Login = () => {
     const Navigate = useNavigate ();
@@ -139,7 +142,8 @@ const Login = () => {
           document.body.dir ='ltr'
         }
     }, [lang,])
-    
+
+   
     const { t } = useTranslation();
     return (
         <div className='grid md:grid-cols-8 sm:grid-cols-1 w-full'>
@@ -161,7 +165,7 @@ const Login = () => {
                         })}
                     </select>
                     <div className='flex '>
-                        <button className='bg-red-400 text-white text-xl px-2 py-1 mx-2'> {t('register_question')}</button>
+                        <Link to="/business/Register" className='bg-red-400 text-white text-xl px-2 py-1 mx-2'> Not Yet Registered? Register Now</Link>
                         <button className=' text-white text-xl mx-2'> {t('pricing')}</button>
                     </div>
                 </div>

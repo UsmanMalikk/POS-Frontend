@@ -279,6 +279,8 @@ const SellingPriceGrpTbl = () => {
                                     <button  className='flex mx-3 p-1 items-center bg-red-500 text-white justify-center'>
                                         <FaPowerOff size={15} />
                                         <h1 className='text-sm mx-1'>Deactivate</h1>
+                                        {/* <h1 className='text-sm mx-1'>{spgData.isDefault ? "ACtivate" : "Deactivate"}</h1> */}
+
                                     </button>
                                 </td>}
                             </tr>

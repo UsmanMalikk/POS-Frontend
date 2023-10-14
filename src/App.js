@@ -49,6 +49,40 @@ import AddOpeningStock from './components/dashboard/Product/openingStock/AddOpen
 import Sells from './components/dashboard/sell/Sells';
 import Draft from './components/dashboard/draft/Draft';
 import Quotations from './components/dashboard/quotations/Quotations';
+import Pos from './components/dashboard/Pos/Pos';
+import AddPos from './components/dashboard/Pos/AddPos';
+import Shipment from './components/dashboard/Shipments/Shipment';
+import Discount from './components/dashboard/discount/Discount';
+import ImportSale from './components/dashboard/sell/ImportSale';
+
+import ListStockTransfer from "./components/dashboard/Stock Transfer/ListStockTransfer";
+import AddStockTransfer from "./components/dashboard/Stock Transfer/AddStockTransfer";
+import ProfitLossRpt from './components/dashboard/reports/ProfitLossRpt';
+import ProfitByProductTbl from './components/dashboard/reportTables/ProfitByProductTbl';
+import ProfitByCategoryTbl from './components/dashboard/reportTables/ProfitByCategoryTbl';
+import ProfitByBrandTbl from './components/dashboard/reportTables/ProfitByBrandTbl';
+import ProfitByLocatinTbl from './components/dashboard/reportTables/ProfitByLocatinTbl';
+import ProfitByInvoiceTbl from './components/dashboard/reportTables/ProfitByInvoiceTbl';
+import ProfitByDateTbl from './components/dashboard/reportTables/ProfitByDateTbl';
+import ProfitByCustomer from './components/dashboard/reportTables/ProfitByCustomer';
+import ProfitByDaysTbl from './components/dashboard/reportTables/ProfitByDaysTbl';
+import PurchaseSaleRpt from './components/dashboard/reports/PurchaseSaleRpt';
+import TaxRpt from './components/dashboard/reports/TaxRpt';
+import InputTaxTbl from './components/dashboard/reportTables/InputTaxTbl';
+import OutpuTaxTbl from './components/dashboard/reportTables/OutpuTaxTbl';
+import ExpenseTaxTbl from './components/dashboard/reportTables/ExpenseTaxTbl';
+import StockRpt from './components/dashboard/reports/StockRpt';
+import ListStockAdjustment from './components/dashboard/Stock Adjustment/ListStockAdjustment';
+import AddStockAdjustment from './components/dashboard/Stock Adjustment/AddStockAdjustment';
+import StockAdjusmentRpt from './components/dashboard/reports/StockAdjusmentRpt';
+import ItemRpt from './components/dashboard/reports/ItemRpt';
+import ProductPurchaseRpt from './components/dashboard/reports/ProductPurchaseRpt';
+import ProductSellRpt from './components/dashboard/reports/ProductSellRpt';
+import PsrDetailedTbl from './components/dashboard/reportTables/PsrDetailedTbl';
+import PsrDetialedWithPurchaseTbl from './components/dashboard/reportTables/PsrDetialedWithPurchaseTbl';
+import PsrGroupedTbl from './components/dashboard/reportTables/PsrGroupedTbl';
+import PsrCategoryTbl from './components/dashboard/reportTables/PsrCategoryTbl';
+import PsrBrandTbl from './components/dashboard/reportTables/PsrBrandTbl';
 
 
 function App() {
@@ -72,7 +106,7 @@ function App() {
             <Route path='/home/roles/addroles' element={<AddorEditRoles />} />
             <Route path='/home/roles/editroles/:id' element={<AddorEditRoles />} />
             <Route path='/home/sales-commission-agents' element={<SalesCommission />} />
-            <Route path='/home/contact/:type' element={<Contact />} />
+            {/* <Route path='/home/contact/:type' element={<Contact />} />
             <Route path='/home/contact/view/:id' element={<ViewContact />} >
               <Route path='/home/contact/view/:id' element={<LedgerTab />} />
               <Route path='/home/contact/view/:id/ledger_tab' element={<LedgerTab />} />
@@ -82,12 +116,22 @@ function App() {
               <Route path='/home/contact/view/:id/payment_tab' element={<PaymentsTab />} />
               <Route path='/home/contact/view/:id/activities_tab' element={<ActivitiesTable />} />
               <Route path='/home/contact/view/:id/sales_tab' element={<SalesTab />} />
-              <Route path='/home/contact/view/:id/rewards_tab' element={<RewardsTab />} />
+              <Route path='/home/contact/view/:id/rewards_tab' element={<RewardsTab />} /> */}
+            <Route path='/home/contacts/:type' element={<Contact />} />
+            <Route path='/home/contacts/:type/view/:id' element={<ViewContact />} >
+              <Route path='/home/contacts/:type/view/:id/ledger_tab' element={<LedgerTab />} />
+              <Route path='/home/contacts/:type/view/:id/purchase_tab' element={<PurchasesTab />} />
+              <Route path='/home/contacts/:type/view/:id/stock_report_tab' element={<StockReportTab />} />
+              {/* <Route path='/home/contact/view/:id/document_tab' element={<DocTable />} />
+                <Route path='/home/contact/view/:id/payment_tab' element={<PaymentsTab />} />
+                <Route path='/home/contact/view/:id/activities_tab' element={<ActivitiesTable />} />
+                <Route path='/home/contact/view/:id/sales_tab' element={<SalesTab />} />
+                <Route path='/home/contact/view/:id/rewards_tab' element={<RewardsTab />} /> */}
 
             </Route>
             <Route path='/home/contact/import' element={<ImporContact />} />
             <Route path='/home/contact/customer-group' element={<CustomerGroup />} />
-            
+
             <Route path='/home/purchase' element={<Purchase />} />
 
             <Route path='/home/purchase/create' element={<AddorEditPurchase />} />
@@ -101,11 +145,11 @@ function App() {
             <Route path='/home/purchase-return' element={<PurchaseReturn />} />
             <Route path='/home/purchase-return/create' element={<AddorEditPucReturn />} />
             <Route path='/home/purchase-return/edit/:id' element={<AddorEditPucReturn />} />
-            <Route path='/home/products' element={<Product/>} />
-            <Route path='/home/update-product-price' element={<UpdatePrice/>} />
-            <Route path='/home/import-products' element={<ImportProducts/>} />
-            <Route path='/home/import-opening-stock' element={<ImportOpeningStock/>} />
-            <Route path='/home/lables/show' element={<PrintLables/>} />
+            <Route path='/home/products' element={<Product />} />
+            <Route path='/home/update-product-price' element={<UpdatePrice />} />
+            <Route path='/home/import-products' element={<ImportProducts />} />
+            <Route path='/home/import-opening-stock' element={<ImportOpeningStock />} />
+            <Route path='/home/lables/show' element={<PrintLables />} />
             <Route path='/home/variation-templates' element={<Variations />} />
             <Route path='/home/units' element={<Units />} />
             <Route path='/home/selling-price-group' element={<SellingPriceGrp />} />
@@ -113,20 +157,73 @@ function App() {
             <Route path='/home/brands' element={<Brand />} />
             <Route path='/home/warranties' element={<Warranties />} />
             <Route path='/home/products/add-selling-prices' element={<AddorEditSellingPriceGrps />} />
-            <Route path='/home/opening-stock/add' element={<AddOpeningStock/>} />
-            <Route path='/home/sells' element={<Sells/>} />
-            <Route path='/home/sells/draft' element={<Draft/>} />
-            <Route path='/home/sells/quotations' element={<Quotations/>} />
-            
-            
-            <Route path='/home/sell/create' element={<AddorEditSell/>} />
-            <Route path='/home/sell/create/:type' element={<AddorEditSell/>} />
+            <Route path='/home/opening-stock/add' element={<AddOpeningStock />} />
+            <Route path='/home/sells' element={<Sells />} />
+            <Route path='/home/sells/draft' element={<Draft />} />
+            <Route path='/home/sells/quotations' element={<Quotations />} />
+            <Route path='/home/pos' element={<Pos />} />
 
-            <Route path='/home/sells/:type/edit/:id' element={<AddorEditSell/>} />
-            
-            
- 
+
+            <Route path='/home/sell/create' element={<AddorEditSell />} />
+            <Route path='/home/sell/create/:type' element={<AddorEditSell />} />
+
+            <Route path='/home/sells/:type/edit/:id' element={<AddorEditSell />} />
+
+
+            {/* <Route path='/home/pos' element={<Pos />} /> */}
+            <Route path='/home/import-sales' element={<ImportSale />} />
+
+            <Route path='/home/shipments' element={<Shipment />} />
+            <Route path='/home/discounts' element={<Discount />} />
+            <Route path="/home/stock-transfer" element={<ListStockTransfer />} />
+            <Route path="/home/stock-transfers/create" element={<AddStockTransfer />} />
+            <Route path='/home/reports/profit-loss' element={<ProfitLossRpt />} >
+              <Route path='/home/reports/profit-loss' element={<ProfitByProductTbl />} />
+
+              <Route path='/home/reports/profit-loss/profit_by_products' element={<ProfitByProductTbl />} />
+              <Route path='/home/reports/profit-loss/profit_by_categories' element={<ProfitByCategoryTbl />} />
+              <Route path='/home/reports/profit-loss/profit_by_brands' element={<ProfitByBrandTbl />} />
+              <Route path='/home/reports/profit-loss/profit_by_locations' element={<ProfitByLocatinTbl />} />
+              <Route path='/home/reports/profit-loss/profit_by_invoice' element={<ProfitByInvoiceTbl />} />
+              <Route path='/home/reports/profit-loss/profit_by_date' element={<ProfitByDateTbl />} />
+              <Route path='/home/reports/profit-loss/profit_by_customer' element={<ProfitByCustomer />} />
+              <Route path='/home/reports/profit-loss/profit_by_days' element={<ProfitByDaysTbl />} />
+
+            </Route>
+            <Route path='/home/reports/purchase-sell' element={<PurchaseSaleRpt />} />
+            <Route path='/home/reports/tax-report' element={<TaxRpt />} >
+              <Route path='/home/reports/tax-report' element={<InputTaxTbl />} />
+              <Route path='/home/reports/tax-report' element={<InputTaxTbl />} />
+              <Route path='/home/reports/tax-report/input_tax_tab' element={<InputTaxTbl />} />
+              <Route path='/home/reports/tax-report/output_tax_tab' element={<OutpuTaxTbl />} />
+              <Route path='/home/reports/tax-report/expense_tax_tab' element={<ExpenseTaxTbl />} />
+
+            </Route>
+
+            <Route path='/home/reports/product-sell-report' element={<ProductSellRpt />} >
+              <Route path='/home/reports/product-sell-report' element={<PsrDetailedTbl />} />
+              <Route path='/home/reports/product-sell-report/psr_detailed_tab' element={<PsrDetailedTbl />} />
+              <Route path='/home/reports/product-sell-report/psr_detailed_with_purchase_tab' element={<PsrDetialedWithPurchaseTbl />} />
+              <Route path='/home/reports/product-sell-report/psr_grouped_tab' element={<PsrGroupedTbl />} />
+              <Route path='/home/reports/product-sell-report/psr_by_cat_tab' element={<PsrCategoryTbl />} />
+              <Route path='/home/reports/product-sell-report/psr_by_brand_tab' element={<PsrBrandTbl />} />
+
+            </Route>
+
+            <Route path='/home/reports/stock-adjustments-report' element={<StockAdjusmentRpt />} />
+            <Route path='/home/reports/item-report' element={<ItemRpt />} />
+            <Route path='/home/reports/product-purchase-report' element={<ProductPurchaseRpt />} />
+
+            <Route path='/home/reports/stock-report' element={<StockRpt />} />
+            <Route path='/home/stock-adjustments' element={<ListStockAdjustment />} />
+            <Route path='/home/stock-adjustments/create' element={<AddStockAdjustment />} />
+
+
+
+
           </Route>
+          <Route path='/pos/create' element={<AddPos />} />
+          <Route path='/pos/edit/:id' element={<AddPos />} />
 
         </Routes>
       </BrowserRouter>

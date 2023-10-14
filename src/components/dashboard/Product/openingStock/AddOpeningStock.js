@@ -9,7 +9,7 @@ const AddOpeningStock = () => {
 
     const location = useLocation();
     const formDataFromPreviousPage = location.state?.formData;
-    console.log(formDataFromPreviousPage)
+    // console.log(formDataFromPreviousPage)
     const [unitData, setUnitData] = useState([]);
 
     const [formData, setFormData] = useState({
@@ -61,7 +61,7 @@ const AddOpeningStock = () => {
         try {
             // const token = localStorage.getItem('token');
             const response = await axios.get(`http://localhost:8000/admin/units/${formDataFromPreviousPage.unit}`);
-            console.log(response)
+            // console.log(response)
             setUnitData(response.data);
 
         } catch (error) {
@@ -74,7 +74,7 @@ const AddOpeningStock = () => {
           // const token = localStorage.getItem('token');
           // console.log(formData)
           const response = await axios.post(`http://localhost:8000/admin/products`, formData);
-          // console.log(response)
+          console.log(response)
           if (response.status === 201) {
             Navigate("/home/products");
         }

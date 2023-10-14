@@ -1,12 +1,13 @@
-import React, { useState } from 'react'
+import React, { useState, useEffect } from 'react'
 import { FaBriefcase, FaCalendar, FaChevronCircleDown, FaEnvelope, FaGlobe, FaIdBadge, FaInfo, FaMapMarker, FaMobile, FaMoneyBillAlt, FaPhone, FaUser, FaUsers } from 'react-icons/fa'
 import { useParams } from 'react-router-dom'
+import axios from 'axios'
 
 const AddorEditContact = (props) => {
     const params = useParams()
     const type= params.type
     console.log(type)
-    const [iserror, setIserror] = useState(false)
+    const [iserror, setIsError] = useState(false)
     const [moreInfor, setMoreInfor] = useState(false)
     const [radioVal, setRadioVal] = useState('')
     const [formData, setFormData] = useState({
@@ -49,22 +50,58 @@ const AddorEditContact = (props) => {
 
     })
 
-    const handleClick = () => {
-        if ((formData.firstName.length === 0 && radioVal ==="individual")||
-        formData.contactType.length === 0 || 
-        formData.mobile.length === 0) {
-            setIserror(true)
-        } else if (props.id === 0) {
-            console.log("Handle Save", formData)
-        } else if (props.id !== 0) {
-            console.log("Handle Update", formData)
+    const handleClick = async () => {
+        if (
+            (formData.firstName.length === 0 && radioVal === "individual") ||
+            formData.contactType.length === 0 ||
+            formData.mobile.length === 0
+        ) {
+            setIsError(true);
+        } else {
+            const postData = {
+                contactType: formData.contactType,
+                businessName:formData.businessName,
+                firstName: formData.firstName,
+                email:formData.email,
+                mobile: formData.mobile,
+                taxNumber:formData.taxNumber,
+                
+                openingBalance:formData.openingBalance,
+                advanceBalance:formData.advanceBalance,
+                addressLine1:formData.addressLine1,
+                purchaseDue:formData.purchaseDue,
+                purchaseReturn:formData.purchaseReturn,
+                customField1:formData.customField1,
+                customField2:formData.customField2,
+                customField3:formData.customField3,
+                customField4:formData.customField4,
+                customField5:formData.customField5,
+                customField6:formData.customField6,
+                customField7:formData.customField7,
+                customField8:formData.customField8,
+                customField9:formData.customField9,
+                customField10:formData.customField10,
+                
+
+
+                // Add other fields here...
+            };
+
+            try {
+                const response = await axios.post('http://localhost:8000/contacts/supplier', postData);
+                console.log('Contact created successfully:', response.data);
+                // Handle any further actions after successful creation
+            } catch (error) {
+                console.error('Error creating contact:', error);
+                // Handle errors here
+            }
         }
-    }
+    };
 
-
+   
 
     return (
-        <div className='flex w-full md:w-[75%] flex-col justify-center items-center bg-white p-5'>
+        <div className='flex w-full  flex-col justify-center items-center bg-white p-5'>
             <h1 className=' text-xl font-bold flex justify-start w-full'>{props.id !== 0 ? "Edit a contact" : "Add a new contact"}</h1>
             <div className=' w-full flex flex-col'>
                 <div className='grid grid-cols-1 mt-2 md:grid-cols-3 gap-2'>

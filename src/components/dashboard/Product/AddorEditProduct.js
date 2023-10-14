@@ -330,21 +330,21 @@ const AddorEditProduct = () => {
       }
       else if (isAdSlngPrcGrp) {
         navigate("/home/products/add-selling-prices", { state: { formData } })
-        setIsAdSlngPrcGrp(false)
+        // setIsAdSlngPrcGrp(false)
       }
       else if (isAddOther) {
         setTimeout(() => {
           navigate("/home/products/create")
         }, 1000)
       }
-      else if(isSave) {
+      else {
         // addProduct()
         console.log("Handle save ", formData);
       }
-      else {
-        console.log("Error")
-      }
-    }
+      // else {
+      //   console.log("Error")
+      // }
+    
 
     // if (isAdSlngPrcGrp) {
     //   navigate("/home/products/add-selling-prices")
@@ -355,7 +355,7 @@ const AddorEditProduct = () => {
 
 
     // }
-  }
+  }}
   return (
     <div className='w-full flex flex-col bg-gray-100 p-5 min-h-screen'>
       <h1 className='text-xl  text-start mb-4'>Add new Product</h1>
@@ -907,10 +907,10 @@ const AddorEditProduct = () => {
                       <td className="px-1 py-1 text-sm flex flex-col">
                         <input type='number' name='quantity' required value={value.quantity} onChange={(e) => { handleComboCahange(index, e) }} className='border-[1px] px-2  w-1/3 border-gray-400 focus:outline-none' />
                         <select value={value.unit} name='unit' onChange={(e) => { handleComboCahange(index, e) }} type='text' className='border-[1px] px-2  border-gray-400 focus:outline-none'>
-                          {value.unitType.map((val, ind) => {
-                            return <option value={val.value}>{val.value}</option>
+                          {/* {value.unitType.map((val, ind) => { */}
+                            <option value={productsData.value}>{productsData.value}</option>
 
-                          })}
+                          {/* })} */}
                         </select>
                       </td>
                       <td className="px-1 py-1"> {value.ppexcludeTax}</td>
@@ -960,11 +960,16 @@ const AddorEditProduct = () => {
 
       </div>
       <div className='flex items-end justify-end mt-5'>
-        <button onClick={() => { handleClick(); setIsAdSlngPrcGrp(true) }} className='bg-orange-500 text-lg px-2 py-2 items-center justify-center flex'>Save & Add Selling-Price-Group Prices</button>
+        {/* <button onClick={() => { handleClick(); setIsAdSlngPrcGrp(true) }} className='bg-orange-500 text-lg px-2 py-2 items-center justify-center flex'>Save & Add Selling-Price-Group Prices</button>
         <button onClick={() => { handleClick(); setIsOpeningStock(true) }} className='bg-blue-500 text-lg px-2 py-2 text-white items-center justify-center flex'>Save & Add Opening Stock</button>
         <button onClick={() => { handleClick(); setIsAddOther(true) }} className='bg-red-500 text-lg px-2 py-2 text-white items-center justify-center flex'>Save & Add Another</button>
 
-        <button onClick={() => {handleClick(); setIsSave(true)}}className='bg-green-500 text-lg px-2 py-2 items-center justify-center flex'>Save</button>
+        
+        <button onClick={() => {handleClick(); setIsSave(true)}}className='bg-green-500 text-lg px-2 py-2 items-center justify-center flex'>Save</button> */}
+        <button onClick={() => {  setIsAdSlngPrcGrp(true);setIsOpeningStock(false);setIsAddOther(false); handleClick(); }} className='bg-orange-500 text-lg px-2 py-2 items-center justify-center flex'>Save & Add Selling-Price-Group Prices</button>
+        <button onClick={() => {  setIsAdSlngPrcGrp(false);setIsOpeningStock(true);setIsAddOther(false); handleClick(); }} className='bg-blue-500 text-lg px-2 py-2 text-white items-center justify-center flex'>Save & Add Opening Stock</button>
+        <button onClick={() => {  setIsAdSlngPrcGrp(false);setIsOpeningStock(false);setIsAddOther(true); handleClick(); }} className='bg-red-500 text-lg px-2 py-2 text-white items-center justify-center flex'>Save & Add Another</button>
+        <button onClick={() => {  setIsAdSlngPrcGrp(false);setIsOpeningStock(false);setIsAddOther(false); handleClick(); }} className='bg-green-500 text-lg px-2 py-2 items-center justify-center flex'>Save</button>
       </div>
     </div>
   )

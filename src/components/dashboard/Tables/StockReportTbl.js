@@ -1,5 +1,5 @@
 import React, { useRef, useState } from 'react'
-import { FaColumns,  FaFileCsv, FaFileExcel, FaFilePdf, FaPrint, FaSearch } from 'react-icons/fa'
+import { FaColumns,  FaFileCsv, FaFileExcel, FaFilePdf, FaHistory, FaPrint, FaSearch } from 'react-icons/fa'
 import { useReactToPrint } from 'react-to-print';
 import { CSVLink } from 'react-csv';
 import * as XLSX from 'xlsx'
@@ -105,7 +105,17 @@ const StockReportTbl = () => {
     const [col6, setCol6] = useState(true)
     const [col7, setCol7] = useState(true)
     const [col8, setCol8] = useState(true)
-    
+    const [col9, setCol9] = useState(true)
+    const [col10, setCol10] = useState(true)
+    const [col11, setCol11] = useState(true)
+    const [col12, setCol12] = useState(true)
+    const [col13, setCol13] = useState(true)
+    const [col14, setCol14] = useState(true)
+    const [col15, setCol15] = useState(true)
+    const [col16, setCol16] = useState(true)
+    const [col17, setCol17] = useState(true)
+    const [col18, setCol18] = useState(true)
+    const [col19, setCol19] = useState(true)
     
     // const [actionList, setActionList] = useState(Array(record.length).fill(false))
 
@@ -149,7 +159,7 @@ const StockReportTbl = () => {
     return (
         <div>
             
-            <div className='flex  flex-col md:flex-row  items-center justify-center mt-3 md:justify-between mx-5'>
+            <div className='flex  flex-col md:flex-row items-center justify-center mt-3 md:justify-between mx-5'>
 
                 <div className='flex items-center justify-center my-2 md:my-0'>
                     <h1 className='text-sm mx-1'>Show</h1>
@@ -187,14 +197,25 @@ const StockReportTbl = () => {
                         <h1 className='text-sm'>Column Visibility</h1>
                         {colvis && <div className='absolute top-7 shadow-md shadow-gray-400 bg-white w-[150px]'>
                             <ul className='flex flex-col items-center justify-center'>
-                                <li className={` w-full py-1 ${col1 ? "" : "bg-blue-600"} hover:bg-blue-400 `} onClick={() => { setCol1(!col1) }}>Product</li>
+                                <li className={` w-full py-1 ${col1 ? "" : "bg-blue-600"} hover:bg-blue-400 `} onClick={() => { setCol1(!col1) }}>Action</li>
                                 <li className={` w-full py-1 ${col2 ? "" : "bg-blue-600"} hover:bg-blue-400 `} onClick={() => { setCol2(!col2) }}>SKU</li>
-                                <li className={` w-full py-1 ${col3 ? "" : "bg-blue-600"} hover:bg-blue-400 `} onClick={() => { setCol3(!col3) }}>Purchase Quantity</li>
-                                <li className={` w-full py-1 ${col4 ? "" : "bg-blue-600"} hover:bg-blue-400 `} onClick={() => { setCol4(!col4) }}>Total Sold</li>
-                                <li className={` w-full py-1 ${col5 ? "" : "bg-blue-600"} hover:bg-blue-400 `} onClick={() => { setCol5(!col5) }}>Total Unit Transfered</li>
-                                <li className={` w-full py-1 ${col6 ? "" : "bg-blue-600"} hover:bg-blue-400 `} onClick={() => { setCol6(!col6) }}>Total Returned</li>
-                                <li className={` w-full py-1 ${col7 ? "" : "bg-blue-600"} hover:bg-blue-400 `} onClick={() => { setCol7(!col7) }}>Current Stock </li>
-                                <li className={` w-full py-1 ${col8 ? "" : "bg-blue-600"} hover:bg-blue-400 `} onClick={() => { setCol8(!col8) }}>Current Stock Value</li>
+                                <li className={` w-full py-1 ${col3 ? "" : "bg-blue-600"} hover:bg-blue-400 `} onClick={() => { setCol3(!col3) }}>Product</li>
+                                <li className={` w-full py-1 ${col4 ? "" : "bg-blue-600"} hover:bg-blue-400 `} onClick={() => { setCol4(!col4) }}>variation</li>
+                                <li className={` w-full py-1 ${col5 ? "" : "bg-blue-600"} hover:bg-blue-400 `} onClick={() => { setCol5(!col5) }}>Category</li>
+                                <li className={` w-full py-1 ${col6 ? "" : "bg-blue-600"} hover:bg-blue-400 `} onClick={() => { setCol6(!col6) }}>Location</li>
+                                <li className={` w-full py-1 ${col7 ? "" : "bg-blue-600"} hover:bg-blue-400 `} onClick={() => { setCol7(!col7) }}>Unit Selling Price </li>
+                                <li className={` w-full py-1 ${col8 ? "" : "bg-blue-600"} hover:bg-blue-400 `} onClick={() => { setCol8(!col8) }}>Current Stock</li>
+                                <li className={` w-full py-1 ${col9 ? "" : "bg-blue-600"} hover:bg-blue-400 `} onClick={() => { setCol9(!col9) }}>Current Stock Value (By Purchase Price)</li>
+                                <li className={` w-full py-1 ${col10 ? "" : "bg-blue-600"} hover:bg-blue-400 `} onClick={() => { setCol10(!col10) }}>Current Stock Value (By Sale Price)</li>
+                                <li className={` w-full py-1 ${col11 ? "" : "bg-blue-600"} hover:bg-blue-400 `} onClick={() => { setCol11(!col11) }}>Potential Profit</li>
+                                <li className={` w-full py-1 ${col12 ? "" : "bg-blue-600"} hover:bg-blue-400 `} onClick={() => { setCol12(!col12) }}>Total Unit Sold</li>
+                                <li className={` w-full py-1 ${col13 ? "" : "bg-blue-600"} hover:bg-blue-400 `} onClick={() => { setCol13(!col13) }}>Total Unit Transfered</li>
+                                <li className={` w-full py-1 ${col14 ? "" : "bg-blue-600"} hover:bg-blue-400 `} onClick={() => { setCol14(!col14) }}>Total Unit Adjusted</li>
+                                <li className={` w-full py-1 ${col15 ? "" : "bg-blue-600"} hover:bg-blue-400 `} onClick={() => { setCol15(!col15) }}>Custom Field 1</li>
+                                <li className={` w-full py-1 ${col16 ? "" : "bg-blue-600"} hover:bg-blue-400 `} onClick={() => { setCol16(!col16) }}>Custom Field 2</li>
+                                <li className={` w-full py-1 ${col17 ? "" : "bg-blue-600"} hover:bg-blue-400 `} onClick={() => { setCol17(!col17) }}>Custom Field 3 </li>
+                                <li className={` w-full py-1 ${col18 ? "" : "bg-blue-600"} hover:bg-blue-400 `} onClick={() => { setCol18(!col18) }}>Custom Field 4</li>
+                                <li className={` w-full py-1 ${col19 ? "" : "bg-blue-600"} hover:bg-blue-400 `} onClick={() => { setCol19(!col19) }}>Current Stock Manufactureing</li>
                                 
                             </ul>
                         </div>}
@@ -211,33 +232,54 @@ const StockReportTbl = () => {
 
 
             </div>
-            <div className='flex flex-col  overflow-x-scroll  mt-5 mx-5' ref={printRef} >
-                <table id='usertbl' className="table-fixed  mb-10   px-5 ">
+            <div className='flex flex-col  overflow-x-scroll  mt-5 ' ref={printRef} >
+                <table id='usertbl'  className="table-fixed w-[115%] ">
                     <thead>
-                        <tr className='h-[50px]'>
-                            {col1 && <th className=" py-2 title-font  tracking-wider font-medium text-gray-900 text-sm bg-gray-200">Product</th>}
-                            {col2 && <th className=" py-2 title-font  tracking-wider font-medium text-gray-900 text-sm bg-gray-200">SKU</th>}
-                            {col3 && <th className=" py-2 title-font  tracking-wider font-medium text-gray-900 text-sm bg-gray-200">Purchase Quantity</th>}
-                            {col4 && <th className=" py-2 title-font  tracking-wider font-medium text-gray-900 text-sm bg-gray-200">Total Sold</th>}
-                            {col5 && <th className=" py-2 title-font  tracking-wider font-medium text-gray-900 text-sm bg-gray-200">Total Unit Transfered</th>}
-                            {col6 && <th className=" py-2 title-font  tracking-wider font-medium text-gray-900 text-sm bg-gray-200">Total Returned</th>}
-                            {col7 && <th className=" py-2 title-font  tracking-wider font-medium text-gray-900 text-sm bg-gray-200">Current Stock</th>}
-                            {col8 && <th className=" py-2 title-font  tracking-wider font-medium text-gray-900 text-sm bg-gray-200">Current Stock Value</th>}
+                        <tr className='h-[100px] bg-white text-xs px-1 text-center'>
+                            {col1 && <th className=" py-2   w-[160px] border-l-[1px] border-r-[1px] border-gray-200  tracking-wider  text-gray-900  Name"> Action</th>}
+                            {col2 && <th className=" py-2 title-font border-l-[1px] border-r-[1px] border-gray-200  tracking-wider font-medium text-gray-900  Name">SKU</th>}
+                            {col3 && <th className=" py-2 title-font border-l-[1px] border-r-[1px] border-gray-200  tracking-wider font-medium text-gray-900  Name">Product</th>}
+                            {col4 && <th className=" py-2 title-font border-l-[1px] border-r-[1px] border-gray-200 w-[60px] tracking-wider font-medium text-gray-900  Name">Variation</th>}
+                            {col5 && <th className=" py-2 title-font border-l-[1px] border-r-[1px] border-gray-200 w-[60px]  tracking-wider font-medium text-gray-900  Name">Category</th>}
+                            {col6 && <th className=" py-2 title-font border-l-[1px] border-r-[1px] border-gray-200 w-[60px]  tracking-wider font-medium text-gray-900  Name">Location</th>}
+                            {col7 && <th className=" py-2 title-font border-l-[1px] border-r-[1px] border-gray-200  tracking-wider font-medium text-gray-900   justify-end  Name">Unit Selling Price</th>}
+                            {col8 && <th className=" py-2 title-font border-l-[1px] border-r-[1px] border-gray-200  tracking-wider font-medium text-gray-900  Name">Current Stock</th>}
+                            {col9 && <th className=" py-2 title-font border-l-[1px] border-r-[1px] border-gray-200 w-[65px] tracking-wider font-medium text-gray-900  Name">Current Stock Value (By Purchase Price)</th>}
+                            {col10 && <th className=" py-2 title-font border-l-[1px] border-r-[1px] border-gray-200 w-[65px]  tracking-wider font-medium text-gray-900  Name">Current Stock Value (By Sale Price)</th>}
+                            {col11 && <th className=" py-2 title-font border-l-[1px] border-r-[1px] border-gray-200 w-[55px] tracking-wider font-medium text-gray-900  Name">Potential Profit</th>}
+                            {col12 && <th className=" py-2 title-font border-l-[1px] border-r-[1px] border-gray-200 w-[50px] tracking-wider font-medium text-gray-900  Name">Total Unit Sold</th>}
+                            {col13 && <th className=" py-2 title-font border-l-[1px] border-r-[1px] border-gray-200 w-[80px] tracking-wider font-medium text-gray-900  Name">Total Unit Transfered</th>}
+                            {col14 && <th className=" py-2 title-font border-l-[1px] border-r-[1px] border-gray-200 w-[70px] tracking-wider font-medium text-gray-900  Name">Total Unit Adjusted</th>}
+                            {col15 && <th className=" py-2 title-font border-l-[1px] border-r-[1px] border-gray-200  tracking-wider font-medium text-gray-900  Name">Custom Field 1</th>}
+                            {col16 && <th className=" py-2 title-font border-l-[1px] border-r-[1px] border-gray-200  tracking-wider font-medium text-gray-900  Name">Custom Field 2</th>}
+                            {col17 && <th className=" py-2 title-font border-l-[1px] border-r-[1px] border-gray-200  tracking-wider font-medium text-gray-900  Name">Custom Field 3</th>}
+                            {col18 && <th className=" py-2 title-font border-l-[1px] border-r-[1px] border-gray-200  tracking-wider font-medium text-gray-900  Name">Custom Field 4</th>}
+                            {col19 && <th className=" py-2 title-font border-l-[1px] border-r-[1px] border-gray-200 w-[100px]  tracking-wider font-medium text-gray-900  Name">Current Stock Manufactureing</th>}
                             
                         </tr>
                     </thead>
                     <tbody >
                         {record.map((value, index) => {
-                            return <tr key={index} className=''>
-                                {col1 && <td className=" py-1 px-1">{value.Email}</td>}
-                                {col2 && <td className="px-1 py-1 text-sm">{value.Username}</td>}
+                            return <tr key={index} className='text-sm'>
+                                {col1 && <td className=" py-1 px-1 w-full "><div className='bg-blue-400 text-white text-xs py-1 flex items-center'><FaHistory size={15} className='mx-2'/> <h1>Product Stock History</h1> </div></td>}
+                                {col2 && <td className="px-1 py-1 ">{value.Name}</td>}
                                 {col3 && <td className="px-1 py-1"> {value.Name}</td>}
                                 {col4 && <td className="px-1 py-1">{value.Role}</td>}
-                                {col5 && <td className=" py-1 px-1">{value.Email}</td>}
+                                {col5 && <td className=" py-1 px-1">{value.Name}</td>}
                                 {col6 && <td className=" py-1 px-1">{value.Role}</td>}
-                                {col7 && <td className="px-1 py-1 text-sm">{value.Username}</td>}
+                                {col7 && <td className="px-1 py-1 text-sm">{value.Name}</td>}
                                 {col8 && <td className="px-1 py-1"> {value.Name}</td>}
-                                
+                                {col9 && <td className="px-1 py-1 text-sm">{value.Name}</td>}
+                                {col10 && <td className="px-1 py-1"> {value.Name}</td>}
+                                {col11 && <td className=" py-1 px-1">{value.Name}</td>}
+                                {col12 && <td className="px-1 py-1 text-sm">{value.Name}</td>}
+                                {col13 && <td className="px-1 py-1"> {value.Name}</td>}
+                                {col14 && <td className="px-1 py-1">{value.Role}</td>}
+                                {col15 && <td className=" py-1 px-1">{value.Name}</td>}
+                                {col16 && <td className=" py-1 px-1">{value.Role}</td>}
+                                {col17 && <td className="px-1 py-1 text-sm">{value.Name}</td>}
+                                {col18 && <td className="px-1 py-1"> {value.Name}</td>}
+                                {col19 && <td className="px-1 py-1 text-sm">{value.Name}</td>}
                             </tr>
                         })}
 
@@ -246,7 +288,7 @@ const StockReportTbl = () => {
                     <tfoot>
                         <tr></tr>
                     </tfoot>
-                </table>
+                </table> 
             </div>
             <nav className='  my-2 w-full'>
                 <ul className='flex justify-end'>

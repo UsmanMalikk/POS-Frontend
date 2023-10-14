@@ -5,8 +5,12 @@ import BussinessForm from './BussinessForm';
 import BussinessSetting from './BussinessSetting';
 import OwnerForm from './OwnerForm';
 import axios from 'axios';
+import { useNavigate } from "react-router-dom"
+import { Link } from 'react-router-dom'
 
 const Registration = () => {
+    const Navigate = useNavigate ();
+
     const languages = [
         {
             code: "en",
@@ -229,6 +233,7 @@ const [psstatus, setPsstatus] = useState(true)
             document.body.dir = 'ltr'
         }
     }, [lang])
+  
     // const pages =["Bussiness","Bussiness Setting","Owner"]
     const { t } = useTranslation();
     return (
@@ -252,7 +257,7 @@ const [psstatus, setPsstatus] = useState(true)
                     </select>
                     <div className='flex '>
                         <button className=' text-white text-xl   mx-2'> {t('all_ready_registered')}</button>
-                        <button className=' text-white text-xl mx-2'> {t('Sing_in')}</button>
+                        <Link to="/login" className=' text-white text-xl mx-2'> Sign In</Link>
                     </div>
                 </div>
                 <div className='flex flex-col w-[80%]  mt-16 '>

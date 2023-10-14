@@ -3,7 +3,7 @@ import { useParams } from 'react-router-dom'
 import axios from 'axios';
 import { useNavigate } from "react-router-dom"
 const AddorEditRoles = () => {
-    const Navigate = useNavigate ();
+    const Navigate = useNavigate();
 
     const [otherPerm, setOtherPerm] = useState([
         { name: "serviceStaff", lable: "Service Staff" },
@@ -246,7 +246,10 @@ const AddorEditRoles = () => {
     //     { name: "map_taxrate", lable: "Map Tax Rate" },
     //     { name: "axs_wocmrc_api_stng", lable: "Access Woocommerce Api Setting" }
     // ])
-    const [roleName, setRoleName] = useState('')
+    // const [roleName, setRoleName] = useState('')
+    const [formData, setFormData] = useState({
+        roleName: ""
+    })
     const [iserror, setIserror] = useState(false)
     // const addRole = async () => {
 
@@ -262,14 +265,14 @@ const AddorEditRoles = () => {
     //         console.error('Error Adding User:', error);
     //     }
     // };
-    const handleClick = (e)=>{
+    const handleClick = (e) => {
         e.preventDefault()
-        if(roleName.length === 0){
+        if (formData.roleName.length === 0) {
             setIserror(true)
         }
-        else if (id){
+        else if (id) {
             console.log("Handle Update")
-        }else{
+        } else {
             // console.log(manufacturingPerm)
 
             console.log("Handle Create")
@@ -280,13 +283,15 @@ const AddorEditRoles = () => {
         const { name, checked } = e.target
         let tempData = array.map(val => val.name === name ? { ...val, isChecked: checked } : val)
         setArray(tempData)
-        console.log(tempData)
+        setFormData({ ...formData, [name.replace(/_./g, (m) => m[1].toUpperCase())]: checked || false })
+        // console.log(tempData)
     }
 
     const handleAllSelect = (e, array, setArray, id) => {
         const { name, checked } = e.target
         if (name === id) {
             let tempData = array.map((val) => {
+                setFormData({ ...formData, [val.name.replace(/_./g, (m) => m[1].toUpperCase())]: checked || false })
                 return { ...val, isChecked: checked }
             });
             setArray(tempData)
@@ -305,10 +310,8 @@ const AddorEditRoles = () => {
             <h1 className='text-2xl items-start flex mx-6 justify-start  font-semibold'>{id ? "Edit Role" : "Add Role"}</h1>
             <div className='flex flex-col rounded-md border-t-[3px] p-5 border-blue-600 bg-white w-[96%] mx-[2%] min-h-screen'>
                 <div className='flex flex-col items-start w-full'>
-                    
-                    <h1 className='text-lg flex'>First Name: *  <span className='text-red-500 mx-2 mt-1 text-sm'>{iserror && roleName.length === 0 ? "Required Field" : ""} </span></h1>
-                    <input type='text' value={roleName} onChange={(e) => {setRoleName(e.target.value)}}  placeholder='First Name' className='focus:outline-none w-full md:w-1/3 border-[1px] border-gray-300 px-2  rounded-sm p-1' />
-                     
+                    <h1 className='text-lg flex'>First Name: *  <span className='text-red-500 mx-2 mt-1 text-sm'>{iserror && formData.firstName.length === 0 ? "Required Field" : ""} </span></h1>
+                    <input type='text' value={formData.firstName} onChange={(e) => { setFormData({ ...formData, firstName: e.target.value }) }} placeholder='First Name' className='focus:outline-none w-full md:w-1/3 border-[1px] border-gray-300 px-2  rounded-sm p-1' />
                 </div>
                 <h1 className='flex text-lg font-semibold'>Permissions:</h1>
                 {/* Others */}
@@ -330,7 +333,7 @@ const AddorEditRoles = () => {
                             return <div key={index} className='flex  items-center justify-start'>
                                 <input type='checkbox'
                                     checked={data?.isChecked || false}
-                                    onChange={(e) => { handleChange(e, otherPerm, setOtherPerm) }}
+                                    onChange={(e) => { handleChange(e, otherPerm, setOtherPerm); }}
                                     name={data.name}
                                     className='w-5 h-5 mt-2 mx-2'
                                 />
@@ -952,7 +955,7 @@ const AddorEditRoles = () => {
                 <h1 className='flex text-sm mt-3'>Home:</h1>
                 <div className='flex flex-col md:flex-row w-full mt-3'>
                     <div className='w-full md:w-1/4'>
-                        
+
                     </div>
                     <div className='w-full md:w-3/4 grid grid-cols-1 md:grid-cols-2'>
                         {homePerm.map((data, index) => {
@@ -975,7 +978,7 @@ const AddorEditRoles = () => {
                 <h1 className='flex text-sm mt-3'>Account:</h1>
                 <div className='flex flex-col md:flex-row w-full mt-3'>
                     <div className='w-full md:w-1/4'>
-                        
+
                     </div>
                     <div className='w-full md:w-3/4 grid grid-cols-1 md:grid-cols-2'>
                         {accountPerm.map((data, index) => {
@@ -1022,7 +1025,7 @@ const AddorEditRoles = () => {
                 <div className='flex flex-col md:flex-row w-full mt-3'>
                     <div className='w-full md:w-1/4'>
                         <div className='flex  items-center justify-start'>
-                            
+
 
                         </div>
                     </div>
@@ -1070,7 +1073,7 @@ const AddorEditRoles = () => {
                 <h1 className='flex text-sm mt-3'>Manufacturing:</h1>
                 <div className='flex flex-col md:flex-row w-full mt-3'>
                     <div className='w-full md:w-1/4'>
-                        
+
                     </div>
                     <div className='w-full md:w-3/4 grid grid-cols-1 md:grid-cols-2'>
                         {manufacturingPerm.map((data, index) => {
@@ -1159,12 +1162,12 @@ const AddorEditRoles = () => {
                 {/* </div> */}
                 <div className=' w-[94%] mx-[3%] mt-5 h-[2px] bg-black'></div>
 
-            ``<button onClick={handleClick} className='flex items-center  text-white w-20 bg-green-400 rounded-sm px-3 py-1 justify-start m-5'>{id ? "Update" : "Save"}</button>
+                `` <button button onClick={handleClick} className='flex items-center  text-white w-20 bg-green-400 rounded-sm px-3 py-1 justify-start m-5' > {id ? "Update" : "Save"}</button >
 
-            </div>
+            </div >
 
-        </div>
-        
+        </div >
+
     )
 }
 

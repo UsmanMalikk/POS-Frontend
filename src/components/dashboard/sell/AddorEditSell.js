@@ -1,4 +1,4 @@
-import React, { useRef, useState } from 'react'
+import React, { useRef, useState, useEffect } from 'react'
 import { FaCalendar, FaChevronCircleDown, FaGift, FaInfo, FaInfoCircle, FaMapMarker, FaMinus, FaMoneyBillAlt, FaPlus, FaPlusCircle, FaSearch, FaTable, FaTimes, FaTrash, FaUser, FaUserSecret } from 'react-icons/fa'
 import { useParams } from 'react-router-dom'
 import { BiChevronDown } from 'react-icons/bi'
@@ -7,8 +7,13 @@ import { MdCancel } from 'react-icons/md'
 import AddProduct from '../Product/AddorEditProduct'
 import AddorEditContact from "../contacts/AddorEditContact"
 import ImportProduct from '../Product/ImportProduct'
+import axios from 'axios';
+import { useNavigate } from "react-router-dom"
+
 
 const AddorEditSell = () => {
+    const Navigate = useNavigate();
+
     const dummyData = [
         {
             id: 1,
@@ -60,6 +65,13 @@ const AddorEditSell = () => {
             Email: "username6@gmail.com"
         }
     ]
+    const [productsData, setProductsData] = useState([]);
+    // const [customersData, setCustomersData] = useState([]);
+    const [spgsData, setSPGsData] = useState([]);
+    const [usersData, setUsersData] = useState([]);
+    // const [unitsData, setUnitsData] = useState([]);
+
+
     const [inputValue, setInputValue] = useState('')
     const [inputValue1, setInputValue1] = useState('')
 
@@ -81,26 +93,30 @@ const AddorEditSell = () => {
         status: "",
         invoiceSchema: "",
         sellingPrice: "",
-        tables: "",
-        serviceStaff: "",
+        // tables: "",
+        // serviceStaff: "",
         businesLocation: "",
         inputData: [],
         payTerm: "",
-        payTerm1: "",
+        // payTerm1: "",
         discountType: "",
         discountAmount: 0,
-        redeemed: "",
-        available: "",
-        redeemedAmount: "",
+        // redeemed: "",
+        // available: "",
+        // redeemedAmount: "",
         discount: 0,
+
         orderTaxType: "",
         orderTax: 0,
         sellNotes: "",
+
         shippingDetails: "",
         shippingAddress: "",
         shippingCharges: 0,
         shippingStatus: "",
         deliveredTo: "",
+        deliveryPerson: "",
+
         additionalExpenseName: "",
         additionalExpenseAmount: 0,
         additionalExpenseName1: "",
@@ -119,6 +135,9 @@ const AddorEditSell = () => {
     const params = useParams()
     const id = params.id
     const type = params.type
+    // console.log(params.type)
+
+
 
     const handleChange = (e, index) => {
         const updatedData = formData.inputData.map((item, ind) => {
@@ -130,45 +149,48 @@ const AddorEditSell = () => {
             }
             return item;
         });
-        console.log(updatedData)
+        // console.log(updatedData)
         setFormData({ ...formData, inputData: updatedData });
     }
 
+    const handleIncDec = (index, type) => {
+        const val = formData.inputData
+        if (type === "Inc") {
+            val[index].quantity += 1
+        } else {
+            val[index].quantity -= 1
+        }
+        setFormData({ ...formData, inputData: val })
+    }
     const deleteByIndex = (index) => {
         let newArray = [...formData.inputData]
         newArray.splice(index, 1)
         setFormData({ ...formData, inputData: newArray })
     }
-
+    const subtotal = (q, p, d, dt) => {
+        let total = 0
+        if (dt === "Percentage") {
+            total = (q * p) - (d / 100) * (q * p)
+            return total
+        } else if (dt === "Fixed") {
+            total = (q * p) - d
+            return total
+        }else{
+            total = q*p
+            return total
+        }
+    }
     const findTotal = () => {
         let total = 0
         formData.inputData.map(val => {
-            return total += val.lineTotal
+            return total += val.subtotal
         })
         return total
     }
     const total = findTotal()
 
     const [isserror, setIsserror] = useState(false)
-    const handleClick = (e) => {
 
-        if (formData.customer.length === 0 ||
-            formData.salesDate.length === 0 ||
-            formData.status.length === 0 ||
-            formData.discountType.length === 0 ||
-            formData.discountAmount.length === 0 ||
-            formData.orderTaxType.length === 0 ||
-            formData.amount.length === 0 ||
-            formData.paymentDate.length === 0 ||
-            formData.paymentMethod.length === 0) {
-            setIsserror(true)
-            console.log(isserror)
-        } else if (id) {
-            console.log("Handle Update", formData)
-        } else {
-            console.log("Handle Save", formData)
-        }
-    }
     const inpuRef = useRef()
     const inpuRef1 = useRef()
 
@@ -186,10 +208,158 @@ const AddorEditSell = () => {
         }
     }
 
+    const fetchSaleById = async () => {
+
+        try {
+            // const token = localStorage.getItem('token');
+            const response = await axios.get(`http://localhost:8000/admin/sales/${type}/${id}`);
+            // console.log(response)
+            setFormData(response.data);
+        } catch (error) {
+            console.error('Error fetching sale:', error);
+        }
+    };
+    const fetchProducts = async () => {
+
+        try {
+            // const token = localStorage.getItem('token');
+            const response = await axios.get(`http://localhost:8000/admin/products`);
+            // console.log(response)
+            setProductsData(response.data);
+        } catch (error) {
+            console.error('Error fetching products:', error);
+        }
+    };
+    //   const fetchCustomers = async () => {
+
+    //     try {
+    //       // const token = localStorage.getItem('token');
+    //       const response = await axios.get(`http://localhost:8000/admin/contacts/customer`);
+    //       // console.log(response)
+    //       setCustomersData(response.data);
+    //     } catch (error) {
+    //       console.error('Error fetching customers:', error);
+    //     }
+    //   };
+    const fetchSPGs = async () => {
+
+        try {
+            // const token = localStorage.getItem('token');
+            const response = await axios.get(`http://localhost:8000/admin/selling-price-groups`);
+            // console.log(response)
+
+
+            setSPGsData(response.data);
+        } catch (error) {
+            console.error('Error fetching SPGs:', error);
+        }
+    };
+
+    const fetchUsers = async () => {
+
+        try {
+            // const token = localStorage.getItem('token');
+            const response = await axios.get(`http://localhost:8000/admin/users`);
+            // console.log(response)
+            setUsersData(response.data);
+        } catch (error) {
+            console.error('Error fetching users:', error);
+        }
+    };
+    // const fetchUnitsById = async () => {
+
+    //     try {
+    //         // const token = localStorage.getItem('token');
+    //         const response = await axios.get(`http://localhost:8000/admin/units/${_id}`);
+    //         // console.log(response)
+    //         setData(response.data);
+
+    //     } catch (error) {
+    //         console.error('Error fetching Selling price Group:', error);
+    //     }
+    // };
+    const addSale = async () => {
+
+        try {
+            // const token = localStorage.getItem('token');
+            // console.log(finalFormData)
+            const response = await axios.post(`http://localhost:8000/admin/sales/${type}`, formData);
+            console.log(response)
+            if (response.status === 201 && type === "draft") {
+                Navigate("/home/draft");
+
+            }
+            else if (response.status === 201 && type === "quotations") {
+                Navigate("/home/quotations");
+
+            }
+            else {
+                Navigate("/home/sells");
+
+            }
+        } catch (error) {
+            console.error('Error Adding Sale:', error);
+        }
+    };
+
+    const addSaleById = async () => {
+
+        try {
+            // const token = localStorage.getItem('token');
+            // console.log(finalFormData)
+            const response = await axios.put(`http://localhost:8000/admin/sales/${type}/${id}`, formData);
+            console.log(response)
+            if (response.status === 200 && type === "draft") {
+                Navigate("/home/draft");
+
+            }
+            else if (response.status === 200 && type === "quotations") {
+                Navigate("/home/quotations");
+
+            }
+            else {
+                Navigate("/home/sells");
+
+            }
+        } catch (error) {
+            console.error('Error Adding Sale:', error);
+        }
+    };
+    useEffect(() => {
+        // Make an API call to fetch SPG's records
+        if (id) {
+            fetchSPGs()
+            fetchProducts()
+            fetchUsers()
+            fetchSaleById();
+        }
+        else {
+            fetchSPGs()
+            fetchProducts()
+            fetchUsers()
+        }
+    }, [])
+    const handleClick = (e) => {
+
+        if (formData.customer.length === 0 ||
+
+            formData.status.length === 0 ||
+
+            formData.amount.length === 0) {
+            setIsserror(true)
+            console.log(isserror)
+        } else if (id) {
+            addSaleById()
+            console.log("Handle Update", formData)
+        } else {
+            addSale()
+            console.log("Handle Save", formData)
+        }
+    }
 
     return (
         <div className='w-full p-5 bg-gray-100'>
-            <h1 className='text-xl text-start font-bold '>{id ? `Edit ${type ? type : "Sale"}`  : `Add ${type ? type : "Sale"}`}</h1>
+            <h1 className='text-xl text-start font-bold '>{id ? `Edit ${type ? type : "Sale"}` : `Add ${type ? type : "Sale"}`}</h1>
             <div className='flex my-3 w-full md:w-1/3 relative'>
                 < FaMapMarker size={15} className='w-8 h-8 p-2 border-[1px] border-gray-600' />
                 <select value={formData.businesLocation} onChange={(e) => { setFormData({ ...formData, businesLocation: e.target.value }) }} type="text" className='px-2 py-1 w-full border-[1px] border-gray-600 focus:outline-none'>
@@ -245,26 +415,27 @@ const AddorEditSell = () => {
                                     className="placeholder:text-gray-700 p-1 outline-none border-[1px] border-gray-500"
                                 />
                             </div>
-                            {dummyData?.map((data) => (
+                            {spgsData?.map((data) => (
                                 <li
-                                    key={data?.Name}
+                                    key={data?._id}
                                     className={`p-2 text-sm hover:bg-sky-600 hover:text-white
-                                        ${data?.Name?.toLowerCase() === selected?.toLowerCase() &&
+                                        ${data?.name?.toLowerCase() === formData.sellingPrice?.toLowerCase() &&
                                         "bg-sky-600 text-white"
                                         }
-                                         ${data?.Name?.toLowerCase().startsWith(inputValue)
+                                         ${data?.name?.toLowerCase().startsWith(inputValue)
                                             ? "block"
                                             : "hidden"
                                         }`}
                                     onClick={() => {
-                                        if (data?.Name?.toLowerCase() !== selected.toLowerCase()) {
-                                            setSelected(data?.Name);
-                                            setOpen(false);
+                                        if (data?.name?.toLowerCase() !== formData.sellingPrice.toLowerCase()) {
+
+                                            setFormData({ ...formData, sellingPrice: data?._id });
+                                            setOpen1(false);
                                             setInputValue("");
                                         }
                                     }}
                                 >
-                                    {data?.Name}
+                                    {data?.name}
                                 </li>
                             ))}
                         </ul>
@@ -474,30 +645,31 @@ const AddorEditSell = () => {
                                     className={`bg-white w-full    border-[1px]   z-10 absolute top-8 border-gray-600  ${isClicked ? "max-h-60" : "max-h-0"} `}
                                 >
 
-                                    {dummyData?.map((data) => (
+                                    {productsData?.map((data) => (
                                         <li
-                                            key={data?.Name}
+                                            key={data?._id}
                                             className={`p-1 px-9 text-start text-sm hover:bg-sky-600 hover:text-white
-                                ${data?.Name?.toLowerCase() === inputValue1?.toLowerCase() &&
+                                ${data?.productName?.toLowerCase() === inputValue1?.toLowerCase() &&
                                                 "bg-sky-600 text-white"
                                                 }
-                                 ${data?.Name?.toLowerCase().startsWith(inputValue)
+                                 ${data?.productName?.toLowerCase().startsWith(inputValue)
                                                     ? "block"
                                                     : "hidden"
                                                 }`}
                                             onClick={() => {
-                                                if (data?.Name?.toLowerCase() !== inputValue1.toLowerCase()) {
-                                                    setInputValue1(data?.Name)
-                                                    let name = data?.Name
+                                                if (data?.productName?.toLowerCase() !== inputValue1.toLowerCase()) {
+                                                    setInputValue1(data?.productName)
+                                                    // let name = data?.productName
                                                     let array = formData.inputData
-                                                    array = [...array, { productName: name }]
+                                                    // let _id = data?._id
+                                                    array = [...array, { product: data?._id, quantity: 0, unitPrice: 0, discount: 0, subtotal: 0 }]
                                                     setFormData({ ...formData, inputData: array })
                                                     setInputValue1('')
                                                     setIsClicked(!isClicked);
                                                 }
                                             }}
                                         >
-                                            {data?.Name}
+                                            {data?.productName}
                                         </li>
                                     ))}
                                 </ul>
@@ -527,16 +699,15 @@ const AddorEditSell = () => {
                                     <td className=" py-1 px-1">
                                         <div className='flex flex-col'>
                                             <p className='text-start'>{value.productName}</p>
-                                            <textarea rows={2} type='text' name="info" value={value.info}  onChange={(e) => { handleChange(e, index) }} className='border-[1px] w-3/4 px-1 border-black focus:outline-none' />
+                                            <textarea rows={2} type='text' name="info" value={value.info} onChange={(e) => { handleChange(e, index) }} className='border-[1px] w-3/4 px-1 border-black focus:outline-none' />
                                             <h1 className='text-xs text-start text-gray-500'>Add product IMEI, Serial number or other informations here.</h1>
                                         </div>
                                     </td>
                                     <td className="px-1 py-1 text-sm">
                                         <div className='flex flex-col'>
                                             <div className='flex'>
-                                                <FaMinus size={15} className='border-[1px] h-8 text-red-400 w-1/6 p-1 border-black' />
-                                                <input type='number' name="quantity" value={value.quantity} className='border-[1px] w-4/6 px-1 py-1 border-black focus:outline-none' />
-                                                <FaPlus size={15} className='border-[1px] h-8 w-1/6 p-1 text-green-400 border-black' />
+                                                <FaMinus onClick={() => { handleIncDec(index, "Dec") }} size={15} className='border-[1px] h-8 text-red-400 w-1/6 p-1 border-black' />
+                                                <input type='number' name="quantity" value={value.quantity} onChange={(e) => { handleChange(e, index) }} className='border-[1px] w-4/6 px-1 py-1 border-black focus:outline-none' />                                                <FaPlus onClick={() => { handleIncDec(index, "Inc") }} size={15} className='border-[1px] h-8 w-1/6 p-1 text-green-400 border-black' />
 
                                             </div>
                                             <select name="unit" value={value.unit} onChange={(e) => { handleChange(e, index) }} className='border-[1px] mt-2 w-full px-1 py-1 border-black focus:outline-none'>
@@ -564,7 +735,7 @@ const AddorEditSell = () => {
                                     </td>
 
                                     <td className=" py-1 px-1 text-start">
-                                        <input name="subtotal" type='number' value={value.subtotal = (value.quantity * value.unitPrice)} onChange={(e) => handleChange(e, index)} className='border-[1px] w-3/4 px-1 border-black focus:outline-none' />
+                                        <input name="subtotal" type='number' value={value.subtotal = subtotal(value.quantity, value.unitPrice, value.discount, value.discountType)} onChange={(e) => handleChange(e, index)} className='border-[1px] w-3/4 px-1 border-black focus:outline-none' />
                                     </td>
                                     <td className="px-1 py-1 ">
                                         <FaTimes size={15} onClick={() => { deleteByIndex(index) }} className='cursor-pointer text-red-400' />
@@ -721,6 +892,15 @@ const AddorEditSell = () => {
 
                     </div>
                     <div className='flex flex-col '>
+                        <h1 className='flex text-sm text-start font-bold'>Delivery Person:</h1>
+
+                        <select value={formData.deliveryPerson} onChange={(e) => { setFormData({ ...formData, deliveryPerson: e.target.value }) }} type='Text' placeholder='Enter Product name / SKU / Scan bar code' className='px-2 py-[2px] w-full border-[1px] border-gray-600 focus:outline-none'>
+                            <option value={""}>Please Selecet</option>
+                            <option value={"Demo Admin"}>Demo Admin</option>f
+                            <option value={"Ismail Shah"}>Ismail Shah</option>f
+                        </select>
+                    </div>
+                    <div className='flex flex-col '>
                         <h1 className='flex text-sm text-start font-bold'>Delivered to:</h1>
                         <input value={formData.deliveredTo} onChange={(e) => { setFormData({ ...formData, deliveredTo: e.target.value }) }} placeholder='Delivered to' type='text' className='px-2 py-[2px] w-full border-[1px] border-gray-600 focus:outline-none' />
 
@@ -755,13 +935,13 @@ const AddorEditSell = () => {
                                 <h1 className='text-sm mx-1 font-bold'> Additional Expense Name</h1>
                                 <h1 className='text-sm mx-1 font-bold'> Amount</h1>
                                 <input value={formData.additionalExpenseName} onChange={(e) => { setFormData({ ...formData, additionalExpenseName: e.target.value }) }} type='text' className='px-2 py-[2px] w-full border-[1px] border-gray-600 focus:outline-none' />
-                                <input value={formData.additionalExpenseAmount1} onChange={(e) => { setFormData({ ...formData, additionalExpenseAmount1: e.target.value }) }} type='number' className='px-2 py-[2px] w-full border-[1px] border-gray-600 focus:outline-none' />
+                                <input value={formData.additionalExpenseAmount} onChange={(e) => { setFormData({ ...formData, additionalExpenseAmount: e.target.value }) }} type='number' className='px-2 py-[2px] w-full border-[1px] border-gray-600 focus:outline-none' />
                                 <input value={formData.additionalExpenseName1} onChange={(e) => { setFormData({ ...formData, additionalExpenseName1: e.target.value }) }} type='text' className='px-2 py-[2px] w-full border-[1px] border-gray-600 focus:outline-none' />
-                                <input value={formData.additionalExpenseAmount2} onChange={(e) => { setFormData({ ...formData, additionalExpenseAmount2: e.target.value }) }} type='number' className='px-2 py-[2px] w-full border-[1px] border-gray-600 focus:outline-none' />
+                                <input value={formData.additionalExpenseAmount1} onChange={(e) => { setFormData({ ...formData, additionalExpenseAmount1: e.target.value }) }} type='number' className='px-2 py-[2px] w-full border-[1px] border-gray-600 focus:outline-none' />
                                 <input value={formData.additionalExpenseName2} onChange={(e) => { setFormData({ ...formData, additionalExpenseName2: e.target.value }) }} type='text' className='px-2 py-[2px] w-full border-[1px] border-gray-600 focus:outline-none' />
-                                <input value={formData.additionalExpenseAmount3} onChange={(e) => { setFormData({ ...formData, additionalExpenseAmount3: e.target.value }) }} type='number' className='px-2 py-[2px] w-full border-[1px] border-gray-600 focus:outline-none' />
+                                <input value={formData.additionalExpenseAmount2} onChange={(e) => { setFormData({ ...formData, additionalExpenseAmount2: e.target.value }) }} type='number' className='px-2 py-[2px] w-full border-[1px] border-gray-600 focus:outline-none' />
                                 <input value={formData.additionalExpenseName3} onChange={(e) => { setFormData({ ...formData, additionalExpenseName3: e.target.value }) }} type='text' className='px-2 py-[2px] w-full border-[1px] border-gray-600 focus:outline-none' />
-                                <input value={formData.additionalExpenseAmount4} onChange={(e) => { setFormData({ ...formData, additionalExpenseAmount4: e.target.value }) }} type='number' className='px-2 py-[2px] w-full border-[1px] border-gray-600 focus:outline-none' />
+                                <input value={formData.additionalExpenseAmount3} onChange={(e) => { setFormData({ ...formData, additionalExpenseAmount3: e.target.value }) }} type='number' className='px-2 py-[2px] w-full border-[1px] border-gray-600 focus:outline-none' />
 
                             </div>
                         </div>

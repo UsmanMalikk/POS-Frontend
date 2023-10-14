@@ -260,7 +260,7 @@ const Sells = () => {
                             </div>
                         </div>
 
-                        <div className='flex'>
+                        <div className='flex mt-7'>
                             <input type='checkbox' value={formData.subscription} onChange={(e) => { setFormData({ ...formData, users: e.target.value }) }} className='w-5 h-5 mx-2' />
                             <h1 className='text-sm'>Subscriptions</h1>
                         </div>
