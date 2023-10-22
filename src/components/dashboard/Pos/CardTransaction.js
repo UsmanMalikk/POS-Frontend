@@ -1,6 +1,6 @@
 import React, { useState } from 'react'
 
-const CardTransaction = () => {
+const CardTransaction = (props) => {
     const [formData, setFormData] = useState({
         
         cardNumber:"",
@@ -12,8 +12,10 @@ const CardTransaction = () => {
         securityCode:""
     })
     const handleClick = (e) => {
-
-            console.log("Handle Save", formData)
+        if (props.onSubmit) {
+            props.onSubmit(formData); // Call the callback function and pass the data.
+          }
+            // console.log("Handle Save", formData)
      
     }
     return (

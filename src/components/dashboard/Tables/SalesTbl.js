@@ -208,6 +208,7 @@ const SalesTbl = () => {
             // const token = localStorage.getItem('token');
             const response = await axios.get(`http://localhost:8000/admin/sales/final`);
             // console.log(response)
+            // console.log(response.data)
             setSalesData(response.data);
         } catch (error) {
             console.error('Error fetching Drafts:', error);
@@ -715,7 +716,7 @@ const SalesTbl = () => {
                                     {/* {col13 && <td className="px-1 py-1"> {(value.totalSaleAmount - value.amount) < 0 ? value.totalSaleAmount - value.amount : ""}</td>}      */}
                                     {col14 && <td className="px-1 py-1">{value.shippingStatus}</td>}
                                     {col15 && <td className=" py-1 px-1">{value.inputData.length}</td>}
-                                    {/* {col16 && <td className=" py-1 px-1">{value.Role}</td>}        Delivery person*/}
+                                    {col16 && <td className=" py-1 px-1">{(value.deliveryPerson)? value.deliveryPerson.firstName : ""}</td>}
                                     {col17 && <td className="px-1 py-1 text-sm">{value.sellNote}</td>}
                                     {col18 && <td className="px-1 py-1"> {value.shippingDetails}</td>}
                                 </tr>

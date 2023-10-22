@@ -1,13 +1,15 @@
 import React, { useState } from 'react'
 
-const SuspendSale = () => {
+const SuspendSale = (props) => {
     const [formData, setFormData] = useState({
         
         suspendNote:""
        
     })
     const handleClick = (e) => {
-
+        if (props.onSubmit) {
+            props.onSubmit(formData); // Call the callback function and pass the data.
+          }
             console.log("Handle Save", formData)
      
     }

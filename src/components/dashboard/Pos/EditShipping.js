@@ -1,7 +1,11 @@
-import React, { useState } from 'react'
+import React, { useState, useEffect } from 'react'
 import { FaInfo } from 'react-icons/fa'
+import axios from 'axios';
 
 const EditShipping = (props) => {
+
+
+    const [usersData, setUsersData] = useState([]);
 
 
 
@@ -16,12 +20,29 @@ const EditShipping = (props) => {
     })
     
     const handleClick = (e) => {
+        if (props.onSubmit) {
+            props.onSubmit(formData); // Call the callback function and pass the data.
+          }
         console.log("Handle Update", formData)
     }
 
+    const fetchUsers = async () => {
 
+        try {
+            // const token = localStorage.getItem('token');
+            const response = await axios.get(`http://localhost:8000/admin/users`);
+            // console.log(response)
+            setUsersData(response.data);
+        } catch (error) {
+            console.error('Error fetching users:', error);
+        }
+    };
 
-
+    useEffect(() => {
+        
+            fetchUsers()        
+        
+    }, [])
 
     return (
         <div className='w-full px-5 pb-3 bg-white'>
@@ -43,7 +64,7 @@ const EditShipping = (props) => {
                 </div>
                 <div className='grid grid-cols-2 gap-5 mt-5'>
                 <div className='flex flex-col '>
-                        <h1 className='flex text-sm text-start font-bold'>Delivered to:</h1>
+                        <h1 className='flex text-sm text-start font-bold'>Shipping Charges:</h1>
                         <div className='flex'>
                             <FaInfo size={15} className='border-[1px] p-1 w-7 h-8 border-gray-600'/>
                             <input value={formData.shippingCharges} onChange={(e) => { setFormData({ ...formData, shippingCharges: e.target.value }) }} placeholder='Delivered to' type='number' className='px-2 py-[2px] w-full border-[1px] border-gray-600 focus:outline-none' />
@@ -74,8 +95,11 @@ const EditShipping = (props) => {
 
                         <select value={formData.deliveryPerson} onChange={(e) => { setFormData({ ...formData, deliveryPerson: e.target.value }) }} type='Text' placeholder='Enter Product name / SKU / Scan bar code' className='px-2 py-[2px] w-full border-[1px] border-gray-600 focus:outline-none'>
                             <option value={""}>Please Selecet</option>
-                            <option value={"Demo Admin"}>Demo Admin</option>f
-                            <option value={"Ismail Shah"}>Ismail Shah</option>f
+                            {usersData.map((user) => (
+                                <option key={user._id} value={user._id}>
+                                    {user.firstName +" "+ user.lastName}
+                                </option>
+                            ))}
                         </select>
                     </div>
 

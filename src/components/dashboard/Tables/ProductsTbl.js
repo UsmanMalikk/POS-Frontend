@@ -11,11 +11,13 @@ import { Link } from 'react-router-dom';
 import ViewPurchaseOrder from '../Purchases/ViewPurchaseOrder';
 import EditShipping from '../sell/EditShipping';
 import EditStatus from '../Purchases/EditStatus';
+import ViewProduct from '../Product/ViewProduct';
+
 import axios from 'axios';
 
 
 const ProductsTbl = () => {
-    const [dummyData,setDummyData] = useState([
+    const [dummyData, setDummyData] = useState([
         {
             id: 1,
             Username: "username",
@@ -67,11 +69,11 @@ const ProductsTbl = () => {
         }
     ])
 
-    const handleChange = (e)=>{
-        const {name, checked} = e.target
-        if(name === "allSelect"){
-            const checkedValue = dummyData.map((val)=>{
-                return{
+    const handleChange = (e) => {
+        const { name, checked } = e.target
+        if (name === "allSelect") {
+            const checkedValue = dummyData.map((val) => {
+                return {
                     ...val, isChecked: checked
                 }
             })
@@ -79,19 +81,19 @@ const ProductsTbl = () => {
         }
     }
 
-    const handleSingle = (e,index)=>{
-        const { checked} = e.target
-        
-            const checkedValue = dummyData.map((val,ind)=>{
-                if(ind === index){
-                    return{
-                        ...val, isChecked: checked
-                    }
+    const handleSingle = (e, index) => {
+        const { checked } = e.target
+
+        const checkedValue = dummyData.map((val, ind) => {
+            if (ind === index) {
+                return {
+                    ...val, isChecked: checked
                 }
-               return val
-            })
-            setDummyData(checkedValue)
-        
+            }
+            return val
+        })
+        setDummyData(checkedValue)
+
     }
     const printRef = useRef()
     let xlDatas = []
@@ -155,6 +157,15 @@ const ProductsTbl = () => {
     const toggleDropdown = (index) => {
         const dropDownAction = [...actionList];
         dropDownAction[index] = !dropDownAction[index];
+        // dropDownAction.map((val, i) => {
+        //     if (i === index) {
+        //         dropDownAction[i] = !dropDownAction[i];
+
+        //     } else {
+        //         dropDownAction[i] = false
+        //     }
+        //     return dropDownAction
+        // })
         setActionList(dropDownAction);
     };
 
@@ -188,7 +199,7 @@ const ProductsTbl = () => {
     }
     const displayData = () => {
         if (showId !== 0 && isshow === true) {
-            return <ViewPurchaseOrder id={showId} />
+            return <ViewProduct id={showId} />
         } else if (updateStatus === true) {
             return <EditStatus id={upid} />
         } else if (shippingStatus === true) {
@@ -201,7 +212,7 @@ const ProductsTbl = () => {
         try {
             // const token = localStorage.getItem('token');
             const response = await axios.get(`http://localhost:8000/admin/products`);
-            console.log(response)
+            // console.log(response)
             setProductsData(response.data);
         } catch (error) {
             console.error('Error fetching units:', error);
@@ -209,14 +220,14 @@ const ProductsTbl = () => {
     };
     const handleDeleteProduct = async (productId) => {
         try {
-          // Make an API call to delete attendance for a specific record
-          const response = await axios.delete(`http://localhost:8000/admin/products/${productId}`);
-          console.log('Product deleted:', response.data); 
-          fetchProducts()
+            // Make an API call to delete attendance for a specific record
+            const response = await axios.delete(`http://localhost:8000/admin/products/${productId}`);
+            console.log('Product deleted:', response.data);
+            fetchProducts()
         } catch (error) {
-          console.error('Error deleting Product:', error);
+            console.error('Error deleting Product:', error);
         }
-      };
+    };
     useEffect(() => {
         // Make an API call to fetch user's user records
         fetchProducts();
@@ -291,12 +302,12 @@ const ProductsTbl = () => {
 
 
             </div>
-            
+
             <div className='flex flex-col items-center justify-center overflow-x-scroll  mt-5 mx-5' ref={printRef} >
                 <table id='usertbl' className="table-auto w-full mb-10 px-5 ">
                     <thead>
                         <tr className='h-[50px] bg-gray-100'>
-                        <th className='text-center'><input type='checkbox' name='allSelect' onChange={(e)=>{handleChange(e)}} /> </th>
+                            <th className='text-center'><input type='checkbox' name='allSelect' onChange={(e) => { handleChange(e) }} /> </th>
                             {col1 && <th className=" py-2 title-font   tracking-wider font-medium text-gray-900 text-sm"></th>}
                             {col2 && <th className=" py-2 title-font   tracking-wider font-medium text-gray-900 text-sm">Action</th>}
                             {col3 && <th className=" py-2 title-font   tracking-wider font-medium text-gray-900 text-sm">Product</th>}
@@ -314,13 +325,13 @@ const ProductsTbl = () => {
                     </thead>
                     <tbody >
                         {record.map((value, index) => {
-                            return <tr key={index} className={`${(index + 1) % 2 === 0 ? "bg-gray-200" : ""} ${value.isChecked ? "bg-blue-800/60":""}`}>
-                                <td className='text-center'><input type='checkbox' name={index} checked={value?.isChecked || false} onChange={(e)=>{handleSingle(e,index)}} /> </td>
+                            return <tr key={index} className={`${(index + 1) % 2 === 0 ? "bg-gray-200" : ""} ${value.isChecked ? "bg-blue-800/60" : ""}`}>
+                                <td className='text-center'><input type='checkbox' name={index} checked={value?.isChecked || false} onChange={(e) => { handleSingle(e, index) }} /> </td>
                                 {col1 && <td className="px-1 py-1 text-sm mx-1">
                                     <div className='flex items-center justify-center'>
                                         <img src='' alt='imagee' />
                                     </div>
-                                    </td>}
+                                </td>}
                                 {col2 && <td className='py-1 flex '>
                                     <div onClick={() => { toggleDropdown(index) }} className='flex px-2 py-1 relative cursor-pointer items-center bg-green-600 rounded-xl text-white justify-center'>
                                         <h1 className='text-sm'>Action</h1>
@@ -329,47 +340,27 @@ const ProductsTbl = () => {
                                             <ul className='absolute top-5 left-10 z-20 flex flex-col items-start w-[200px] bg-white text-gray-600 shadow-xl shadow-gray-400 '>
 
                                                 <li className='w-full'>
-                                                    <Link onClick={() => { setIsCliked(!isCliked); setShowId(value.id); setIsshow(true); }} className='flex px-2 py-1 w-full cursor-pointer hover:bg-gray-400 items-center '>
+                                                    <Link onClick={() => { setIsCliked(!isCliked); setShowId(value._id); setIsshow(true); }} className='flex px-2 py-1 w-full cursor-pointer hover:bg-gray-400 items-center '>
                                                         <FaEye size={15} />
                                                         <h1 className='text-sm'>View</h1>
-                                                    </Link >
+                                                    </Link>
                                                 </li>
+                                                
                                                 <li className='w-full'>
-                                                    <div onClick={() => { }} className='flex px-2 py-1 w-full cursor-pointer hover:bg-gray-400 items-center '>
-                                                        <FaPrint size={15} />
-                                                        <h1 className='text-sm'>Print</h1>
-                                                    </div>
-                                                </li>
-                                                <li className='w-full'>
-                                                    <Link to={`/home/purchase-order/eidt/${value.id}`} className='flex px-2 py-1 w-full cursor-pointer hover:bg-gray-400 items-center '>
+                                                    <Link to={`/home/products/edit/${value._id}`} className='flex px-2 py-1 w-full cursor-pointer hover:bg-gray-400 items-center '>
                                                         <FaEdit size={15} />
                                                         <h1 className='text-sm'>Edit</h1>
                                                     </Link>
                                                 </li>
                                                 <li className='w-full'>
-                                                    <div onClick={()=> handleDeleteProduct(value._id) } className='flex px-2 py-1 w-full cursor-pointer hover:bg-gray-400 items-center '>
+                                                    <div onClick={() => handleDeleteProduct(value._id)} className='flex px-2 py-1 w-full cursor-pointer hover:bg-gray-400 items-center '>
                                                         <FaTrash size={15} />
                                                         <h1 className='text-sm'>Delete</h1>
                                                     </div>
                                                 </li>
-                                                <li className='w-full'>
-                                                    <div onClick={() => { }} className='flex px-2 py-1 w-full cursor-pointer hover:bg-gray-400 items-center '>
-                                                        <FaDownload size={15} />
-                                                        <h1 className='text-sm'>Download PDF</h1>
-                                                    </div>
-                                                </li>
-                                                <li className=' w-full'>
-                                                    <Link className='flex px-2 py-1 w-full cursor-pointer hover:bg-gray-400 items-center '>
-                                                        <FaTruck size={15} />
-                                                        <h1 className='text-sm'>Edit Shipping</h1>
-                                                    </Link >
-                                                </li>
-                                                <li className='w-full'>
-                                                    <Link className='flex px-2 py-1 w-full cursor-pointer hover:bg-gray-400 items-center '>
-                                                        <FaEnvelope size={15} />
-                                                        <h1 className='text-sm'>Send Notification</h1>
-                                                    </Link>
-                                                </li>
+                                                
+                                                
+                                                
 
                                             </ul>
                                         }
@@ -379,13 +370,13 @@ const ProductsTbl = () => {
                                 {col4 && <td className="px-1 py-1"> {value.businessLocation}</td>}
                                 {col5 && <td className=" py-1 px-1">{value.Name}</td>}
                                 {col6 && <td className=" py-1 px-1">{value.Name}</td>}
-                                {col7 && <td className="px-1 py-1 text-sm">{value.openingStock[0].quantityRemaining}</td>}
+                                {col7 && <td className="px-1 py-1 text-sm">{value.openingStock[0]?.quantityRemaining}</td>}
                                 {col8 && <td className=" py-1 px-1">{value.productType}</td>}
                                 {col9 && <td className="px-1 py-1">{value.Role}</td>}
                                 {col10 && <td className=" py-1 px-1">{value.Name}</td>}
                                 {col11 && <td className="px-1 py-1">{value.Role}</td>}
                                 {col12 && <td className=" py-1 px-1">{value.sku}</td>}
-                           </tr>
+                            </tr>
                         })}
 
 
@@ -399,9 +390,11 @@ const ProductsTbl = () => {
                 <button className='bg-blue-500 px-1 text-xs text-white mx-2 rounded-md py-1'>Delete Selected</button>
                 <button className='bg-orange-500 px-1 text-xs mx-2 rounded-md py-1'>Delete Selected</button>
                 <button className='bg-yellow-500 px-1 text-xs mx-2 rounded-md py-1'>Delete Selected</button>
-            
+
             </div>
-            {isCliked &&
+            {/* {isCliked &&
+
+
                 <div className='absolute top-0 flex flex-col items-center  justify-center right-0 bg-black/70 w-full min-h-screen'>
                     <div className='flex items-end justify-end w-full md:w-[80%]  mt-10 bg-white px-5 pt-2'>
                         <MdCancel onClick={() => { setIsCliked(!isCliked); setShowId(0); setIsshow(false) }} size={20} />
@@ -410,7 +403,8 @@ const ProductsTbl = () => {
                     {displayData()}
                 </div>
 
-            }
+            } */}
+
             <nav className='  my-2 w-full'>
                 <ul className='flex justify-end'>
                     <li>
@@ -432,7 +426,7 @@ const ProductsTbl = () => {
                 <div className='absolute top-0 flex flex-col items-center  justify-center right-0 bg-black/50 w-full min-h-screen'>
                     <div className='flex flex-col w-full md:w-[80%]  mt-10 bg-white px-5 pt-2'>
                         <div className='flex items-end justify-end '>
-                            <MdCancel onClick={() => { setIsCliked(!isCliked); setShowId(0); setUpdateStatus(false); setShippingStatus(false)}} size={20} />
+                            <MdCancel onClick={() => { setIsCliked(!isCliked); setShowId(0); setUpdateStatus(false); setShippingStatus(false) }} size={20} />
 
                         </div>
                         {displayData()}

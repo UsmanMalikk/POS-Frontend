@@ -4,7 +4,7 @@ import { FaInfoCircle } from 'react-icons/fa'
 import axios from 'axios';
 
 const AddorEditDiscount = (props) => {
-    console.log(props)
+    // console.log(props)
     const [formData, setFormData] = useState({
         name: "",
         products: [],
@@ -20,7 +20,15 @@ const AddorEditDiscount = (props) => {
         isActive: false,
         isApplyinCustomerGrps: false
     })
+    const handleDelete = (index) => {
+        let newArray = [...formData.products]
+        newArray.splice(index, 1)
+        setFormData({ ...formData, products: newArray })
+    }
+    const [open1, setOpen1] = useState(false)
     const [isserror, setIsserror] = useState(false)
+    const [inputValue1, setInputValue1] = useState('')
+    const [seletedValue, setSeletedValue] = useState('')
     const [info, setInfo] = useState(false)
     const [brandsData, setBrandsData] = useState([]);
     const [categoryData, setCategorysData] = useState([]);
@@ -45,7 +53,7 @@ const AddorEditDiscount = (props) => {
         try {
             // const token = localStorage.getItem('token');
             const response = await axios.get(`http://localhost:8000/admin/products`);
-            // console.log(response)
+            console.log(response)
             setProductsData(response.data);
         } catch (error) {
             console.error('Error fetching products:', error);
@@ -78,12 +86,32 @@ const AddorEditDiscount = (props) => {
             console.error('Error fetching brand:', error);
         }
     };
+    const fetchDiscountById = async () => {
+
+        try {
+            // const token = localStorage.getItem('token');
+            const response = await axios.get(`http://localhost:8000/admin/discounts/${props.id}`);
+            // console.log(response)
+            setFormData(response.data);
+        } catch (error) {
+            console.error('Error fetching Discounts:', error);
+        }
+    };
     useEffect(() => {
         // Make an API call to fetch user's user records
-        fetchProducts()
-        fetchCategory()
-        fetchBrands();
-        fetchSPG()
+        if (props.id) {
+            fetchProducts()
+            fetchCategory()
+            fetchBrands();
+            fetchSPG()
+            fetchDiscountById()
+        } else {
+            fetchProducts()
+            fetchCategory()
+            fetchBrands();
+            fetchSPG()
+        }
+
     }, []);
 
     const addDiscount = async () => {
@@ -94,6 +122,8 @@ const AddorEditDiscount = (props) => {
             const response = await axios.post(`http://localhost:8000/admin/discounts`, formData);
             // console.log(response)
             if (response.status === 201) {
+                window.location.reload();
+
                 console.log("Success")
             }
         } catch (error) {
@@ -108,11 +138,17 @@ const AddorEditDiscount = (props) => {
             // console.log(formData)
             const response = await axios.put(`http://localhost:8000/admin/discounts/${props.id}`, formData);
             console.log(response)
+            if (response.status === 200) {
+                window.location.reload();
 
+                console.log("Success")
+            }
         } catch (error) {
             console.error('Error Adding Discount:', error);
         }
     };
+
+
 
     const handleClick = (e) => {
 
@@ -147,15 +183,80 @@ const AddorEditDiscount = (props) => {
                     />
                 </div>
                 <div className='flex flex-col'>
-                    <div className='flex'>
-                        <h1>Product:</h1>
+
+                    <div className='flex text-sm text-start font-bold'>
+                        <h1>products:</h1>
                     </div>
-                    <input type='text'
-                        // value={formData.products}
-                        // onChange={(e) => setFormData({ ...formData, name: e.target.value })}
-                        className='w-full border-[1px] border-gray-400 py-1 px-1'
-                    />
+                    <div className='flex flex-col relative'>
+                        <div className='flex'>
+                            <input
+                                onClick={() => setOpen1(!open1)}
+                                className='bg-white w-full  flex items-center  focus:outline-none justify-between px-2  py-1 mt-1 border-[1px] border-gray-600'
+                                value={seletedValue}
+                                onChange={(e) => { setSeletedValue(e.target.value) }}
+
+                                placeholder='Select Value'
+                            />
+
+
+                        </div>
+                        {open1 &&
+                            <ul
+
+                                className={`bg-white z-10  w-full -right-7 mx-[30px] border-[1px] absolute top-9 border-gray-600  overflow-y-auto ${open1 ? "max-h-60" : "max-h-0"} `}
+                            >
+                                <div className="flex items-center px-1 sticky top-0 bg-white">
+                                    <input
+                                        type="text"
+                                        value={inputValue1}
+                                        onChange={(e) => setInputValue1(e.target.value.toLowerCase())}
+                                        className="placeholder:text-gray-700 w-full p-1 outline-none border-[1px] border-gray-500"
+                                    />
+                                </div>
+                                {productsData?.map((data) => (
+                                    <li
+                                        key={data?._id}
+                                        className={`p-2 text-sm text-start hover:bg-sky-600 hover:text-white
+                                                        ${data?.productName?.toLowerCase() === seletedValue?.toLowerCase() &&
+                                            "bg-sky-600 text-white"
+                                            }
+                                                         ${data?.Name?.toLowerCase().startsWith(inputValue1)
+                                                ? "block"
+                                                : "hidden"
+                                            }`}
+                                        onClick={() => {
+                                            if (data?.productName?.toLowerCase() !== seletedValue.toLowerCase()) {
+                                                let darray = formData.products
+                                                darray = [...darray, data?._id]
+                                                setFormData({ ...formData, products: darray })
+                                                setOpen1(false);
+                                                setInputValue1("");
+                                            }
+                                        }}
+                                    >
+                                        {data?.productName}
+                                    </li>
+                                ))}
+                            </ul>
+                        }
+                    </div>
+
                 </div>
+                {formData.products.length > 0 &&
+
+                    <div className='w-full border-[1px] border-gray-400 py-1 px-1'>
+                        <ul className='flex'>
+                            {formData.products.map((val, index) => {
+                                return <>
+                                    <li key={index} className='flex items-center py-1 rounded-md px-2 bg-blue-500 text-white text-xs mx-2'>
+                                        <p onClick={() => { handleDelete(index) }} className='mx-1 mb-1 cursor-pointer'>x</p>
+                                        <h1>{val}</h1>
+                                    </li>
+                                </>
+                            })}
+                        </ul>
+                    </div>
+                }
                 <div className='grid grid-cols-2 gap-5'>
                     <div className='flex flex-col'>
                         <div className='flex'>
@@ -326,6 +427,7 @@ const AddorEditDiscount = (props) => {
 
         </div>
     )
+
 }
 
 export default AddorEditDiscount

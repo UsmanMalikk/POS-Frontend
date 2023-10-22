@@ -1,35 +1,69 @@
-import React, { useState } from 'react'
+import React, { useState, useEffect  } from 'react'
 import { FaInfoCircle } from 'react-icons/fa'
+import axios from 'axios';
 import { useLocation } from 'react-router-dom';
 
 const AddorEditSellingPriceGrps = () => {
+    const location = useLocation();
+    const formDataFromPreviousPage = location.state?.formData;
+
     const [info, setInfo] = useState(false)
     const [info1, setInfo1] = useState(false)
     const [info2, setInfo2] = useState(false)
     const [info3, setInfo3] = useState(false)
-   
+    const [spgData, setSpgData] = useState([]);
+
     const [formData, setFormData] = useState({
-        // ...formDataFromPreviousPage,
         productName: "Fetch From Data Base",
         productId: '',
-        dfltSlngPrice: "1200.00",
-        retailAmount: "",
-        retailType: "Fixed",
-        salemanAmount: "",
-        salemanType: "Fixed",
-        minimumPriceAmount: "",
-        minimumPriceType: "Fixed",
-        salePointsAmount: "",
-        salePointsType: "Fixed"
-
+        
+        grpPrices: [{
+            dfltSlngPrice: "1200.00",
+            retailAmount: "",
+            retailType: "Fixed",
+            salemanAmount: "",
+            salemanType: "Fixed",
+            minimumPriceAmount: "",
+            minimumPriceType: "Fixed",
+            salePointsAmount: "",
+            salePointsType: "Fixed"
+        }]
     })
+    const handleChange = (e, index) => {
+        const updatedData = formData.grpPrices.map((item, ind) => {
+            if (ind === index) {
+                // Create a new copy of the item with the modified subItem
+                return {
+                    ...item, [e.target.name]: e.target.value
+                };
+            }
+            return item;
+        });
+        setFormData({ ...formData, grpPrices: updatedData });
+    }
 
     const handleSaveorEdit = () => {
-        
+
         console.log("Handle Save", formData)
 
     }
+    const fetchSPG = async () => {
 
+        try {
+            // const token = localStorage.getItem('token');
+            const response = await axios.get(`http://localhost:8000/admin/selling-price-groups`);
+            console.log(response.data)
+            setSpgData(response.data);
+            // console.log(variationData)
+
+        } catch (error) {
+            console.error('Error fetching spg:', error);
+        }
+    };
+    useEffect(() => {
+        // Make an API call to fetch user's user records
+        fetchSPG();
+    }, []);
     return (
         <div className='flex flex-col w-full px-5 bg-white '>
             <div className='flex'>
@@ -118,54 +152,56 @@ const AddorEditSellingPriceGrps = () => {
                         </tr>
                     </thead>
                     <tbody>
-
-                        <tr >
+                        {formData.grpPrices.map((val,index)=>{
+                            return  <tr key={index}>
                             <td>
-                                <h1>{formData.dfltSlngPrice}</h1>
+                                <h1>{val.dfltSlngPrice}</h1>
                             </td>
                             <td >
                                 <div className='flex flex-col'>
-                                <input type='number' value={formData.retailAmount} onChange={(e) => { setFormData({ ...formData, retailAmount: e.target.value }) }} className='border-[1px] px-2 py-1 border-gray-400 focus:outline-none' />
-                                <select value={formData.retailType} onChange={(e) => { setFormData({ ...formData, retailType: e.target.value }) }} className='border-[1px] px-2 py-1 border-gray-400 focus:outline-none' >
-                                    <option value={"Fixed"}>Fixed</option>
-                                    <option value={"Percentage"}>Percentage</option>
+                                    <input type='number' name='retailAmount' value={val.retailAmount} onChange={(e) => { handleChange(e,index)  }} className='border-[1px] px-2 py-1 border-gray-400 focus:outline-none' />
+                                    <select name='retailType' value={formData.retailType} onChange={(e) => { handleChange(e,index)  }} className='border-[1px] px-2 py-1 border-gray-400 focus:outline-none' >
+                                        <option value={"Fixed"}>Fixed</option>
+                                        <option value={"Percentage"}>Percentage</option>
 
-                                </select>
+                                    </select>
                                 </div>
-                                
+
 
                             </td>
                             <td >
                                 <div className='flex flex-col'>
-                                <input type='number' value={formData.salemanAmount} onChange={(e) => { setFormData({ ...formData, salemanAmount: e.target.value }) }} className='border-[1px] px-2 py-1 border-gray-400 focus:outline-none' />
-                                <select value={formData.salemanType} onChange={(e) => { setFormData({ ...formData, salemanType: e.target.value }) }} className='border-[1px] px-2 py-1 border-gray-400 focus:outline-none' >
-                                    <option value={"Fixed"}>Fixed</option>
-                                    <option value={"Percentage"}>Percentage</option>
+                                    <input type='number' name='salemanAmount' value={formData.salemanAmount} onChange={(e) => { handleChange(e,index)  }} className='border-[1px] px-2 py-1 border-gray-400 focus:outline-none' />
+                                    <select name='salemanType' value={formData.salemanType} onChange={(e) => { handleChange(e,index)  }} className='border-[1px] px-2 py-1 border-gray-400 focus:outline-none' >
+                                        <option value={"Fixed"}>Fixed</option>
+                                        <option value={"Percentage"}>Percentage</option>
 
-                                </select>
-                                </div>
-                            </td>
-                            <td >
-                                <div className='flex flex-col'>
-                                <input type='number' value={formData.minimumPriceAmount} onChange={(e) => { setFormData({ ...formData, minimumPriceAmount: e.target.value }) }} className='border-[1px] px-2 py-1 border-gray-400 focus:outline-none' />
-                                <select value={formData.minimumPriceType} onChange={(e) => { setFormData({ ...formData, minimumPriceType: e.target.value }) }} className='border-[1px] px-2 py-1 border-gray-400 focus:outline-none' >
-                                    <option value={"Fixed"}>Fixed</option>
-                                    <option value={"Percentage"}>Percentage</option>
-
-                                </select>
+                                    </select>
                                 </div>
                             </td>
                             <td >
                                 <div className='flex flex-col'>
-                                <input type='number' value={formData.salePointsAmount} onChange={(e) => { setFormData({ ...formData, salePointsAmount: e.target.value }) }} className='border-[1px] px-2 py-1 border-gray-400 focus:outline-none' />
-                                <select value={formData.salePointsType} onChange={(e) => { setFormData({ ...formData, salePointsType: e.target.value }) }} className='border-[1px] px-2 py-1 border-gray-400 focus:outline-none' >
-                                    <option value={"Fixed"}>Fixed</option>
-                                    <option value={"Percentage"}>Percentage</option>
+                                    <input type='number' name='minimumPriceAmount' value={formData.minimumPriceAmount}  className='border-[1px] px-2 py-1 border-gray-400 focus:outline-none' />
+                                    <select name='minimumPriceType' value={formData.minimumPriceType} onChange={(e) => { handleChange(e,index)  }} className='border-[1px] px-2 py-1 border-gray-400 focus:outline-none' >
+                                        <option value={"Fixed"}>Fixed</option>
+                                        <option value={"Percentage"}>Percentage</option>
 
-                                </select>
+                                    </select>
+                                </div>
+                            </td>
+                            <td >
+                                <div className='flex flex-col'>
+                                    <input name='salePointsAmount' type='number' value={formData.salePointsAmount} onChange={(e) => { handleChange(e,index)  }} className='border-[1px] px-2 py-1 border-gray-400 focus:outline-none' />
+                                    <select name='salePointsType' value={formData.salePointsType} onChange={(e) => { handleChange(e,index)  }} className='border-[1px] px-2 py-1 border-gray-400 focus:outline-none' >
+                                        <option value={"Fixed"}>Fixed</option>
+                                        <option value={"Percentage"}>Percentage</option>
+
+                                    </select>
                                 </div>
                             </td>
                         </tr>
+                        })}
+                       
 
 
                     </tbody>

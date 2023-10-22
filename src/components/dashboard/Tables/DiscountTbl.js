@@ -188,8 +188,8 @@ const fetchDiscounts = async () => {
 
         try {
             // const token = localStorage.getItem('token');
-            const response = await axios.get(`http://localhost:8000/admin/brands`);
-            // console.log(response.data)
+            const response = await axios.get(`http://localhost:8000/admin/discounts`);
+            console.log(response.data)
             setDiscountsData(response.data);
 
         } catch (error) {
@@ -300,17 +300,20 @@ const fetchDiscounts = async () => {
                     </thead>
                     <tbody >
                         {record.map((value, index) => {
+                            let startDate = new Date(value.startsAt).toLocaleDateString()
+                            let endDate = new Date(value.endsAt).toLocaleDateString()
+
                             return <tr key={index} className={`${value.isChecked ? "bg-blue-800/60":""}`}>
                                 <td className='text-center'><input type='checkbox' name={index} checked={value?.isChecked || false} onChange={(e)=>{handleSingle(e,index)}} /> </td>
-                                {col1 && <td className="px-1 py-1 text-sm">{value.Username}</td>}
-                                {col2 && <td className="px-1 py-1"> {value.Name}</td>}
-                                {col3 && <td className=" py-1 px-1">{value.Name}</td>}
-                                {col4 && <td className=" py-1 px-1">{value.Name}</td>}
-                                {col5 && <td className="px-1 py-1 text-sm">{value.Username}</td>}
-                                {col6 && <td className=" py-1 px-1">{value.Name}</td>}
-                                {col7 && <td className=" py-1 px-1">{value.Name}</td>}
-                                {col8 && <td className="px-1 py-1 text-sm">{value.Username}</td>}
-                                {col9 && <td className=" py-1 px-1">{value.Name}</td>}
+                                {col1 && <td className="px-1 py-1 text-sm">{value.name}</td>}
+                                {col2 && <td className="px-1 py-1"> {startDate}</td>}
+                                {col3 && <td className=" py-1 px-1">{endDate}</td>}
+                                {col4 && <td className=" py-1 px-1">{value.discountAmount}</td>}
+                                {col5 && <td className="px-1 py-1 text-sm">{value.priority}</td>}
+                                {col6 && <td className=" py-1 px-1">{(value.brand !== null) ? value.brand.brandName: ""}</td>}
+                                {col7 && <td className=" py-1 px-1">{(value.category !== null)?value.category.categoryName: ""}</td>}
+                                {col8 && <td className="px-1 py-1 text-sm">{(value.product)?value.product.productName: ""}</td>}
+                                {col9 && <td className=" py-1 px-1">{value.location}</td>}
                                 {col10 && <td className='py-1 flex '>
                                     <div onClick={() => { toggleDropdown(index) }} className='flex px-2 py-1 relative cursor-pointer items-center bg-green-600 rounded-xl text-white justify-center'>
                                         <h1 className='text-sm'>Action</h1>
@@ -319,7 +322,7 @@ const fetchDiscounts = async () => {
                                             <ul className='absolute top-5 right-10  z-20 flex flex-col items-start w-[100px] bg-white text-gray-600 shadow-xl shadow-gray-400 '>
 
                                                 <li className='w-full'>
-                                                    <div onClick={()=>{setIsCliked(true); setUpid(value.id); setIsEdit(true); }} className='flex px-2 py-1 w-full cursor-pointer hover:bg-gray-400 items-center '>
+                                                    <div onClick={()=>{setIsCliked(true); setUpid(value._id); setIsEdit(true); }} className='flex px-2 py-1 w-full cursor-pointer hover:bg-gray-400 items-center '>
                                                         <FaEdit size={15} />
                                                         <h1 className='text-sm'>Edit</h1>
                                                     </div>

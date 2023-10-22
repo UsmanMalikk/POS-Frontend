@@ -42,8 +42,10 @@ const AddorEditWarranties = (props) => {
             const response = await axios.post(`http://localhost:8000/admin/warranties`, formData);
             // console.log(response)
             if (response.status === 201) {
-            console.log("Success")
-        }
+                window.location.reload();
+
+                console.log("Success")
+            }
         } catch (error) {
             console.error('Error Adding Warranty:', error);
         }
@@ -56,7 +58,11 @@ const AddorEditWarranties = (props) => {
             // console.log(formData)
             const response = await axios.put(`http://localhost:8000/admin/warranties/${_id}`, formData);
             console.log(response)
+            if (response.status === 200) {
+                window.location.reload();
 
+                console.log("Success")
+            }
         } catch (error) {
             console.error('Error Adding Warranty:', error);
         }

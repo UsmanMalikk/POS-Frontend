@@ -1,4 +1,4 @@
-import React, { useState } from 'react'
+import React, { useState, useEffect } from 'react'
 import { FaBackward, FaBriefcase, FaCalculator, FaCheck, FaClock, FaCreditCard, FaEdit, FaInfoCircle, FaKeyboard, FaMinus, FaMinusCircle, FaMoneyBillAlt, FaMoneyCheckAlt, FaPause, FaPauseCircle, FaPlus, FaPlusCircle, FaSearch, FaTable, FaTimes, FaUndo, FaUser, FaUserSecret, FaWindowClose, FaWindowMaximize } from 'react-icons/fa'
 import { useParams } from 'react-router-dom'
 import { BiChevronDown } from 'react-icons/bi'
@@ -7,7 +7,7 @@ import { MdCancel } from 'react-icons/md'
 import AddProduct from '../Product/AddorEditProduct'
 import AddorEditContact from "../contacts/AddorEditContact"
 import ProductItem from './ProductItem'
-import Payment from './Payment'
+// import Payment from './Payment'
 import CardTransaction from './CardTransaction'
 import SuspendSale from './SuspendSale'
 import EditProduct from './EditProduct'
@@ -20,6 +20,10 @@ import EditOrderTax from './EditOrderTax'
 import EditShipping from './EditShipping'
 import RecentTransaction from './RecentTransaction'
 import moment from 'moment'
+import axios from 'axios';
+
+import { useNavigate } from "react-router-dom"
+
 
 
 
@@ -29,6 +33,8 @@ import moment from 'moment'
 
 
 const AddPos = () => {
+  const Navigate = useNavigate();
+
   const dummyData = [
     {
       id: 1,
@@ -81,116 +87,123 @@ const AddPos = () => {
     }
   ]
 
-  const productData = [
-    {
-      id: 1,
-      Name: "Product1",
-      image: "data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAIEAAACBCAMAAADQfiliAAAAJFBMVEX19fXMzMzT09PPz8/5+fnw8PDJycnq6urn5+ft7e3c3NzX19crZrtmAAABV0lEQVR4nO3YwRKCMAxF0aZNU0L//3+tFAEFsZvEzTtLxhmuJQolBAAAAAAAAAAAAAAAsMNj7M6vNY2oatUwidAIoWITwEOnXySjRRBKeUQisQloBXHku3EkCjaLsBXk/KPAeA1KTCnezJp1AU/LD0Kmr+tsXdDmrI/7149ZFxRZE97+dvQwGcYF60VoyqEgU3QrCPoq0P2UOcnhqphPYu2TWLcl4D4aW4J5QajS1P3wOpsSs1MBh2mep/0WnLcbUsouBcs5+PMSvBLYqWB3DFhmgd0KSl/x9wCi5yz4FGifu0wfUjvsMgfPP4XYLsH50USKRwGXvuKaTgUkhe0L1oBrLgXntfctYL0L8Ci4D3Ao2O/OKPhnAd3uGcnh1/hjw+TxhPKLaUHSgW2jmu0b+eI2cDmMdnvnQqPvD6xeYbDOccSsZm9y/v0aCQAAAAAAAAAAAAAAmgd0EQ1cxW38UQAAAABJRU5ErkJggg==",
-      price: 200
-    },
-    {
-      id: 2,
-      Name: "Product2",
-      image: "data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAIEAAACBCAMAAADQfiliAAAAJFBMVEX19fXMzMzT09PPz8/5+fnw8PDJycnq6urn5+ft7e3c3NzX19crZrtmAAABV0lEQVR4nO3YwRKCMAxF0aZNU0L//3+tFAEFsZvEzTtLxhmuJQolBAAAAAAAAAAAAAAAsMNj7M6vNY2oatUwidAIoWITwEOnXySjRRBKeUQisQloBXHku3EkCjaLsBXk/KPAeA1KTCnezJp1AU/LD0Kmr+tsXdDmrI/7149ZFxRZE97+dvQwGcYF60VoyqEgU3QrCPoq0P2UOcnhqphPYu2TWLcl4D4aW4J5QajS1P3wOpsSs1MBh2mep/0WnLcbUsouBcs5+PMSvBLYqWB3DFhmgd0KSl/x9wCi5yz4FGifu0wfUjvsMgfPP4XYLsH50USKRwGXvuKaTgUkhe0L1oBrLgXntfctYL0L8Ci4D3Ao2O/OKPhnAd3uGcnh1/hjw+TxhPKLaUHSgW2jmu0b+eI2cDmMdnvnQqPvD6xeYbDOccSsZm9y/v0aCQAAAAAAAAAAAAAAmgd0EQ1cxW38UQAAAABJRU5ErkJggg==",
-      price: 200
-    },
-    {
-      id: 3,
-      Name: "Product3",
-      image: "data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAIEAAACBCAMAAADQfiliAAAAJFBMVEX19fXMzMzT09PPz8/5+fnw8PDJycnq6urn5+ft7e3c3NzX19crZrtmAAABV0lEQVR4nO3YwRKCMAxF0aZNU0L//3+tFAEFsZvEzTtLxhmuJQolBAAAAAAAAAAAAAAAsMNj7M6vNY2oatUwidAIoWITwEOnXySjRRBKeUQisQloBXHku3EkCjaLsBXk/KPAeA1KTCnezJp1AU/LD0Kmr+tsXdDmrI/7149ZFxRZE97+dvQwGcYF60VoyqEgU3QrCPoq0P2UOcnhqphPYu2TWLcl4D4aW4J5QajS1P3wOpsSs1MBh2mep/0WnLcbUsouBcs5+PMSvBLYqWB3DFhmgd0KSl/x9wCi5yz4FGifu0wfUjvsMgfPP4XYLsH50USKRwGXvuKaTgUkhe0L1oBrLgXntfctYL0L8Ci4D3Ao2O/OKPhnAd3uGcnh1/hjw+TxhPKLaUHSgW2jmu0b+eI2cDmMdnvnQqPvD6xeYbDOccSsZm9y/v0aCQAAAAAAAAAAAAAAmgd0EQ1cxW38UQAAAABJRU5ErkJggg==",
-      price: 200
-    },
-    {
-      id: 4,
-      Name: "Product4",
-      image: "data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAIEAAACBCAMAAADQfiliAAAAJFBMVEX19fXMzMzT09PPz8/5+fnw8PDJycnq6urn5+ft7e3c3NzX19crZrtmAAABV0lEQVR4nO3YwRKCMAxF0aZNU0L//3+tFAEFsZvEzTtLxhmuJQolBAAAAAAAAAAAAAAAsMNj7M6vNY2oatUwidAIoWITwEOnXySjRRBKeUQisQloBXHku3EkCjaLsBXk/KPAeA1KTCnezJp1AU/LD0Kmr+tsXdDmrI/7149ZFxRZE97+dvQwGcYF60VoyqEgU3QrCPoq0P2UOcnhqphPYu2TWLcl4D4aW4J5QajS1P3wOpsSs1MBh2mep/0WnLcbUsouBcs5+PMSvBLYqWB3DFhmgd0KSl/x9wCi5yz4FGifu0wfUjvsMgfPP4XYLsH50USKRwGXvuKaTgUkhe0L1oBrLgXntfctYL0L8Ci4D3Ao2O/OKPhnAd3uGcnh1/hjw+TxhPKLaUHSgW2jmu0b+eI2cDmMdnvnQqPvD6xeYbDOccSsZm9y/v0aCQAAAAAAAAAAAAAAmgd0EQ1cxW38UQAAAABJRU5ErkJggg==",
-      price: 200
-    },
-    {
-      id: 5,
-      Name: "Product5",
-      image: "data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAIEAAACBCAMAAADQfiliAAAAJFBMVEX19fXMzMzT09PPz8/5+fnw8PDJycnq6urn5+ft7e3c3NzX19crZrtmAAABV0lEQVR4nO3YwRKCMAxF0aZNU0L//3+tFAEFsZvEzTtLxhmuJQolBAAAAAAAAAAAAAAAsMNj7M6vNY2oatUwidAIoWITwEOnXySjRRBKeUQisQloBXHku3EkCjaLsBXk/KPAeA1KTCnezJp1AU/LD0Kmr+tsXdDmrI/7149ZFxRZE97+dvQwGcYF60VoyqEgU3QrCPoq0P2UOcnhqphPYu2TWLcl4D4aW4J5QajS1P3wOpsSs1MBh2mep/0WnLcbUsouBcs5+PMSvBLYqWB3DFhmgd0KSl/x9wCi5yz4FGifu0wfUjvsMgfPP4XYLsH50USKRwGXvuKaTgUkhe0L1oBrLgXntfctYL0L8Ci4D3Ao2O/OKPhnAd3uGcnh1/hjw+TxhPKLaUHSgW2jmu0b+eI2cDmMdnvnQqPvD6xeYbDOccSsZm9y/v0aCQAAAAAAAAAAAAAAmgd0EQ1cxW38UQAAAABJRU5ErkJggg==",
-      price: 200
-    },
-    {
-      id: 6,
-      Name: "Product6",
-      image: "data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAIEAAACBCAMAAADQfiliAAAAJFBMVEX19fXMzMzT09PPz8/5+fnw8PDJycnq6urn5+ft7e3c3NzX19crZrtmAAABV0lEQVR4nO3YwRKCMAxF0aZNU0L//3+tFAEFsZvEzTtLxhmuJQolBAAAAAAAAAAAAAAAsMNj7M6vNY2oatUwidAIoWITwEOnXySjRRBKeUQisQloBXHku3EkCjaLsBXk/KPAeA1KTCnezJp1AU/LD0Kmr+tsXdDmrI/7149ZFxRZE97+dvQwGcYF60VoyqEgU3QrCPoq0P2UOcnhqphPYu2TWLcl4D4aW4J5QajS1P3wOpsSs1MBh2mep/0WnLcbUsouBcs5+PMSvBLYqWB3DFhmgd0KSl/x9wCi5yz4FGifu0wfUjvsMgfPP4XYLsH50USKRwGXvuKaTgUkhe0L1oBrLgXntfctYL0L8Ci4D3Ao2O/OKPhnAd3uGcnh1/hjw+TxhPKLaUHSgW2jmu0b+eI2cDmMdnvnQqPvD6xeYbDOccSsZm9y/v0aCQAAAAAAAAAAAAAAmgd0EQ1cxW38UQAAAABJRU5ErkJggg==",
-      price: 200
-    },
-    {
-      id: 7,
-      Name: "Product7",
-      image: "data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAIEAAACBCAMAAADQfiliAAAAJFBMVEX19fXMzMzT09PPz8/5+fnw8PDJycnq6urn5+ft7e3c3NzX19crZrtmAAABV0lEQVR4nO3YwRKCMAxF0aZNU0L//3+tFAEFsZvEzTtLxhmuJQolBAAAAAAAAAAAAAAAsMNj7M6vNY2oatUwidAIoWITwEOnXySjRRBKeUQisQloBXHku3EkCjaLsBXk/KPAeA1KTCnezJp1AU/LD0Kmr+tsXdDmrI/7149ZFxRZE97+dvQwGcYF60VoyqEgU3QrCPoq0P2UOcnhqphPYu2TWLcl4D4aW4J5QajS1P3wOpsSs1MBh2mep/0WnLcbUsouBcs5+PMSvBLYqWB3DFhmgd0KSl/x9wCi5yz4FGifu0wfUjvsMgfPP4XYLsH50USKRwGXvuKaTgUkhe0L1oBrLgXntfctYL0L8Ci4D3Ao2O/OKPhnAd3uGcnh1/hjw+TxhPKLaUHSgW2jmu0b+eI2cDmMdnvnQqPvD6xeYbDOccSsZm9y/v0aCQAAAAAAAAAAAAAAmgd0EQ1cxW38UQAAAABJRU5ErkJggg==",
-      price: 200
-    },
-    {
-      id: 8,
-      Name: "Product8",
-      image: "data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAIEAAACBCAMAAADQfiliAAAAJFBMVEX19fXMzMzT09PPz8/5+fnw8PDJycnq6urn5+ft7e3c3NzX19crZrtmAAABV0lEQVR4nO3YwRKCMAxF0aZNU0L//3+tFAEFsZvEzTtLxhmuJQolBAAAAAAAAAAAAAAAsMNj7M6vNY2oatUwidAIoWITwEOnXySjRRBKeUQisQloBXHku3EkCjaLsBXk/KPAeA1KTCnezJp1AU/LD0Kmr+tsXdDmrI/7149ZFxRZE97+dvQwGcYF60VoyqEgU3QrCPoq0P2UOcnhqphPYu2TWLcl4D4aW4J5QajS1P3wOpsSs1MBh2mep/0WnLcbUsouBcs5+PMSvBLYqWB3DFhmgd0KSl/x9wCi5yz4FGifu0wfUjvsMgfPP4XYLsH50USKRwGXvuKaTgUkhe0L1oBrLgXntfctYL0L8Ci4D3Ao2O/OKPhnAd3uGcnh1/hjw+TxhPKLaUHSgW2jmu0b+eI2cDmMdnvnQqPvD6xeYbDOccSsZm9y/v0aCQAAAAAAAAAAAAAAmgd0EQ1cxW38UQAAAABJRU5ErkJggg==",
-      price: 200
-    },
-    {
-      id: 9,
-      Name: "Product9",
-      image: "data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAIEAAACBCAMAAADQfiliAAAAJFBMVEX19fXMzMzT09PPz8/5+fnw8PDJycnq6urn5+ft7e3c3NzX19crZrtmAAABV0lEQVR4nO3YwRKCMAxF0aZNU0L//3+tFAEFsZvEzTtLxhmuJQolBAAAAAAAAAAAAAAAsMNj7M6vNY2oatUwidAIoWITwEOnXySjRRBKeUQisQloBXHku3EkCjaLsBXk/KPAeA1KTCnezJp1AU/LD0Kmr+tsXdDmrI/7149ZFxRZE97+dvQwGcYF60VoyqEgU3QrCPoq0P2UOcnhqphPYu2TWLcl4D4aW4J5QajS1P3wOpsSs1MBh2mep/0WnLcbUsouBcs5+PMSvBLYqWB3DFhmgd0KSl/x9wCi5yz4FGifu0wfUjvsMgfPP4XYLsH50USKRwGXvuKaTgUkhe0L1oBrLgXntfctYL0L8Ci4D3Ao2O/OKPhnAd3uGcnh1/hjw+TxhPKLaUHSgW2jmu0b+eI2cDmMdnvnQqPvD6xeYbDOccSsZm9y/v0aCQAAAAAAAAAAAAAAmgd0EQ1cxW38UQAAAABJRU5ErkJggg==",
-      price: 200
-    },
-    {
-      id: 10,
-      Name: "Product10",
-      image: "data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAIEAAACBCAMAAADQfiliAAAAJFBMVEX19fXMzMzT09PPz8/5+fnw8PDJycnq6urn5+ft7e3c3NzX19crZrtmAAABV0lEQVR4nO3YwRKCMAxF0aZNU0L//3+tFAEFsZvEzTtLxhmuJQolBAAAAAAAAAAAAAAAsMNj7M6vNY2oatUwidAIoWITwEOnXySjRRBKeUQisQloBXHku3EkCjaLsBXk/KPAeA1KTCnezJp1AU/LD0Kmr+tsXdDmrI/7149ZFxRZE97+dvQwGcYF60VoyqEgU3QrCPoq0P2UOcnhqphPYu2TWLcl4D4aW4J5QajS1P3wOpsSs1MBh2mep/0WnLcbUsouBcs5+PMSvBLYqWB3DFhmgd0KSl/x9wCi5yz4FGifu0wfUjvsMgfPP4XYLsH50USKRwGXvuKaTgUkhe0L1oBrLgXntfctYL0L8Ci4D3Ao2O/OKPhnAd3uGcnh1/hjw+TxhPKLaUHSgW2jmu0b+eI2cDmMdnvnQqPvD6xeYbDOccSsZm9y/v0aCQAAAAAAAAAAAAAAmgd0EQ1cxW38UQAAAABJRU5ErkJggg==",
-      price: 200
-    },
-    {
-      id: 11,
-      Name: "Product11",
-      image: "data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAIEAAACBCAMAAADQfiliAAAAJFBMVEX19fXMzMzT09PPz8/5+fnw8PDJycnq6urn5+ft7e3c3NzX19crZrtmAAABV0lEQVR4nO3YwRKCMAxF0aZNU0L//3+tFAEFsZvEzTtLxhmuJQolBAAAAAAAAAAAAAAAsMNj7M6vNY2oatUwidAIoWITwEOnXySjRRBKeUQisQloBXHku3EkCjaLsBXk/KPAeA1KTCnezJp1AU/LD0Kmr+tsXdDmrI/7149ZFxRZE97+dvQwGcYF60VoyqEgU3QrCPoq0P2UOcnhqphPYu2TWLcl4D4aW4J5QajS1P3wOpsSs1MBh2mep/0WnLcbUsouBcs5+PMSvBLYqWB3DFhmgd0KSl/x9wCi5yz4FGifu0wfUjvsMgfPP4XYLsH50USKRwGXvuKaTgUkhe0L1oBrLgXntfctYL0L8Ci4D3Ao2O/OKPhnAd3uGcnh1/hjw+TxhPKLaUHSgW2jmu0b+eI2cDmMdnvnQqPvD6xeYbDOccSsZm9y/v0aCQAAAAAAAAAAAAAAmgd0EQ1cxW38UQAAAABJRU5ErkJggg==",
-      price: 200
-    },
-    {
-      id: 12,
-      Name: "Product12",
-      image: "data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAIEAAACBCAMAAADQfiliAAAAJFBMVEX19fXMzMzT09PPz8/5+fnw8PDJycnq6urn5+ft7e3c3NzX19crZrtmAAABV0lEQVR4nO3YwRKCMAxF0aZNU0L//3+tFAEFsZvEzTtLxhmuJQolBAAAAAAAAAAAAAAAsMNj7M6vNY2oatUwidAIoWITwEOnXySjRRBKeUQisQloBXHku3EkCjaLsBXk/KPAeA1KTCnezJp1AU/LD0Kmr+tsXdDmrI/7149ZFxRZE97+dvQwGcYF60VoyqEgU3QrCPoq0P2UOcnhqphPYu2TWLcl4D4aW4J5QajS1P3wOpsSs1MBh2mep/0WnLcbUsouBcs5+PMSvBLYqWB3DFhmgd0KSl/x9wCi5yz4FGifu0wfUjvsMgfPP4XYLsH50USKRwGXvuKaTgUkhe0L1oBrLgXntfctYL0L8Ci4D3Ao2O/OKPhnAd3uGcnh1/hjw+TxhPKLaUHSgW2jmu0b+eI2cDmMdnvnQqPvD6xeYbDOccSsZm9y/v0aCQAAAAAAAAAAAAAAmgd0EQ1cxW38UQAAAABJRU5ErkJggg==",
-      price: 200
-    },
-    {
-      id: 13,
-      Name: "Product13",
-      image: "data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAIEAAACBCAMAAADQfiliAAAAJFBMVEX19fXMzMzT09PPz8/5+fnw8PDJycnq6urn5+ft7e3c3NzX19crZrtmAAABV0lEQVR4nO3YwRKCMAxF0aZNU0L//3+tFAEFsZvEzTtLxhmuJQolBAAAAAAAAAAAAAAAsMNj7M6vNY2oatUwidAIoWITwEOnXySjRRBKeUQisQloBXHku3EkCjaLsBXk/KPAeA1KTCnezJp1AU/LD0Kmr+tsXdDmrI/7149ZFxRZE97+dvQwGcYF60VoyqEgU3QrCPoq0P2UOcnhqphPYu2TWLcl4D4aW4J5QajS1P3wOpsSs1MBh2mep/0WnLcbUsouBcs5+PMSvBLYqWB3DFhmgd0KSl/x9wCi5yz4FGifu0wfUjvsMgfPP4XYLsH50USKRwGXvuKaTgUkhe0L1oBrLgXntfctYL0L8Ci4D3Ao2O/OKPhnAd3uGcnh1/hjw+TxhPKLaUHSgW2jmu0b+eI2cDmMdnvnQqPvD6xeYbDOccSsZm9y/v0aCQAAAAAAAAAAAAAAmgd0EQ1cxW38UQAAAABJRU5ErkJggg==",
-      price: 200
-    },
-    {
-      id: 14,
-      Name: "Product14",
-      image: "data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAIEAAACBCAMAAADQfiliAAAAJFBMVEX19fXMzMzT09PPz8/5+fnw8PDJycnq6urn5+ft7e3c3NzX19crZrtmAAABV0lEQVR4nO3YwRKCMAxF0aZNU0L//3+tFAEFsZvEzTtLxhmuJQolBAAAAAAAAAAAAAAAsMNj7M6vNY2oatUwidAIoWITwEOnXySjRRBKeUQisQloBXHku3EkCjaLsBXk/KPAeA1KTCnezJp1AU/LD0Kmr+tsXdDmrI/7149ZFxRZE97+dvQwGcYF60VoyqEgU3QrCPoq0P2UOcnhqphPYu2TWLcl4D4aW4J5QajS1P3wOpsSs1MBh2mep/0WnLcbUsouBcs5+PMSvBLYqWB3DFhmgd0KSl/x9wCi5yz4FGifu0wfUjvsMgfPP4XYLsH50USKRwGXvuKaTgUkhe0L1oBrLgXntfctYL0L8Ci4D3Ao2O/OKPhnAd3uGcnh1/hjw+TxhPKLaUHSgW2jmu0b+eI2cDmMdnvnQqPvD6xeYbDOccSsZm9y/v0aCQAAAAAAAAAAAAAAmgd0EQ1cxW38UQAAAABJRU5ErkJggg==",
-      price: 200
-    },
-    {
-      id: 14,
-      Name: "Product14",
-      image: "data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAIEAAACBCAMAAADQfiliAAAAJFBMVEX19fXMzMzT09PPz8/5+fnw8PDJycnq6urn5+ft7e3c3NzX19crZrtmAAABV0lEQVR4nO3YwRKCMAxF0aZNU0L//3+tFAEFsZvEzTtLxhmuJQolBAAAAAAAAAAAAAAAsMNj7M6vNY2oatUwidAIoWITwEOnXySjRRBKeUQisQloBXHku3EkCjaLsBXk/KPAeA1KTCnezJp1AU/LD0Kmr+tsXdDmrI/7149ZFxRZE97+dvQwGcYF60VoyqEgU3QrCPoq0P2UOcnhqphPYu2TWLcl4D4aW4J5QajS1P3wOpsSs1MBh2mep/0WnLcbUsouBcs5+PMSvBLYqWB3DFhmgd0KSl/x9wCi5yz4FGifu0wfUjvsMgfPP4XYLsH50USKRwGXvuKaTgUkhe0L1oBrLgXntfctYL0L8Ci4D3Ao2O/OKPhnAd3uGcnh1/hjw+TxhPKLaUHSgW2jmu0b+eI2cDmMdnvnQqPvD6xeYbDOccSsZm9y/v0aCQAAAAAAAAAAAAAAmgd0EQ1cxW38UQAAAABJRU5ErkJggg==",
-      price: 200
-    },
-    {
-      id: 16,
-      Name: "Product16",
-      image: "data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAIEAAACBCAMAAADQfiliAAAAJFBMVEX19fXMzMzT09PPz8/5+fnw8PDJycnq6urn5+ft7e3c3NzX19crZrtmAAABV0lEQVR4nO3YwRKCMAxF0aZNU0L//3+tFAEFsZvEzTtLxhmuJQolBAAAAAAAAAAAAAAAsMNj7M6vNY2oatUwidAIoWITwEOnXySjRRBKeUQisQloBXHku3EkCjaLsBXk/KPAeA1KTCnezJp1AU/LD0Kmr+tsXdDmrI/7149ZFxRZE97+dvQwGcYF60VoyqEgU3QrCPoq0P2UOcnhqphPYu2TWLcl4D4aW4J5QajS1P3wOpsSs1MBh2mep/0WnLcbUsouBcs5+PMSvBLYqWB3DFhmgd0KSl/x9wCi5yz4FGifu0wfUjvsMgfPP4XYLsH50USKRwGXvuKaTgUkhe0L1oBrLgXntfctYL0L8Ci4D3Ao2O/OKPhnAd3uGcnh1/hjw+TxhPKLaUHSgW2jmu0b+eI2cDmMdnvnQqPvD6xeYbDOccSsZm9y/v0aCQAAAAAAAAAAAAAAmgd0EQ1cxW38UQAAAABJRU5ErkJggg==",
-      price: 200
-    },
-    {
-      id: 17,
-      Name: "Product17",
-      image: "data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAIEAAACBCAMAAADQfiliAAAAJFBMVEX19fXMzMzT09PPz8/5+fnw8PDJycnq6urn5+ft7e3c3NzX19crZrtmAAABV0lEQVR4nO3YwRKCMAxF0aZNU0L//3+tFAEFsZvEzTtLxhmuJQolBAAAAAAAAAAAAAAAsMNj7M6vNY2oatUwidAIoWITwEOnXySjRRBKeUQisQloBXHku3EkCjaLsBXk/KPAeA1KTCnezJp1AU/LD0Kmr+tsXdDmrI/7149ZFxRZE97+dvQwGcYF60VoyqEgU3QrCPoq0P2UOcnhqphPYu2TWLcl4D4aW4J5QajS1P3wOpsSs1MBh2mep/0WnLcbUsouBcs5+PMSvBLYqWB3DFhmgd0KSl/x9wCi5yz4FGifu0wfUjvsMgfPP4XYLsH50USKRwGXvuKaTgUkhe0L1oBrLgXntfctYL0L8Ci4D3Ao2O/OKPhnAd3uGcnh1/hjw+TxhPKLaUHSgW2jmu0b+eI2cDmMdnvnQqPvD6xeYbDOccSsZm9y/v0aCQAAAAAAAAAAAAAAmgd0EQ1cxW38UQAAAABJRU5ErkJggg==",
-      price: 200
-    },
-    {
-      id: 18,
-      Name: "Product18",
-      image: "data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAIEAAACBCAMAAADQfiliAAAAJFBMVEX19fXMzMzT09PPz8/5+fnw8PDJycnq6urn5+ft7e3c3NzX19crZrtmAAABV0lEQVR4nO3YwRKCMAxF0aZNU0L//3+tFAEFsZvEzTtLxhmuJQolBAAAAAAAAAAAAAAAsMNj7M6vNY2oatUwidAIoWITwEOnXySjRRBKeUQisQloBXHku3EkCjaLsBXk/KPAeA1KTCnezJp1AU/LD0Kmr+tsXdDmrI/7149ZFxRZE97+dvQwGcYF60VoyqEgU3QrCPoq0P2UOcnhqphPYu2TWLcl4D4aW4J5QajS1P3wOpsSs1MBh2mep/0WnLcbUsouBcs5+PMSvBLYqWB3DFhmgd0KSl/x9wCi5yz4FGifu0wfUjvsMgfPP4XYLsH50USKRwGXvuKaTgUkhe0L1oBrLgXntfctYL0L8Ci4D3Ao2O/OKPhnAd3uGcnh1/hjw+TxhPKLaUHSgW2jmu0b+eI2cDmMdnvnQqPvD6xeYbDOccSsZm9y/v0aCQAAAAAAAAAAAAAAmgd0EQ1cxW38UQAAAABJRU5ErkJggg==",
-      price: 200
-    }
-  ]
+  // const productData = [
+  //   {
+  //     id: 1,
+  //     Name: "Product1",
+  //     image: "data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAIEAAACBCAMAAADQfiliAAAAJFBMVEX19fXMzMzT09PPz8/5+fnw8PDJycnq6urn5+ft7e3c3NzX19crZrtmAAABV0lEQVR4nO3YwRKCMAxF0aZNU0L//3+tFAEFsZvEzTtLxhmuJQolBAAAAAAAAAAAAAAAsMNj7M6vNY2oatUwidAIoWITwEOnXySjRRBKeUQisQloBXHku3EkCjaLsBXk/KPAeA1KTCnezJp1AU/LD0Kmr+tsXdDmrI/7149ZFxRZE97+dvQwGcYF60VoyqEgU3QrCPoq0P2UOcnhqphPYu2TWLcl4D4aW4J5QajS1P3wOpsSs1MBh2mep/0WnLcbUsouBcs5+PMSvBLYqWB3DFhmgd0KSl/x9wCi5yz4FGifu0wfUjvsMgfPP4XYLsH50USKRwGXvuKaTgUkhe0L1oBrLgXntfctYL0L8Ci4D3Ao2O/OKPhnAd3uGcnh1/hjw+TxhPKLaUHSgW2jmu0b+eI2cDmMdnvnQqPvD6xeYbDOccSsZm9y/v0aCQAAAAAAAAAAAAAAmgd0EQ1cxW38UQAAAABJRU5ErkJggg==",
+  //     price: 200
+  //   },
+  //   {
+  //     id: 2,
+  //     Name: "Product2",
+  //     image: "data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAIEAAACBCAMAAADQfiliAAAAJFBMVEX19fXMzMzT09PPz8/5+fnw8PDJycnq6urn5+ft7e3c3NzX19crZrtmAAABV0lEQVR4nO3YwRKCMAxF0aZNU0L//3+tFAEFsZvEzTtLxhmuJQolBAAAAAAAAAAAAAAAsMNj7M6vNY2oatUwidAIoWITwEOnXySjRRBKeUQisQloBXHku3EkCjaLsBXk/KPAeA1KTCnezJp1AU/LD0Kmr+tsXdDmrI/7149ZFxRZE97+dvQwGcYF60VoyqEgU3QrCPoq0P2UOcnhqphPYu2TWLcl4D4aW4J5QajS1P3wOpsSs1MBh2mep/0WnLcbUsouBcs5+PMSvBLYqWB3DFhmgd0KSl/x9wCi5yz4FGifu0wfUjvsMgfPP4XYLsH50USKRwGXvuKaTgUkhe0L1oBrLgXntfctYL0L8Ci4D3Ao2O/OKPhnAd3uGcnh1/hjw+TxhPKLaUHSgW2jmu0b+eI2cDmMdnvnQqPvD6xeYbDOccSsZm9y/v0aCQAAAAAAAAAAAAAAmgd0EQ1cxW38UQAAAABJRU5ErkJggg==",
+  //     price: 200
+  //   },
+  //   {
+  //     id: 3,
+  //     Name: "Product3",
+  //     image: "data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAIEAAACBCAMAAADQfiliAAAAJFBMVEX19fXMzMzT09PPz8/5+fnw8PDJycnq6urn5+ft7e3c3NzX19crZrtmAAABV0lEQVR4nO3YwRKCMAxF0aZNU0L//3+tFAEFsZvEzTtLxhmuJQolBAAAAAAAAAAAAAAAsMNj7M6vNY2oatUwidAIoWITwEOnXySjRRBKeUQisQloBXHku3EkCjaLsBXk/KPAeA1KTCnezJp1AU/LD0Kmr+tsXdDmrI/7149ZFxRZE97+dvQwGcYF60VoyqEgU3QrCPoq0P2UOcnhqphPYu2TWLcl4D4aW4J5QajS1P3wOpsSs1MBh2mep/0WnLcbUsouBcs5+PMSvBLYqWB3DFhmgd0KSl/x9wCi5yz4FGifu0wfUjvsMgfPP4XYLsH50USKRwGXvuKaTgUkhe0L1oBrLgXntfctYL0L8Ci4D3Ao2O/OKPhnAd3uGcnh1/hjw+TxhPKLaUHSgW2jmu0b+eI2cDmMdnvnQqPvD6xeYbDOccSsZm9y/v0aCQAAAAAAAAAAAAAAmgd0EQ1cxW38UQAAAABJRU5ErkJggg==",
+  //     price: 200
+  //   },
+  //   {
+  //     id: 4,
+  //     Name: "Product4",
+  //     image: "data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAIEAAACBCAMAAADQfiliAAAAJFBMVEX19fXMzMzT09PPz8/5+fnw8PDJycnq6urn5+ft7e3c3NzX19crZrtmAAABV0lEQVR4nO3YwRKCMAxF0aZNU0L//3+tFAEFsZvEzTtLxhmuJQolBAAAAAAAAAAAAAAAsMNj7M6vNY2oatUwidAIoWITwEOnXySjRRBKeUQisQloBXHku3EkCjaLsBXk/KPAeA1KTCnezJp1AU/LD0Kmr+tsXdDmrI/7149ZFxRZE97+dvQwGcYF60VoyqEgU3QrCPoq0P2UOcnhqphPYu2TWLcl4D4aW4J5QajS1P3wOpsSs1MBh2mep/0WnLcbUsouBcs5+PMSvBLYqWB3DFhmgd0KSl/x9wCi5yz4FGifu0wfUjvsMgfPP4XYLsH50USKRwGXvuKaTgUkhe0L1oBrLgXntfctYL0L8Ci4D3Ao2O/OKPhnAd3uGcnh1/hjw+TxhPKLaUHSgW2jmu0b+eI2cDmMdnvnQqPvD6xeYbDOccSsZm9y/v0aCQAAAAAAAAAAAAAAmgd0EQ1cxW38UQAAAABJRU5ErkJggg==",
+  //     price: 200
+  //   },
+  //   {
+  //     id: 5,
+  //     Name: "Product5",
+  //     image: "data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAIEAAACBCAMAAADQfiliAAAAJFBMVEX19fXMzMzT09PPz8/5+fnw8PDJycnq6urn5+ft7e3c3NzX19crZrtmAAABV0lEQVR4nO3YwRKCMAxF0aZNU0L//3+tFAEFsZvEzTtLxhmuJQolBAAAAAAAAAAAAAAAsMNj7M6vNY2oatUwidAIoWITwEOnXySjRRBKeUQisQloBXHku3EkCjaLsBXk/KPAeA1KTCnezJp1AU/LD0Kmr+tsXdDmrI/7149ZFxRZE97+dvQwGcYF60VoyqEgU3QrCPoq0P2UOcnhqphPYu2TWLcl4D4aW4J5QajS1P3wOpsSs1MBh2mep/0WnLcbUsouBcs5+PMSvBLYqWB3DFhmgd0KSl/x9wCi5yz4FGifu0wfUjvsMgfPP4XYLsH50USKRwGXvuKaTgUkhe0L1oBrLgXntfctYL0L8Ci4D3Ao2O/OKPhnAd3uGcnh1/hjw+TxhPKLaUHSgW2jmu0b+eI2cDmMdnvnQqPvD6xeYbDOccSsZm9y/v0aCQAAAAAAAAAAAAAAmgd0EQ1cxW38UQAAAABJRU5ErkJggg==",
+  //     price: 200
+  //   },
+  //   {
+  //     id: 6,
+  //     Name: "Product6",
+  //     image: "data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAIEAAACBCAMAAADQfiliAAAAJFBMVEX19fXMzMzT09PPz8/5+fnw8PDJycnq6urn5+ft7e3c3NzX19crZrtmAAABV0lEQVR4nO3YwRKCMAxF0aZNU0L//3+tFAEFsZvEzTtLxhmuJQolBAAAAAAAAAAAAAAAsMNj7M6vNY2oatUwidAIoWITwEOnXySjRRBKeUQisQloBXHku3EkCjaLsBXk/KPAeA1KTCnezJp1AU/LD0Kmr+tsXdDmrI/7149ZFxRZE97+dvQwGcYF60VoyqEgU3QrCPoq0P2UOcnhqphPYu2TWLcl4D4aW4J5QajS1P3wOpsSs1MBh2mep/0WnLcbUsouBcs5+PMSvBLYqWB3DFhmgd0KSl/x9wCi5yz4FGifu0wfUjvsMgfPP4XYLsH50USKRwGXvuKaTgUkhe0L1oBrLgXntfctYL0L8Ci4D3Ao2O/OKPhnAd3uGcnh1/hjw+TxhPKLaUHSgW2jmu0b+eI2cDmMdnvnQqPvD6xeYbDOccSsZm9y/v0aCQAAAAAAAAAAAAAAmgd0EQ1cxW38UQAAAABJRU5ErkJggg==",
+  //     price: 200
+  //   },
+  //   {
+  //     id: 7,
+  //     Name: "Product7",
+  //     image: "data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAIEAAACBCAMAAADQfiliAAAAJFBMVEX19fXMzMzT09PPz8/5+fnw8PDJycnq6urn5+ft7e3c3NzX19crZrtmAAABV0lEQVR4nO3YwRKCMAxF0aZNU0L//3+tFAEFsZvEzTtLxhmuJQolBAAAAAAAAAAAAAAAsMNj7M6vNY2oatUwidAIoWITwEOnXySjRRBKeUQisQloBXHku3EkCjaLsBXk/KPAeA1KTCnezJp1AU/LD0Kmr+tsXdDmrI/7149ZFxRZE97+dvQwGcYF60VoyqEgU3QrCPoq0P2UOcnhqphPYu2TWLcl4D4aW4J5QajS1P3wOpsSs1MBh2mep/0WnLcbUsouBcs5+PMSvBLYqWB3DFhmgd0KSl/x9wCi5yz4FGifu0wfUjvsMgfPP4XYLsH50USKRwGXvuKaTgUkhe0L1oBrLgXntfctYL0L8Ci4D3Ao2O/OKPhnAd3uGcnh1/hjw+TxhPKLaUHSgW2jmu0b+eI2cDmMdnvnQqPvD6xeYbDOccSsZm9y/v0aCQAAAAAAAAAAAAAAmgd0EQ1cxW38UQAAAABJRU5ErkJggg==",
+  //     price: 200
+  //   },
+  //   {
+  //     id: 8,
+  //     Name: "Product8",
+  //     image: "data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAIEAAACBCAMAAADQfiliAAAAJFBMVEX19fXMzMzT09PPz8/5+fnw8PDJycnq6urn5+ft7e3c3NzX19crZrtmAAABV0lEQVR4nO3YwRKCMAxF0aZNU0L//3+tFAEFsZvEzTtLxhmuJQolBAAAAAAAAAAAAAAAsMNj7M6vNY2oatUwidAIoWITwEOnXySjRRBKeUQisQloBXHku3EkCjaLsBXk/KPAeA1KTCnezJp1AU/LD0Kmr+tsXdDmrI/7149ZFxRZE97+dvQwGcYF60VoyqEgU3QrCPoq0P2UOcnhqphPYu2TWLcl4D4aW4J5QajS1P3wOpsSs1MBh2mep/0WnLcbUsouBcs5+PMSvBLYqWB3DFhmgd0KSl/x9wCi5yz4FGifu0wfUjvsMgfPP4XYLsH50USKRwGXvuKaTgUkhe0L1oBrLgXntfctYL0L8Ci4D3Ao2O/OKPhnAd3uGcnh1/hjw+TxhPKLaUHSgW2jmu0b+eI2cDmMdnvnQqPvD6xeYbDOccSsZm9y/v0aCQAAAAAAAAAAAAAAmgd0EQ1cxW38UQAAAABJRU5ErkJggg==",
+  //     price: 200
+  //   },
+  //   {
+  //     id: 9,
+  //     Name: "Product9",
+  //     image: "data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAIEAAACBCAMAAADQfiliAAAAJFBMVEX19fXMzMzT09PPz8/5+fnw8PDJycnq6urn5+ft7e3c3NzX19crZrtmAAABV0lEQVR4nO3YwRKCMAxF0aZNU0L//3+tFAEFsZvEzTtLxhmuJQolBAAAAAAAAAAAAAAAsMNj7M6vNY2oatUwidAIoWITwEOnXySjRRBKeUQisQloBXHku3EkCjaLsBXk/KPAeA1KTCnezJp1AU/LD0Kmr+tsXdDmrI/7149ZFxRZE97+dvQwGcYF60VoyqEgU3QrCPoq0P2UOcnhqphPYu2TWLcl4D4aW4J5QajS1P3wOpsSs1MBh2mep/0WnLcbUsouBcs5+PMSvBLYqWB3DFhmgd0KSl/x9wCi5yz4FGifu0wfUjvsMgfPP4XYLsH50USKRwGXvuKaTgUkhe0L1oBrLgXntfctYL0L8Ci4D3Ao2O/OKPhnAd3uGcnh1/hjw+TxhPKLaUHSgW2jmu0b+eI2cDmMdnvnQqPvD6xeYbDOccSsZm9y/v0aCQAAAAAAAAAAAAAAmgd0EQ1cxW38UQAAAABJRU5ErkJggg==",
+  //     price: 200
+  //   },
+  //   {
+  //     id: 10,
+  //     Name: "Product10",
+  //     image: "data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAIEAAACBCAMAAADQfiliAAAAJFBMVEX19fXMzMzT09PPz8/5+fnw8PDJycnq6urn5+ft7e3c3NzX19crZrtmAAABV0lEQVR4nO3YwRKCMAxF0aZNU0L//3+tFAEFsZvEzTtLxhmuJQolBAAAAAAAAAAAAAAAsMNj7M6vNY2oatUwidAIoWITwEOnXySjRRBKeUQisQloBXHku3EkCjaLsBXk/KPAeA1KTCnezJp1AU/LD0Kmr+tsXdDmrI/7149ZFxRZE97+dvQwGcYF60VoyqEgU3QrCPoq0P2UOcnhqphPYu2TWLcl4D4aW4J5QajS1P3wOpsSs1MBh2mep/0WnLcbUsouBcs5+PMSvBLYqWB3DFhmgd0KSl/x9wCi5yz4FGifu0wfUjvsMgfPP4XYLsH50USKRwGXvuKaTgUkhe0L1oBrLgXntfctYL0L8Ci4D3Ao2O/OKPhnAd3uGcnh1/hjw+TxhPKLaUHSgW2jmu0b+eI2cDmMdnvnQqPvD6xeYbDOccSsZm9y/v0aCQAAAAAAAAAAAAAAmgd0EQ1cxW38UQAAAABJRU5ErkJggg==",
+  //     price: 200
+  //   },
+  //   {
+  //     id: 11,
+  //     Name: "Product11",
+  //     image: "data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAIEAAACBCAMAAADQfiliAAAAJFBMVEX19fXMzMzT09PPz8/5+fnw8PDJycnq6urn5+ft7e3c3NzX19crZrtmAAABV0lEQVR4nO3YwRKCMAxF0aZNU0L//3+tFAEFsZvEzTtLxhmuJQolBAAAAAAAAAAAAAAAsMNj7M6vNY2oatUwidAIoWITwEOnXySjRRBKeUQisQloBXHku3EkCjaLsBXk/KPAeA1KTCnezJp1AU/LD0Kmr+tsXdDmrI/7149ZFxRZE97+dvQwGcYF60VoyqEgU3QrCPoq0P2UOcnhqphPYu2TWLcl4D4aW4J5QajS1P3wOpsSs1MBh2mep/0WnLcbUsouBcs5+PMSvBLYqWB3DFhmgd0KSl/x9wCi5yz4FGifu0wfUjvsMgfPP4XYLsH50USKRwGXvuKaTgUkhe0L1oBrLgXntfctYL0L8Ci4D3Ao2O/OKPhnAd3uGcnh1/hjw+TxhPKLaUHSgW2jmu0b+eI2cDmMdnvnQqPvD6xeYbDOccSsZm9y/v0aCQAAAAAAAAAAAAAAmgd0EQ1cxW38UQAAAABJRU5ErkJggg==",
+  //     price: 200
+  //   },
+  //   {
+  //     id: 12,
+  //     Name: "Product12",
+  //     image: "data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAIEAAACBCAMAAADQfiliAAAAJFBMVEX19fXMzMzT09PPz8/5+fnw8PDJycnq6urn5+ft7e3c3NzX19crZrtmAAABV0lEQVR4nO3YwRKCMAxF0aZNU0L//3+tFAEFsZvEzTtLxhmuJQolBAAAAAAAAAAAAAAAsMNj7M6vNY2oatUwidAIoWITwEOnXySjRRBKeUQisQloBXHku3EkCjaLsBXk/KPAeA1KTCnezJp1AU/LD0Kmr+tsXdDmrI/7149ZFxRZE97+dvQwGcYF60VoyqEgU3QrCPoq0P2UOcnhqphPYu2TWLcl4D4aW4J5QajS1P3wOpsSs1MBh2mep/0WnLcbUsouBcs5+PMSvBLYqWB3DFhmgd0KSl/x9wCi5yz4FGifu0wfUjvsMgfPP4XYLsH50USKRwGXvuKaTgUkhe0L1oBrLgXntfctYL0L8Ci4D3Ao2O/OKPhnAd3uGcnh1/hjw+TxhPKLaUHSgW2jmu0b+eI2cDmMdnvnQqPvD6xeYbDOccSsZm9y/v0aCQAAAAAAAAAAAAAAmgd0EQ1cxW38UQAAAABJRU5ErkJggg==",
+  //     price: 200
+  //   },
+  //   {
+  //     id: 13,
+  //     Name: "Product13",
+  //     image: "data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAIEAAACBCAMAAADQfiliAAAAJFBMVEX19fXMzMzT09PPz8/5+fnw8PDJycnq6urn5+ft7e3c3NzX19crZrtmAAABV0lEQVR4nO3YwRKCMAxF0aZNU0L//3+tFAEFsZvEzTtLxhmuJQolBAAAAAAAAAAAAAAAsMNj7M6vNY2oatUwidAIoWITwEOnXySjRRBKeUQisQloBXHku3EkCjaLsBXk/KPAeA1KTCnezJp1AU/LD0Kmr+tsXdDmrI/7149ZFxRZE97+dvQwGcYF60VoyqEgU3QrCPoq0P2UOcnhqphPYu2TWLcl4D4aW4J5QajS1P3wOpsSs1MBh2mep/0WnLcbUsouBcs5+PMSvBLYqWB3DFhmgd0KSl/x9wCi5yz4FGifu0wfUjvsMgfPP4XYLsH50USKRwGXvuKaTgUkhe0L1oBrLgXntfctYL0L8Ci4D3Ao2O/OKPhnAd3uGcnh1/hjw+TxhPKLaUHSgW2jmu0b+eI2cDmMdnvnQqPvD6xeYbDOccSsZm9y/v0aCQAAAAAAAAAAAAAAmgd0EQ1cxW38UQAAAABJRU5ErkJggg==",
+  //     price: 200
+  //   },
+  //   {
+  //     id: 14,
+  //     Name: "Product14",
+  //     image: "data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAIEAAACBCAMAAADQfiliAAAAJFBMVEX19fXMzMzT09PPz8/5+fnw8PDJycnq6urn5+ft7e3c3NzX19crZrtmAAABV0lEQVR4nO3YwRKCMAxF0aZNU0L//3+tFAEFsZvEzTtLxhmuJQolBAAAAAAAAAAAAAAAsMNj7M6vNY2oatUwidAIoWITwEOnXySjRRBKeUQisQloBXHku3EkCjaLsBXk/KPAeA1KTCnezJp1AU/LD0Kmr+tsXdDmrI/7149ZFxRZE97+dvQwGcYF60VoyqEgU3QrCPoq0P2UOcnhqphPYu2TWLcl4D4aW4J5QajS1P3wOpsSs1MBh2mep/0WnLcbUsouBcs5+PMSvBLYqWB3DFhmgd0KSl/x9wCi5yz4FGifu0wfUjvsMgfPP4XYLsH50USKRwGXvuKaTgUkhe0L1oBrLgXntfctYL0L8Ci4D3Ao2O/OKPhnAd3uGcnh1/hjw+TxhPKLaUHSgW2jmu0b+eI2cDmMdnvnQqPvD6xeYbDOccSsZm9y/v0aCQAAAAAAAAAAAAAAmgd0EQ1cxW38UQAAAABJRU5ErkJggg==",
+  //     price: 200
+  //   },
+  //   {
+  //     id: 14,
+  //     Name: "Product14",
+  //     image: "data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAIEAAACBCAMAAADQfiliAAAAJFBMVEX19fXMzMzT09PPz8/5+fnw8PDJycnq6urn5+ft7e3c3NzX19crZrtmAAABV0lEQVR4nO3YwRKCMAxF0aZNU0L//3+tFAEFsZvEzTtLxhmuJQolBAAAAAAAAAAAAAAAsMNj7M6vNY2oatUwidAIoWITwEOnXySjRRBKeUQisQloBXHku3EkCjaLsBXk/KPAeA1KTCnezJp1AU/LD0Kmr+tsXdDmrI/7149ZFxRZE97+dvQwGcYF60VoyqEgU3QrCPoq0P2UOcnhqphPYu2TWLcl4D4aW4J5QajS1P3wOpsSs1MBh2mep/0WnLcbUsouBcs5+PMSvBLYqWB3DFhmgd0KSl/x9wCi5yz4FGifu0wfUjvsMgfPP4XYLsH50USKRwGXvuKaTgUkhe0L1oBrLgXntfctYL0L8Ci4D3Ao2O/OKPhnAd3uGcnh1/hjw+TxhPKLaUHSgW2jmu0b+eI2cDmMdnvnQqPvD6xeYbDOccSsZm9y/v0aCQAAAAAAAAAAAAAAmgd0EQ1cxW38UQAAAABJRU5ErkJggg==",
+  //     price: 200
+  //   },
+  //   {
+  //     id: 16,
+  //     Name: "Product16",
+  //     image: "data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAIEAAACBCAMAAADQfiliAAAAJFBMVEX19fXMzMzT09PPz8/5+fnw8PDJycnq6urn5+ft7e3c3NzX19crZrtmAAABV0lEQVR4nO3YwRKCMAxF0aZNU0L//3+tFAEFsZvEzTtLxhmuJQolBAAAAAAAAAAAAAAAsMNj7M6vNY2oatUwidAIoWITwEOnXySjRRBKeUQisQloBXHku3EkCjaLsBXk/KPAeA1KTCnezJp1AU/LD0Kmr+tsXdDmrI/7149ZFxRZE97+dvQwGcYF60VoyqEgU3QrCPoq0P2UOcnhqphPYu2TWLcl4D4aW4J5QajS1P3wOpsSs1MBh2mep/0WnLcbUsouBcs5+PMSvBLYqWB3DFhmgd0KSl/x9wCi5yz4FGifu0wfUjvsMgfPP4XYLsH50USKRwGXvuKaTgUkhe0L1oBrLgXntfctYL0L8Ci4D3Ao2O/OKPhnAd3uGcnh1/hjw+TxhPKLaUHSgW2jmu0b+eI2cDmMdnvnQqPvD6xeYbDOccSsZm9y/v0aCQAAAAAAAAAAAAAAmgd0EQ1cxW38UQAAAABJRU5ErkJggg==",
+  //     price: 200
+  //   },
+  //   {
+  //     id: 17,
+  //     Name: "Product17",
+  //     image: "data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAIEAAACBCAMAAADQfiliAAAAJFBMVEX19fXMzMzT09PPz8/5+fnw8PDJycnq6urn5+ft7e3c3NzX19crZrtmAAABV0lEQVR4nO3YwRKCMAxF0aZNU0L//3+tFAEFsZvEzTtLxhmuJQolBAAAAAAAAAAAAAAAsMNj7M6vNY2oatUwidAIoWITwEOnXySjRRBKeUQisQloBXHku3EkCjaLsBXk/KPAeA1KTCnezJp1AU/LD0Kmr+tsXdDmrI/7149ZFxRZE97+dvQwGcYF60VoyqEgU3QrCPoq0P2UOcnhqphPYu2TWLcl4D4aW4J5QajS1P3wOpsSs1MBh2mep/0WnLcbUsouBcs5+PMSvBLYqWB3DFhmgd0KSl/x9wCi5yz4FGifu0wfUjvsMgfPP4XYLsH50USKRwGXvuKaTgUkhe0L1oBrLgXntfctYL0L8Ci4D3Ao2O/OKPhnAd3uGcnh1/hjw+TxhPKLaUHSgW2jmu0b+eI2cDmMdnvnQqPvD6xeYbDOccSsZm9y/v0aCQAAAAAAAAAAAAAAmgd0EQ1cxW38UQAAAABJRU5ErkJggg==",
+  //     price: 200
+  //   },
+  //   {
+  //     id: 18,
+  //     Name: "Product18",
+  //     image: "data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAIEAAACBCAMAAADQfiliAAAAJFBMVEX19fXMzMzT09PPz8/5+fnw8PDJycnq6urn5+ft7e3c3NzX19crZrtmAAABV0lEQVR4nO3YwRKCMAxF0aZNU0L//3+tFAEFsZvEzTtLxhmuJQolBAAAAAAAAAAAAAAAsMNj7M6vNY2oatUwidAIoWITwEOnXySjRRBKeUQisQloBXHku3EkCjaLsBXk/KPAeA1KTCnezJp1AU/LD0Kmr+tsXdDmrI/7149ZFxRZE97+dvQwGcYF60VoyqEgU3QrCPoq0P2UOcnhqphPYu2TWLcl4D4aW4J5QajS1P3wOpsSs1MBh2mep/0WnLcbUsouBcs5+PMSvBLYqWB3DFhmgd0KSl/x9wCi5yz4FGifu0wfUjvsMgfPP4XYLsH50USKRwGXvuKaTgUkhe0L1oBrLgXntfctYL0L8Ci4D3Ao2O/OKPhnAd3uGcnh1/hjw+TxhPKLaUHSgW2jmu0b+eI2cDmMdnvnQqPvD6xeYbDOccSsZm9y/v0aCQAAAAAAAAAAAAAAmgd0EQ1cxW38UQAAAABJRU5ErkJggg==",
+  //     price: 200
+  //   }
+  // ]
+  const [productsData, setProductsData] = useState([]);
+  // const [customersData, setCustomersData] = useState([]);
+  const [spgsData, setSPGsData] = useState([]);
+  // const [unitsData, setUnitsData] = useState([]);
+
+
+
   const [inputValue, setInputValue] = useState('')
   const [inputValue1, setInputValue1] = useState('')
   const [dynwidth, setDynwidth] = useState('')
@@ -205,14 +218,17 @@ const AddPos = () => {
   const [info5, setInfo5] = useState(false)
   const [info1, setInfo1] = useState(false)
   const [isCard, setIsCard] = useState(false)
-  const [isMultiplePay, setIsMultiplePay] = useState(false)
+  // const [isMultiplePay, setIsMultiplePay] = useState(false)
   const [isSuspend, setIsSuspend] = useState(false)
   const [info, setInfo] = useState(false)
-  const [saleReturn, setSaleReturn] = useState(false)
-  const [sellReturn, setSellReturn] = useState('')
+  // const [saleReturn, setSaleReturn] = useState(false)
+  // const [sellReturn, setSellReturn] = useState('')
+
   const [formData, setFormData] = useState({
     customer: "",
     sellingPrice: "",
+    status: "",
+    invoiceNumber: "",
     // tables: "",
     // serviceStaff: "",
     businesLocation: "",
@@ -233,6 +249,16 @@ const AddPos = () => {
     shippingCharges: 0,
     shippingStatus: "",
     deliveredTo: "",
+    deliveryPerson: "",
+    byPos: null,
+    cardNumber: "",
+    holderName: "",
+    transactionNumber: "",
+    cardType: "",
+    month: "",
+    year: "",
+    securityCode: "",
+
     additionalExpenseName: "",
     additionalExpenseAmount: 0,
     additionalExpenseName1: "",
@@ -245,14 +271,84 @@ const AddPos = () => {
     paymentDate: "",
     paymentMethod: "",
     paymentAccount: "",
-    paymentNote: ""
+    paymentNote: "",
+    suspendNote: ""
 
   })
   const params = useParams()
   const id = params.id
+  const type = params.type
+  // console.log(formData)
 
+  const handleCardFormData = (editProductFormData) => {
+    // Process the formData here, e.g., make an API request
+    // to save the data to the server.
+    // You can also update the state in the parent component.
+    setFormData({
+      ...formData, cardNumber: editProductFormData.cardNumber,
+      holderName: editProductFormData.holderName,
+      transactionNumber: editProductFormData.transactionNumber,
+      cardType: editProductFormData.cardType,
+      month: editProductFormData.month,
+      year: editProductFormData.year,
+      securityCode: editProductFormData.securityCode
+    });
+    // setCardData(editProductFormData);
+    addSale()
 
+  }
+  const handleSuspendFormData = (editProductFormData) => {
+    // Process the formData here, e.g., make an API request
+    // to save the data to the server.
+    // You can also update the state in the parent component.
+    setFormData({
+      ...formData, suspendNote: editProductFormData.suspendNote
+      
+    });
+    // setCardData(editProductFormData);
+    // console.log("1st or 2nd?")
+    addSale()
+  }
+  const handleShippingFormData = (editProductFormData) => {
+    // Process the formData here, e.g., make an API request
+    // to save the data to the server.
+    // You can also update the state in the parent component.
+    setFormData({
+      ...formData, suspendNote: editProductFormData.suspendNote,
+        shippingDetails: editProductFormData.shippingDetails,
+        shippingAddress: editProductFormData.shippingAddress,
+        shippingStatus: editProductFormData.shippingStatus,
+        shippingCharges:editProductFormData.shippingCharges,
+        deliveredTo: editProductFormData.deliveredTo,
+        deliveryPerson: editProductFormData.deliveryPerson,
+      
+    });
+    // setCardData(editProductFormData);
+  }
+  const handleProductFormData = (editProductFormData) => {
+    // Process the formData here, e.g., make an API request
+    // to save the data to the server.
+    // You can also update the state in the parent component.
+    console.log(proId)
 
+      setFormData({
+        ...formData, 
+        inputData: formData.inputData.map((item) =>
+        item.product === proId
+          ? { ...item, 
+            description: editProductFormData.description,
+            unitPrice: editProductFormData.unitPrice,
+            discountType: editProductFormData.discountType,
+            discountAmount: editProductFormData.discountAmount,
+          }
+          : item 
+      ),
+        
+      });
+    }
+    
+    // setCardData(editProductFormData);
+  
   const handleChange = (e, index) => {
     const updatedData = formData.inputData.map((item, ind) => {
       if (ind === index) {
@@ -292,22 +388,11 @@ const AddPos = () => {
   const total = findTotal()
 
   const [isserror, setIsserror] = useState(false)
-  const handleClick = (e) => {
 
-    if (formData.customer.length === 0 ||
-      formData.inputData.length === 0) {
-      setIsserror(true)
-      console.log(isserror)
-    } else if (id) {
-      console.log("Handle Update", formData)
-    } else {
-      console.log("Handle Save", formData)
-    }
-  }
 
-  const handleSellReturn = () => {
-    console.log("Handle Sell Return ", sellReturn)
-  }
+  // const handleSellReturn = () => {
+  //   console.log("Handle Sell Return ", sellReturn)
+  // }
 
 
   const dateTime = moment().date().toLocaleString();
@@ -327,16 +412,14 @@ const AddPos = () => {
   const displayData = () => {
     if (newProduct === true) {
       return <AddProduct />
-    } else if (isMultiplePay) {
-      return <Payment />
-    } else if (isAddSupplier === true) {
+    }else if (isAddSupplier === true) {
       return <AddorEditContact id={0} />
     } else if (isCard === true) {
-      return <CardTransaction />
+      return <CardTransaction onSubmit={handleCardFormData} />
     } else if (isSuspend === true) {
-      return <SuspendSale />
+      return <SuspendSale onSubmit={handleSuspendFormData}/>
     } else if (editProduct === true) {
-      return <EditProduct name={prdName} id={proId} />
+      return <EditProduct name={prdName} id={proId} onSubmit={handleProductFormData}/> //
     } else if (suspendedSale === true) {
       return <SuspendedSale />
     } else if (registerDetail === true) {
@@ -348,7 +431,7 @@ const AddPos = () => {
     } else if (updateOrderTax === true) {
       return <EditOrderTax />
     } else if (updateShipping === true) {
-      return <EditShipping />
+      return <EditShipping onSubmit={handleShippingFormData}/>
     } else if (recentTrx === true) {
       return <RecentTransaction />
     }
@@ -368,7 +451,164 @@ const AddPos = () => {
     }
   }
 
+  const fetchSaleById = async () => {
 
+    try {
+      // const token = localStorage.getItem('token');
+      const response = await axios.get(`http://localhost:8000/admin/sales/${type}/${id}`);
+      // console.log(response)
+      setFormData(response.data);
+    } catch (error) {
+      console.error('Error fetching sale:', error);
+    }
+  };
+  const fetchProducts = async () => {
+
+    try {
+      // const token = localStorage.getItem('token');
+      const response = await axios.get(`http://localhost:8000/admin/products`);
+      // console.log(response)
+      setProductsData(response.data);
+    } catch (error) {
+      console.error('Error fetching products:', error);
+    }
+  };
+  //   const fetchCustomers = async () => {
+
+  //     try {
+  //       // const token = localStorage.getItem('token');
+  //       const response = await axios.get(`http://localhost:8000/admin/contacts/customer`);
+  //       // console.log(response)
+  //       setCustomersData(response.data);
+  //     } catch (error) {
+  //       console.error('Error fetching customers:', error);
+  //     }
+  //   };
+  const fetchSPGs = async () => {
+
+    try {
+      // const token = localStorage.getItem('token');
+      const response = await axios.get(`http://localhost:8000/admin/selling-price-groups`);
+      // console.log(response)
+
+
+      setSPGsData(response.data);
+    } catch (error) {
+      console.error('Error fetching SPGs:', error);
+    }
+  };
+
+  
+  const addSale = async () => {
+
+    try {
+      // const token = localStorage.getItem('token');
+      // console.log(finalFormData)
+      const response = await axios.post(`http://localhost:8000/admin/pos`, formData);
+      console.log(response)
+      if (response.status === 201) {
+        window.location.reload();
+
+      }
+      
+    } catch (error) {
+      console.error('Error Adding Sale:', error);
+    }
+  };
+
+  const addSaleById = async () => {
+
+    try {
+      // const token = localStorage.getItem('token');
+      // console.log(finalFormData)
+      const response = await axios.put(`http://localhost:8000/admin/sales/${id}`, formData);
+      console.log(response)
+      if (response.status === 201 && type === "draft") {
+        // Navigate("/home/draft");
+        console.log("draft")
+
+      }
+      else if (response.status === 201 && type === "quotations") {
+        // Navigate("/home/quotations");
+        console.log("quotations")
+
+      }
+      else {
+        // console.log("final")
+        window.location.reload();
+
+      }
+    } catch (error) {
+      console.error('Error Adding Sale:', error);
+    }
+  };
+  useEffect(() => {
+    // Make an API call to fetch SPG's records
+    if (id) {
+      fetchSPGs()
+      fetchProducts()
+      fetchSaleById();
+    }
+    else {
+      fetchSPGs()
+      fetchProducts()
+    }
+  }, [])
+  const handleClick = (e) => {
+    console.log(e)
+    if (formData.customer.length === 0 ||
+      formData.inputData.length === 0) {
+      setIsserror(true)
+      console.log(isserror)
+    } else if (id) {
+      addSaleById()
+      console.log("Handle Update", formData)
+    } else {
+      if (e === 'cash') {
+        formData.paymentMethod = "Cash"
+        // console.log(formData.shippingCharges)
+        formData.amount = parseInt(total) + parseFloat(formData.shippingCharges)
+        formData.byPos = true
+
+        addSale()
+        // console.log("Handle Save Cash", formData)
+      } else if (e === 'draft') {
+        formData.status = "Draft"
+        formData.byPos = true
+
+        addSale()
+        // console.log("Handle Save Draft", formData)
+      } else if (e === 'quotation') {
+        formData.status = "Quotation"
+        formData.byPos = true
+
+        addSale()
+        // console.log("Handle Save Quotation", formData)
+      } else if (e === 'suspended') {
+        formData.status = "Suspended"
+
+        // addSale()
+        // console.log("Handle Save Suspended", formData)
+      } else if (e === 'card') {
+        formData.paymentMethod = "Card"
+
+        formData.amount = parseInt(total) + parseFloat(formData.shippingCharges)
+
+        formData.byPos = true
+
+        // addSale()
+        console.log("Handle Save Suspended", formData)
+      } 
+        
+      else{
+        window.location.reload();
+
+        console.log("Cancel")
+      }
+      // addSale()
+      // console.log("Handle Save", formData)
+    }
+  }
   return (
     <div id='POS' className='w-full p-3 bg-gray-300'>
 
@@ -441,14 +681,14 @@ const AddPos = () => {
           <div onClick={openFullscreen} title='Press F11 to go full screen' className='p-1 bg-blue-500 text-white flex'>
             <FaWindowMaximize size={15} className='mx-1' />
           </div>
-          <div onClick={() => { setSaleReturn(!saleReturn) }} title='Sell Return' className='p-1 bg-red-500 text-white flex relative'>
+          {/* <div onClick={() => { setSaleReturn(!saleReturn) }} title='Sell Return' className='p-1 bg-red-500 text-white flex relative'>
             <FaUndo size={15} className='mx-1' />
             {saleReturn && <div className='absolute top-8 z-10 -right-10 flex shadow-md shadow-gray-400 items-center justify-center bg-white flex-col h-[110px] w-[200px] p-2'>
               <h2 className='text-gray-500 text-start'>Sell Return</h2>
               <input type='text' value={sellReturn} onChange={(e) => { setSellReturn(e.target.value) }} className='border-[1px] rounded-md mt-3 border-gray-400 focus:outline-none' />
               <button onClick={handleSellReturn} className='flex bg-red-500 w-1/3 items-center justify-center rounded-md text-white mt-2'>Send</button>
             </div>}
-          </div>
+          </div> */}
           <div onClick={() => { setShcal(!shcal) }} title='Calculator' className='p-1 relative bg-green-500 text-white flex '>
             <FaCalculator size={15} className='mx-1' />
             {shcal && <div className='absolute top-7 -right-14'> <Calculator /></div>}
@@ -459,7 +699,7 @@ const AddPos = () => {
           <div onClick={() => { setIsCliked(true); setCloseRegister(true) }} title='Close Register' className='p-1 bg-red-500 text-white flex'>
             <FaWindowClose size={15} className='mx-1' />
           </div>
-          <div title='Go Back' className='p-1 bg-blue-400 text-white flex'>
+          <div onClick={() => { Navigate("/home/pos") }} title='Go Back' className='p-1 bg-blue-400 text-white flex'>
             <FaBackward size={15} className='mx-1' />
           </div>
         </div>
@@ -533,12 +773,13 @@ const AddPos = () => {
 
               <div className='flex relative mt-4'>
                 < FaMoneyBillAlt size={15} className='w-8 h-9 p-1 border-[1px] border-gray-600' />
-                <select value={formData.dfltSlngPrice} onChange={(e) => { setFormData({ ...formData, dfltSlngPrice: e.target.value }) }} type="text" className='px-2 py-1 w-full border-[1px] border-gray-600 focus:outline-none'>
-                  <option value={""}>Default Selling Price</option>
-                  <option value={"Retail"}>Retail</option>
-                  <option value={"Saleman"}>Saleman</option>
-                  <option value={"Minimum Price"}>Minimum Price</option>
-                  <option value={"Sale Points"}>Sale Points</option>
+                <select value={formData.sellingPrice} onChange={(e) => { setFormData({ ...formData, sellingPrice: e.target.value }) }} type="text" className='px-2 py-1 w-full border-[1px] border-gray-600 focus:outline-none'>
+                  <option value={""}>Select SPG</option>
+                  {spgsData.map((spg) => (
+                    <option key={spg._id} value={spg._id}>
+                      {spg.name}
+                    </option>
+                  ))}
 
                 </select>
                 <FaInfoCircle onMouseOver={() => { setInfo2(true) }} onMouseLeave={() => { setInfo2(false) }} size={15} style={{ color: "skyblue" }} className='w-8 h-9 p-1 border-[1px] border-gray-600' />
@@ -572,30 +813,29 @@ const AddPos = () => {
                       className={`bg-white w-full    border-[1px]   z-10 absolute top-8 border-gray-600  ${isClicked ? "max-h-60" : "max-h-0"} `}
                     >
 
-                      {dummyData?.map((data) => (
+                      {productsData?.map((data) => (
                         <li
-                          key={data?.Name}
+                          key={data?._id}
                           className={`p-1 px-9 text-start text-sm hover:bg-sky-600 hover:text-white
-                                ${data?.Name?.toLowerCase() === inputValue1?.toLowerCase() &&
+                                ${data?.productName?.toLowerCase() === inputValue1?.toLowerCase() &&
                             "bg-sky-600 text-white"
                             }
-                                 ${data?.Name?.toLowerCase().startsWith(inputValue)
+                                 ${data?.productName?.toLowerCase().startsWith(inputValue)
                               ? "block"
                               : "hidden"
                             }`}
                           onClick={() => {
-                            if (data?.Name?.toLowerCase() !== inputValue1.toLowerCase()) {
-                              setInputValue1(data?.Name)
-                              let name = data?.Name
+                            if (data?.productName?.toLowerCase() !== inputValue1.toLowerCase()) {
+                              setInputValue1(data?.productName)
                               let array = formData.inputData
-                              array = [...array, { productName: name, quantity: 0, unitPrice: 0, discount: 0, subtotal: 0 }]
+                              array = [...array, { product: data?._id, quantity: 0, unitPrice: 0, discount: 0, subtotal: 0 }]
                               setFormData({ ...formData, inputData: array })
                               setInputValue1('')
                               setIsClicked(!isClicked);
                             }
                           }}
                         >
-                          {data?.Name}
+                          {data?.productName}
                         </li>
                       ))}
                     </ul>
@@ -645,7 +885,7 @@ const AddPos = () => {
                     return <tr key={index} className={`${(index + 1) % 2 === 0 ? "bg-gray-200" : ""} items-center justify-center`}>
                       <td className=" py-1 px-1 text-center">
                         <div className='flex flex-col'>
-                          <p onClick={() => { setIsCliked(true); setEditProduct(true); setPrdName(value.productName); setProId(value.id); setDynwidth("50%") }} className='text-start text-blue-500 cursor-pointer flex items-center justify-center'>{value.productName}   <FaInfoCircle className='mx-2' title='Edit Product Unit Price and Tax' size={15} /></p>
+                          <p onClick={() => { setIsCliked(true); setEditProduct(true); setPrdName(value.productName); setProId(value.product); setDynwidth("50%") }} className='text-start text-blue-500 cursor-pointer flex items-center justify-center'>{value.productName}   <FaInfoCircle className='mx-2' title='Edit Product Unit Price and Tax' size={15} /></p>
                         </div>
                       </td>
                       <td className="px-1 py-1 text-sm flex items-center justify-center">
@@ -745,11 +985,11 @@ const AddPos = () => {
         </div>
         <div className='flex overflow-y-scroll w-[40%]'>
           <div className='grid grid-cols-3 gap-4 mx-2 '>
-            {productData.map((val, index) => {
+            {productsData.map((val, index) => {
               return <div key={index} className='w-[150px] h-[100px] p-1'
                 onClick={() => {
                   let array = formData.inputData
-                  array = [...array, { productName: val.Name, quantity: 0, unitPrice: val.price, subtotal: 0 }]
+                  array = [...array, { product: val._id, productName: val.productName, quantity: 0, unitPrice: val.price, subtotal: 0 }]
                   setFormData({ ...formData, inputData: array })
                 }}>
                 <ProductItem data={val} />
@@ -765,7 +1005,7 @@ const AddPos = () => {
 
       <div className='footer w-full flex justify-between items-center  h-[100px] fixed bottom-0 bg-gray-200'>
         <div className='grid grid-cols-4 md:grid-cols-9 gap-1 w-3/4'>
-          <div onClick={() => { handleClick("draf") }} className='p-1 cursor-pointer items-center justify-center bg-blue-400 text-white flex'>
+          <div onClick={() => { handleClick("draft") }} className='p-1 cursor-pointer items-center justify-center bg-blue-400 text-white flex'>
             <FaEdit size={15} className='mx-1' />
             <h1 className='text-sm font-semibold'>Draft</h1>
           </div>
@@ -777,18 +1017,18 @@ const AddPos = () => {
             <FaPause size={15} className='mx-1' />
             <h1 className='text-sm font-semibold'>Suspended</h1>
           </div>
-          <div onClick={() => { handleClick("creditSale") }} className='p-[2px] cursor-pointer items-center justify-start w-[100px] bg-purple-400 text-white flex'>
+          {/* <div onClick={() => { handleClick("creditSale") }} className='p-[2px] cursor-pointer items-center justify-start w-[100px] bg-purple-400 text-white flex'>
             <FaCheck size={15} className='mx-1' />
             <h1 className='text-sm font-semibold'>Credit Sale</h1>
-          </div>
+          </div> */}
           <div onClick={() => { handleClick("card"); setIsCliked(true); setIsCard(true); setDynwidth("50%") }} className='p-2 cursor-pointer items-center justify-center bg-red-400 text-white flex'>
             <FaCreditCard size={15} className='mx-1' />
             <h1 className='text-sm font-semibold'>Card</h1>
           </div>
-          <div onClick={() => { handleClick("multiplePay"); setIsMultiplePay(true); setIsCliked(true) }} className='p-[2px] cursor-pointer items-center justify-start w-[100px] bg-purple-900 text-white flex'>
+          {/* <div onClick={() => { handleClick("multiplePay"); setIsMultiplePay(true); setIsCliked(true) }} className='p-[2px] cursor-pointer items-center justify-start w-[100px] bg-purple-900 text-white flex'>
             <FaMoneyCheckAlt size={15} className='mx-1' />
             <h1 className='text-xs font-semibold '>Multiple Pay</h1>
-          </div>
+          </div> */}
           <div onClick={() => { handleClick("cash") }} className='p-1 cursor-pointer items-center justify-center bg-green-400 text-white flex'>
             <FaMoneyBillAlt size={15} className='mx-1' />
             <h1 className='text-sm font-semibold'>Cash</h1>
@@ -799,7 +1039,7 @@ const AddPos = () => {
           </div>
           <div className='p-1 cursor-pointer w-[200px] items-center justify-between h-[50px] bg-purple-900 text-white flex'>
             <h1 className='text-sm font-bold'>Total Payable</h1>
-            <h1 className='text-xs'>{total}</h1>
+            <h1 className='text-xs'>{parseInt(total) + parseFloat(formData.shippingCharges)}</h1>
 
           </div>
         </div>
@@ -829,7 +1069,7 @@ const AddPos = () => {
               setIsSuspend(false);
               setIsAddSupplier(false);
               setNewProduct(false);
-              setIsMultiplePay(false);
+              // setIsMultiplePay(false);
               setDynwidth('');
               setEditProduct(false)
             }} className=' flex items-end justify-end  w-full mt-10 bg-white px-5 pt-2'>

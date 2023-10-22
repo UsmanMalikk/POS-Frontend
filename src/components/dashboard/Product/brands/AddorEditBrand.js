@@ -8,7 +8,7 @@ const AddorEditBrand = (props) => {
     const [formData, setFormData] = useState({
         brandName: "",
         shortDescription: "",
-        
+
     })
 
 
@@ -41,8 +41,10 @@ const AddorEditBrand = (props) => {
             const response = await axios.post(`http://localhost:8000/admin/brands`, formData);
             // console.log(response)
             if (response.status === 201) {
-            console.log("Success")
-        }
+                window.location.reload();
+
+                console.log("Success")
+            }
         } catch (error) {
             console.error('Error Adding SPG:', error);
         }
@@ -55,14 +57,18 @@ const AddorEditBrand = (props) => {
             // console.log(formData)
             const response = await axios.put(`http://localhost:8000/admin/brands/${_id}`, formData);
             console.log(response)
+            if (response.status === 200) {
+                window.location.reload();
 
+                console.log("Success")
+            }
         } catch (error) {
             console.error('Error Adding SPG:', error);
         }
     };
 
     const handleSaveorEdit = () => {
-        if (formData.brandName.length === 0 ) {
+        if (formData.brandName.length === 0) {
             setIsserror(true)
         } else if (props.id) {
             addBrandById()

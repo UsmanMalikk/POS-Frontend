@@ -92,9 +92,10 @@ const AddorEditProduct = () => {
   const navigate = useNavigate()
   const [formData, setFormData] = useState({
     productName: "",
-    sku: "",
+    sku: 0,
     barcodeType: "",
     unit: "",
+    unitName:"",
     businessLocation: "",
     manageStock: false,
     // alertQuantity: 0,
@@ -107,7 +108,7 @@ const AddorEditProduct = () => {
     // servieStaffTime: "",
     // woocommerceSync: false,
     productType: "",
-    variationType: [{ variationTempleateID: "", variation: [{ subSKU: "", value: "", variationImage: "" }] }],
+    variationType: [{ variationTempleateID: null, variation: [{ subSKU: "", value: "", variationImage: "" }] }],
     combo: [],
     netTotal: 0,
     dfltSellingPrice: 0,
@@ -196,10 +197,60 @@ const AddorEditProduct = () => {
 
   const addRow = () => {
     let newArray = formData.variationType
-    newArray = [...newArray, { variationTempleateID: "", variation: [{ subSKU: "", value: "", variationImage: "" }] }]
+    newArray = [...newArray, { variationTempleateID: null, variation: [{ subSKU: "", value: "", variationImage: "" }] }]
     setFormData({ ...formData, variationType: newArray })
   }
+  // const handleUpdate = () => {
+  //   // Handle update logic for _id (update case)
+  //   console.log("Handle Update", formData);
+  // };
 
+  const handleOpeningStock = () => {
+    if (formData.productName.length === 0 ||
+      formData.unit.length === 0 
+    ) {
+      setIsserror(true)
+      console.log(isserror)
+    }
+    navigate("/home/opening-stock/add", { state: { formData } });
+  };
+
+  const handleSellingPriceGroup = () => {
+    if (formData.productName.length === 0 ||
+      formData.unit.length === 0 
+    ) {
+      setIsserror(true)
+      console.log(isserror)
+    }    navigate("/home/products/add-selling-prices", { state: { formData } });
+  };
+
+  const handleAddOther = () => {
+    if (formData.productName.length === 0 ||
+      formData.unit.length === 0 
+    ) {
+      setIsserror(true)
+      console.log(isserror)}
+    setTimeout(() => {
+      navigate("/home/products/create");
+    }, 1000);
+  };
+
+  const handleSave = () => {
+    if (formData.productName.length === 0 ||
+      formData.unit.length === 0 
+    ) {
+      setIsserror(true)
+      console.log(isserror)
+    }else if(_id){
+      addProductById()
+      console.log("Handle update ", formData);
+
+    }else{
+      addProduct()
+      console.log("Handle save ", formData);
+    }
+       
+  };
 
 
   const fetchUnits = async () => {
@@ -219,7 +270,7 @@ const AddorEditProduct = () => {
     try {
       // const token = localStorage.getItem('token');
       const response = await axios.get(`http://localhost:8000/admin/variations/all-records`);
-      console.log(response.data)
+      // console.log(response.data)
       setVariationData(response.data);
       // console.log(variationData)
 
@@ -244,7 +295,7 @@ const AddorEditProduct = () => {
     try {
       // const token = localStorage.getItem('token');
       const response = await axios.get(`http://localhost:8000/admin/products/${_id}`);
-      // console.log(response)
+      console.log(response)
       setFormData(response.data);
 
     } catch (error) {
@@ -276,6 +327,7 @@ const AddorEditProduct = () => {
       const response = await axios.post(`http://localhost:8000/admin/products`, formData);
       // console.log(response)
       if (response.status === 201) {
+        navigate("/home/products")
         console.log("Success")
       }
     } catch (error) {
@@ -290,75 +342,76 @@ const AddorEditProduct = () => {
       // console.log(formData)
       const response = await axios.put(`http://localhost:8000/admin/products/${_id}`, formData);
       console.log(response)
-
+      if (response.status === 200) {
+        navigate("/home/products")
+        console.log("Success")
+      }
     } catch (error) {
       console.error('Error Adding Product:', error);
     }
   };
   const [isserror, setIsserror] = useState(false)
-  const handleClick = () => {
+  // const handleClick = () => {
+  //   // console.log(isOpeningStock)
+  //   if (formData.productName.length === 0 ||
+  //     formData.unit.length === 0 
+  //   ) {
+  //     setIsserror(true)
+  //     console.log(isserror)
+  //   }
+  //   else if (_id) {
+  //     // // Check if isOpeningStock is true
+  //     // if (isOpeningStock) {
+  //     //   // Navigate to the opening stock page and pass the formData as state
+  //     //   navigate("/home/opening-stock/add", { state: { formData } });
+  //     // }
+  //     // else if (isAdSlngPrcGrp) {
+  //     //   navigate("/home/products/add-selling-prices", { state: { formData } })
+  //     //   setIsAdSlngPrcGrp(false)
+  //     // }
+  //     // else {
+  //     // addProductById()
+  //     //   console.log("Handle Update", formData)
 
-    if (formData.productName.length === 0 ||
-      // formData.barcodeType.length === 0 ||
-      formData.unit.length === 0 ||
-      formData.productType.length === 0
-    ) {
-      setIsserror(true)
-      console.log(isserror)
-    }
-    else if (_id) {
-      // // Check if isOpeningStock is true
-      // if (isOpeningStock) {
-      //   // Navigate to the opening stock page and pass the formData as state
-      //   navigate("/home/opening-stock/add", { state: { formData } });
-      // }
-      // else if (isAdSlngPrcGrp) {
-      //   navigate("/home/products/add-selling-prices", { state: { formData } })
-      //   setIsAdSlngPrcGrp(false)
-      // }
-      // else {
-      // addProductById()
-      //   console.log("Handle Update", formData)
-
-      // }
-    }
-    else {
-      // Check if isOpeningStock is true
-      if (isOpeningStock) {
-        // Navigate to the opening stock page and pass the formData as state
-        navigate("/home/opening-stock/add", { state: { formData } });
-      }
-      else if (isAdSlngPrcGrp) {
-        navigate("/home/products/add-selling-prices", { state: { formData } })
-        // setIsAdSlngPrcGrp(false)
-      }
-      else if (isAddOther) {
-        setTimeout(() => {
-          navigate("/home/products/create")
-        }, 1000)
-      }
-      else {
-        // addProduct()
-        console.log("Handle save ", formData);
-      }
-      // else {
-      //   console.log("Error")
-      // }
+  //     // }
+  //   }
+  //   else {
+  //     // Check if isOpeningStock is true
+  //     if (isOpeningStock) {
+  //       // Navigate to the opening stock page and pass the formData as state
+  //       handleOpeningStock()
+  //     }
+  //     else if (isAdSlngPrcGrp) {
+  //       handleSellingPriceGroup()
+  //       // setIsAdSlngPrcGrp(false)
+  //     }
+  //     else if (isAddOther) {
+  //       handleAddOther()
+  //     }
+  //     else {
+  //       // addProduct()
+  //       handleSave()      
+  //     }
+  //     // else {
+  //     //   console.log("Error")
+  //     // }
     
 
-    // if (isAdSlngPrcGrp) {
-    //   navigate("/home/products/add-selling-prices")
-    //   setIsAdSlngPrcGrp(false)
-    // }
-    // else if (isOpeningStock) {
-    //   navigate("/home/opening-stock/add" )}
+  //   // if (isAdSlngPrcGrp) {
+  //   //   navigate("/home/products/add-selling-prices")
+  //   //   setIsAdSlngPrcGrp(false)
+  //   // }
+  //   // else if (isOpeningStock) {
+  //   //   navigate("/home/opening-stock/add" )}
 
 
-    // }
-  }}
+  //   // }
+  // }}
+
+ 
   return (
     <div className='w-full flex flex-col bg-gray-100 p-5 min-h-screen'>
-      <h1 className='text-xl  text-start mb-4'>Add new Product</h1>
+      <h1 className='text-xl  text-start mb-4'>{_id? "Edit":"Add new"}  Product</h1>
       <div className='w-full p-5 border-t-[3px] bg-white  border-blue-600 pb-[100px] rounded-xl'>
         <div className='grid grid-cols-1 md:grid-cols-3 gap-4'>
           <div className='flex flex-col'>
@@ -384,7 +437,7 @@ const AddorEditProduct = () => {
             </div>
             <input type='text' value={formData.sku} onChange={(e) => { setFormData({ ...formData, sku: e.target.value }) }} placeholder='SKU' className='border-[1px] px-2 py-1 border-gray-400 focus:outline-none' />
           </div>
-          <div className='flex flex-col '>
+          {/* <div className='flex flex-col '>
 
             <h1 className='flex text-start font-bold'>
               Barcode Type:*
@@ -444,7 +497,7 @@ const AddorEditProduct = () => {
               }
             </div>
 
-          </div>
+          </div> */}
           <div className='flex flex-col '>
             <h1 className='flex text-start font-bold'>
               Unit:*
@@ -456,7 +509,7 @@ const AddorEditProduct = () => {
                 <input
                   onClick={() => setOpen(!open)}
                   className='bg-white w-full  flex items-center  focus:outline-none justify-between px-2  border-[1px] border-gray-600'
-                  value={formData.unit}
+                  value={(_id ) ? (formData.unit.name +" "+ formData.unit.shortName): formData.unitName}
                   onChange={(e) => { setFormData({ ...formData, unit: e.target.value }) }}
                   placeholder='Select Value'
                 />
@@ -491,7 +544,7 @@ const AddorEditProduct = () => {
                         }`}
                       onClick={() => {
                         if (data?.name?.toLowerCase() !== formData.unit.toLowerCase()) {
-                          setFormData({ ...formData, unit: data?._id })
+                          setFormData({ ...formData, unit: data?._id ,unitName: data?.name + ' ' + data?.shortName})
                           setOpen(false);
                           setInputValue("");
                         }
@@ -730,10 +783,10 @@ const AddorEditProduct = () => {
 
                         </select>
 
-                        {val.variationTempleateID.length > 0 &&
+                        {val.variationTempleateID !== null &&
                           <div className='mt-5'>
                             <h1 className='font-semibold text-xs text-start'>Selecet Variation Values</h1>
-                            <select value={''} onChange={(e) => { handleValues(e, index) }} className='w-full border-[1px] border-black py-1 px-1 focus:outline-none' >
+                            <select value={null} onChange={(e) => { handleValues(e, index) }} className='w-full border-[1px] border-black py-1 px-1 focus:outline-none' >
                               {variationData.map((variations) => (
 
                                 val.variationTempleateID === variations._id ?
@@ -748,7 +801,6 @@ const AddorEditProduct = () => {
                                   </>
                                   :
                                   <>
-
 
                                   </>
 
@@ -966,10 +1018,10 @@ const AddorEditProduct = () => {
 
         
         <button onClick={() => {handleClick(); setIsSave(true)}}className='bg-green-500 text-lg px-2 py-2 items-center justify-center flex'>Save</button> */}
-        <button onClick={() => {  setIsAdSlngPrcGrp(true);setIsOpeningStock(false);setIsAddOther(false); handleClick(); }} className='bg-orange-500 text-lg px-2 py-2 items-center justify-center flex'>Save & Add Selling-Price-Group Prices</button>
-        <button onClick={() => {  setIsAdSlngPrcGrp(false);setIsOpeningStock(true);setIsAddOther(false); handleClick(); }} className='bg-blue-500 text-lg px-2 py-2 text-white items-center justify-center flex'>Save & Add Opening Stock</button>
-        <button onClick={() => {  setIsAdSlngPrcGrp(false);setIsOpeningStock(false);setIsAddOther(true); handleClick(); }} className='bg-red-500 text-lg px-2 py-2 text-white items-center justify-center flex'>Save & Add Another</button>
-        <button onClick={() => {  setIsAdSlngPrcGrp(false);setIsOpeningStock(false);setIsAddOther(false); handleClick(); }} className='bg-green-500 text-lg px-2 py-2 items-center justify-center flex'>Save</button>
+        <button onClick={() => {  handleSellingPriceGroup() }} className='bg-orange-500 text-lg px-2 py-2 items-center justify-center flex'>{_id? "Update":"Save"} & Add Selling-Price-Group Prices</button>
+        <button onClick={() => {  handleOpeningStock() }} className='bg-blue-500 text-lg px-2 py-2 text-white items-center justify-center flex'>{_id? "Update":"Save"} & Add Opening Stock</button>
+        <button onClick={() => {  handleAddOther() }} className='bg-red-500 text-lg px-2 py-2 text-white items-center justify-center flex'>{_id? "Update":"Save"} & Add Another</button>
+        <button onClick={() => {  handleSave() }} className='bg-green-500 text-lg px-2 py-2 items-center justify-center flex'>{_id? "Update":"Save"}</button>
       </div>
     </div>
   )

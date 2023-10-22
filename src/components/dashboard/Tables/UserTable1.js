@@ -112,7 +112,7 @@ const UserTable1 = () => {
         try {
             // const token = localStorage.getItem('token');
             const response = await axios.get(`http://localhost:8000/admin/users`);
-            // console.log(response)
+            console.log(response.data.role)
             setUsersData(response.data);
         } catch (error) {
             console.error('Error fetching users:', error);
@@ -241,7 +241,7 @@ const UserTable1 = () => {
                                 return <tr key={index} className=''>
                                     {col1 && <td className="px-1 py-1 text-sm">{value.userName}</td>}
                                     {col2 && <td className="px-1 py-1"> {value.firstName}</td>}
-                                    {col3 && <td className="px-1 py-1">{value.role.name}</td>}
+                                    {col3 && <td className="px-1 py-1">{value.role.roleName}</td>}
                                     {col4 && <td className=" py-1 px-1">{value.email}</td>}
                                     {col5 && <td className='py-1 flex '>
                                         <Link to={`/home/users/edituser/${value._id}`} className='flex mx-1 p-1 items-center bg-blue-600 text-white justify-center'>

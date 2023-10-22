@@ -68,7 +68,7 @@ const AddorEditVariations = (props) => {
             const response = await axios.post(`http://localhost:8000/admin/variations`, formData);
             console.log(response)
             if (response.status === 201) {
-                Navigate("/home/variation-templates");
+                window.location.reload();
             }
         } catch (error) {
             console.error('Error Adding User:', error);
@@ -82,7 +82,9 @@ const AddorEditVariations = (props) => {
             console.log(formData)
             const response = await axios.put(`http://localhost:8000/admin/variations/${_id}`, formData);
             console.log(response)
-
+            if (response.status === 200) {
+                window.location.reload();
+            }
         } catch (error) {
             console.error('Error Adding Variation:', error);
         }

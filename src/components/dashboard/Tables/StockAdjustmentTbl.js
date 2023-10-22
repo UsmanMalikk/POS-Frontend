@@ -22,7 +22,7 @@ import { jsPDF } from "jspdf";
 import * as htmlToImage from "html-to-image";
 import { MdCancel } from "react-icons/md";
 import { Link } from "react-router-dom";
-import ViewSell from "../sell/ViewSell";
+import ViewStock from "../StockAdjustment/ViewStock";
 import EditShipping from "../sell/EditShipping";
 import ViewPayment from "../payments/ViewPayment";
 import axios from 'axios';
@@ -165,6 +165,7 @@ const StockAdjustmentTbl = () => {
   const toggleDropdown = (index) => {
     const dropDownAction = [...actionList];
     dropDownAction[index] = !dropDownAction[index];
+
     setActionList(dropDownAction);
   };
 
@@ -190,15 +191,15 @@ const StockAdjustmentTbl = () => {
         Reason,
         Email,
       }) => [
-        date,
-        id,
-        Location,
-        AdjustmentType,
-        TotalAmount,
-        TotalAmountRecieved,
-        Reason,
-        Email,
-      ]
+          date,
+          id,
+          Location,
+          AdjustmentType,
+          TotalAmount,
+          TotalAmountRecieved,
+          Reason,
+          Email,
+        ]
     ),
   ];
 
@@ -225,7 +226,7 @@ const StockAdjustmentTbl = () => {
   const [showId, setShowId] = useState(0);
   const displayData = () => {
     if (showId !== 0 && isshow === true) {
-      return <ViewSell id={showId} />;
+      return <ViewStock id={showId} />;
     } else if (iseditship === true && editShipId !== 0) {
       return <EditShipping id={editShipId} />;
     } else if (isShowPayment === true) {
@@ -236,7 +237,7 @@ const StockAdjustmentTbl = () => {
 
 
 
-const fetchSTK = async () => {
+  const fetchSTK = async () => {
 
     try {
       // const token = localStorage.getItem('token');
@@ -250,17 +251,17 @@ const fetchSTK = async () => {
   useEffect(() => {
     // Make an API call to fetch user's user records
     fetchSTK();
-}, []);
-const handleDeleteAdjustment = async (stkId) => {
-  try {
-    // Make an API call to delete attendance for a specific record
-    const response = await axios.delete(`http://localhost:8000/admin/stock-adjustment/${stkId}`);
-    console.log('Stoct Adjustment deleted:', response.data); // Handle success response
-    fetchSTK()
-  } catch (error) {
-    console.error('Error deleting Stoct Adjustment:', error);
-  }
-};
+  }, []);
+  const handleDeleteAdjustment = async (stkId) => {
+    try {
+      // Make an API call to delete attendance for a specific record
+      const response = await axios.delete(`http://localhost:8000/admin/stock-adjustment/${stkId}`);
+      console.log('Stoct Adjustment deleted:', response.data); // Handle success response
+      fetchSTK()
+    } catch (error) {
+      console.error('Error deleting Stoct Adjustment:', error);
+    }
+  };
   return (
     <div>
       <div className="flex  flex-col md:flex-row  items-center justify-center mt-3 md:justify-between mx-5">
@@ -312,9 +313,8 @@ const handleDeleteAdjustment = async (stkId) => {
               <div className="absolute top-7 shadow-md shadow-gray-400 bg-white w-[150px]">
                 <ul className="flex flex-col items-center justify-center">
                   <li
-                    className={` w-full py-1 ${
-                      col1 ? "" : "bg-blue-600"
-                    } hover:bg-blue-400 `}
+                    className={` w-full py-1 ${col1 ? "" : "bg-blue-600"
+                      } hover:bg-blue-400 `}
                     onClick={() => {
                       setCol1(!col1);
                     }}
@@ -322,9 +322,8 @@ const handleDeleteAdjustment = async (stkId) => {
                     Action
                   </li>
                   <li
-                    className={` w-full py-1 ${
-                      col2 ? "" : "bg-blue-600"
-                    } hover:bg-blue-400 `}
+                    className={` w-full py-1 ${col2 ? "" : "bg-blue-600"
+                      } hover:bg-blue-400 `}
                     onClick={() => {
                       setCol2(!col2);
                     }}
@@ -332,9 +331,8 @@ const handleDeleteAdjustment = async (stkId) => {
                     Date
                   </li>
                   <li
-                    className={` w-full py-1 ${
-                      col3 ? "" : "bg-blue-600"
-                    } hover:bg-blue-400 `}
+                    className={` w-full py-1 ${col3 ? "" : "bg-blue-600"
+                      } hover:bg-blue-400 `}
                     onClick={() => {
                       setCol3(!col3);
                     }}
@@ -342,9 +340,8 @@ const handleDeleteAdjustment = async (stkId) => {
                     Reference No
                   </li>
                   <li
-                    className={` w-full py-1 ${
-                      col4 ? "" : "bg-blue-600"
-                    } hover:bg-blue-400 `}
+                    className={` w-full py-1 ${col4 ? "" : "bg-blue-600"
+                      } hover:bg-blue-400 `}
                     onClick={() => {
                       setCol4(!col4);
                     }}
@@ -352,9 +349,8 @@ const handleDeleteAdjustment = async (stkId) => {
                     Location
                   </li>
                   <li
-                    className={` w-full py-1 ${
-                      col5 ? "" : "bg-blue-600"
-                    } hover:bg-blue-400 `}
+                    className={` w-full py-1 ${col5 ? "" : "bg-blue-600"
+                      } hover:bg-blue-400 `}
                     onClick={() => {
                       setCol5(!col5);
                     }}
@@ -362,9 +358,8 @@ const handleDeleteAdjustment = async (stkId) => {
                     Adjustment Type
                   </li>
                   <li
-                    className={` w-full py-1 ${
-                      col6 ? "" : "bg-blue-600"
-                    } hover:bg-blue-400 `}
+                    className={` w-full py-1 ${col6 ? "" : "bg-blue-600"
+                      } hover:bg-blue-400 `}
                     onClick={() => {
                       setCol6(!col6);
                     }}
@@ -372,9 +367,8 @@ const handleDeleteAdjustment = async (stkId) => {
                     Total Amount
                   </li>
                   <li
-                    className={` w-full py-1 ${
-                      col7 ? "" : "bg-blue-600"
-                    } hover:bg-blue-400 `}
+                    className={` w-full py-1 ${col7 ? "" : "bg-blue-600"
+                      } hover:bg-blue-400 `}
                     onClick={() => {
                       setCol7(!col7);
                     }}
@@ -382,9 +376,8 @@ const handleDeleteAdjustment = async (stkId) => {
                     Total Amount Recovered
                   </li>
                   <li
-                    className={` w-full py-1 ${
-                      col8 ? "" : "bg-blue-600"
-                    } hover:bg-blue-400 `}
+                    className={` w-full py-1 ${col8 ? "" : "bg-blue-600"
+                      } hover:bg-blue-400 `}
                     onClick={() => {
                       setCol8(!col8);
                     }}
@@ -501,7 +494,7 @@ const handleDeleteAdjustment = async (stkId) => {
                                 onClick={() => {
                                   setIsCliked(true);
                                   setIsshow(true);
-                                  setShowId(value.id);
+                                  setShowId(value._id);
                                 }}
                                 className="flex px-2 py-1 w-full cursor-pointer hover:bg-gray-400 items-center "
                               >
@@ -561,7 +554,7 @@ const handleDeleteAdjustment = async (stkId) => {
                                 <h1 className="text-sm">Edit Shipping</h1>
                               </div>
                             </li>
-                            <li className="mt-5 w-full">
+                            {/* <li className="mt-5 w-full">
                               <Link className="flex px-2 py-1 w-full cursor-pointer hover:bg-gray-400 items-center ">
                                 <FaMoneyBillAlt size={15} />
                                 <h1 className="text-sm">Add Payment</h1>
@@ -592,7 +585,7 @@ const handleDeleteAdjustment = async (stkId) => {
                                   Item Received Notification
                                 </h1>
                               </Link>
-                            </li>
+                            </li> */}
                           </ul>
                         )}
                       </div>
@@ -636,9 +629,8 @@ const handleDeleteAdjustment = async (stkId) => {
             return (
               <li
                 key={i}
-                className={`${
-                  crpage === n ? "bg-blue-500" : ""
-                } py-3 px-4 mx-1 border-[1px] border-gray-400`}
+                className={`${crpage === n ? "bg-blue-500" : ""
+                  } py-3 px-4 mx-1 border-[1px] border-gray-400`}
               >
                 <button
                   onClick={() => {

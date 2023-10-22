@@ -176,7 +176,7 @@ const DraftTbl = () => {
     //         console.error('Error fetching Contact:', error);
     //     }
     // };
-    const fetchSales = async () => {
+    const fetchDrafts = async () => {
       
         try {
             // const token = localStorage.getItem('token');
@@ -201,7 +201,7 @@ const DraftTbl = () => {
 
     useEffect(() => {
         
-            fetchSales();
+        fetchDrafts();
 
       
     }, []);

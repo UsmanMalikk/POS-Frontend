@@ -70,6 +70,7 @@ const AddorEditSell = () => {
     const [spgsData, setSPGsData] = useState([]);
     const [usersData, setUsersData] = useState([]);
     // const [unitsData, setUnitsData] = useState([]);
+    const [AccountsData, setAccountsData] = useState([]);
 
 
     const [inputValue, setInputValue] = useState('')
@@ -88,11 +89,12 @@ const AddorEditSell = () => {
 
     const [formData, setFormData] = useState({
         customer: "",
-        invoiceNo: "",
+        invoiceNumber: "",
         salesDate: "",
         status: "",
         invoiceSchema: "",
         sellingPrice: "",
+        sellingPriceName:"",
         // tables: "",
         // serviceStaff: "",
         businesLocation: "",
@@ -115,7 +117,7 @@ const AddorEditSell = () => {
         shippingCharges: 0,
         shippingStatus: "",
         deliveredTo: "",
-        deliveryPerson: "",
+        deliveryPerson: null,
 
         additionalExpenseName: "",
         additionalExpenseAmount: 0,
@@ -128,7 +130,7 @@ const AddorEditSell = () => {
         amount: "",
         paymentDate: "",
         paymentMethod: "",
-        paymentAccount: "",
+        paymentAccount: null,
         paymentNote: ""
 
     })
@@ -175,8 +177,8 @@ const AddorEditSell = () => {
         } else if (dt === "Fixed") {
             total = (q * p) - d
             return total
-        }else{
-            total = q*p
+        } else {
+            total = q * p
             return total
         }
     }
@@ -213,7 +215,7 @@ const AddorEditSell = () => {
         try {
             // const token = localStorage.getItem('token');
             const response = await axios.get(`http://localhost:8000/admin/sales/${type}/${id}`);
-            // console.log(response)
+            console.log(response)
             setFormData(response.data);
         } catch (error) {
             console.error('Error fetching sale:', error);
@@ -264,6 +266,18 @@ const AddorEditSell = () => {
             setUsersData(response.data);
         } catch (error) {
             console.error('Error fetching users:', error);
+        }
+    };
+    const fetchAccounts = async () => {
+
+        try {
+            // const token = localStorage.getItem('token');
+            const response = await axios.get(`http://localhost:8000/admin/add-accounts`);
+
+            // console.log(response)
+            setAccountsData(response.data);
+        } catch (error) {
+            console.error('Error fetching Accounnt:', error);
         }
     };
     // const fetchUnitsById = async () => {
@@ -332,11 +346,13 @@ const AddorEditSell = () => {
             fetchProducts()
             fetchUsers()
             fetchSaleById();
+            fetchAccounts()
         }
         else {
             fetchSPGs()
             fetchProducts()
             fetchUsers()
+            fetchAccounts()
         }
     }, [])
     const handleClick = (e) => {
@@ -384,7 +400,7 @@ const AddorEditSell = () => {
                     <input
                         onClick={() => setOpen1(!open1)}
                         className='bg-white w-full  flex items-center  focus:outline-none justify-between px-2  border-[1px] border-gray-600'
-                        value={formData.sellingPrice}
+                        value={(id ) ? formData.sellingPrice.name : formData.sellingPriceName}
                         onChange={(e) => { setFormData({ ...formData, sellingPrice: e.target.value }) }}
                         placeholder='Select Value'
                     />
@@ -429,7 +445,7 @@ const AddorEditSell = () => {
                                     onClick={() => {
                                         if (data?.name?.toLowerCase() !== formData.sellingPrice.toLowerCase()) {
 
-                                            setFormData({ ...formData, sellingPrice: data?._id });
+                                            setFormData({ ...formData, sellingPrice: data?._id, sellingPriceName: data?.name });
                                             setOpen1(false);
                                             setInputValue("");
                                         }
@@ -587,16 +603,16 @@ const AddorEditSell = () => {
                     </div>
                     <div className='flex flex-col'>
                         <h1 className='flex text-sm text-start font-bold'>Invoice No:</h1>
-                        <input value={formData.invoiceNo} onChange={(e) => { setFormData({ ...formData, invoiceNo: e.target.value }) }} type='Text' placeholder='Invoice No' className='px-2 py-[2px] w-full border-[1px] border-gray-600 focus:outline-none' />
+                        <input value={formData.invoiceNumber} onChange={(e) => { setFormData({ ...formData, invoiceNumber: e.target.value }) }} type='Text' placeholder='Invoice No' className='px-2 py-[2px] w-full border-[1px] border-gray-600 focus:outline-none' />
                         <h1 className='flex text-sm text-start '>Keep Blank to autogenerate</h1>
 
                     </div>
 
 
-                    <div className=' flex flex-col '>
+                    {/* <div className=' flex flex-col '>
                         <h2 className='text-start font-bold '> Attatch Document:</h2>
                         <div className='flex'>
-                            {/* value={formData.img_data} onChange={ (e)=>setFormData({...formData,  img_data: e.target.value})} */}
+                            value={formData.img_data} onChange={ (e)=>setFormData({...formData,  img_data: e.target.value})}
                             <input type='text' className='px-3  border-[1px] border-gray-700  focus:outline-none w-[60%]' />
                             <input className='px-3   focus:outline-none w-[60%] hidden' type='file' ref={inpuRef} accept='application/pdf,text/csv,application/zip,application/msword,application/vnd.openxmlformats-officedocument.wordprocessingml.document,image/jpeg,image/jpg,image/png' />
                             <div onClick={() => { inpuRef.current?.click(); }} className='flex cursor-pointersu bg-blue-600 text-white w-[40%] items-center justify-center'>
@@ -609,9 +625,9 @@ const AddorEditSell = () => {
                             Allowed File: .pdf, .csv, .zip,	.doc, .docx, .jpeg,	.jpg, .png
                         </p>
 
-                    </div>
+                    </div> */}
                 </div>
-                <div className='grid grid-cols-1 md:grid-cols-3 mt-3 gap-4'>
+                {/* <div className='grid grid-cols-1 md:grid-cols-3 mt-3 gap-4'>
 
                     <div className='flex '>
                         < FaTable size={15} className='w-8 h-8 p-2 border-[1px] border-gray-600' />
@@ -629,7 +645,7 @@ const AddorEditSell = () => {
                         </select>
                     </div>
 
-                </div>
+                </div> */}
             </div>
             <div className='flex  w-full   flex-col  p-5 mt-5 bg-white border-t-[3px] rounded-md border-blue-600'>
                 <div className='flex flex-col items-center justify-center md:flex-row w-full'>
@@ -662,7 +678,7 @@ const AddorEditSell = () => {
                                                     // let name = data?.productName
                                                     let array = formData.inputData
                                                     // let _id = data?._id
-                                                    array = [...array, { product: data?._id, quantity: 0, unitPrice: 0, discount: 0, subtotal: 0 }]
+                                                    array = [...array, { product: data?._id, productName: data?.productName, quantity: 0, unit: data?.unit, unitPrice: 0, discount: 0, subtotal: 0 }]
                                                     setFormData({ ...formData, inputData: array })
                                                     setInputValue1('')
                                                     setIsClicked(!isClicked);
@@ -698,7 +714,7 @@ const AddorEditSell = () => {
                                 return <tr key={index} className={`${(index + 1) % 2 === 0 ? "bg-gray-200" : ""} `}>
                                     <td className=" py-1 px-1">
                                         <div className='flex flex-col'>
-                                            <p className='text-start'>{value.productName}</p>
+                                            <p className='text-start'>{(value.productName) ? value.productName : value.product.productName}</p>
                                             <textarea rows={2} type='text' name="info" value={value.info} onChange={(e) => { handleChange(e, index) }} className='border-[1px] w-3/4 px-1 border-black focus:outline-none' />
                                             <h1 className='text-xs text-start text-gray-500'>Add product IMEI, Serial number or other informations here.</h1>
                                         </div>
@@ -711,7 +727,7 @@ const AddorEditSell = () => {
 
                                             </div>
                                             <select name="unit" value={value.unit} onChange={(e) => { handleChange(e, index) }} className='border-[1px] mt-2 w-full px-1 py-1 border-black focus:outline-none'>
-                                                <option value={"Litter"}>Litter</option>
+                                                <option value={value.unit}>{(value.unit) ? value.unit.name : ""}</option>
                                             </select>
                                         </div>
                                     </td>
@@ -726,6 +742,8 @@ const AddorEditSell = () => {
                                         <div className='flex flex-col'>
                                             <input name="discount" type='number' value={value.discount} onChange={(e) => handleChange(e, index)} className='border-[1px] w-full px-1 py-1 border-black focus:outline-none' />
                                             <select name="discountType" value={value.discountType} onChange={(e) => { handleChange(e, index) }} className='border-[1px] mt-2 w-full px-1 py-1 border-black focus:outline-none'>
+                                                <option value={""}>Please Select</option>
+
                                                 <option value={"Fixed"}>Fixed</option>
                                                 <option value={"Percentage"}>Percentage</option>
 
@@ -802,7 +820,7 @@ const AddorEditSell = () => {
 
                     </div>
                 </div>
-                <div className='grid grid-cols-1 md:grid-cols-3 gap-5 mt-5 border-[1px] border-gray-300 p-3'>
+                {/* <div className='grid grid-cols-1 md:grid-cols-3 gap-5 mt-5 border-[1px] border-gray-300 p-3'>
                     <div className='flex flex-col '>
                         <h1 className='flex text-sm text-start font-bold'>Redeemed:</h1>
                         <div className='flex'>
@@ -850,7 +868,7 @@ const AddorEditSell = () => {
                         <h1 className='flex text-sm  font-bold'>Order Tax <p className='mx-2'>(+) {formData.orderTax}</p> </h1>
 
                     </div>
-                </div>
+                </div> */}
                 <div className='w-full h-[1px] bg-gray-300 my-5'></div>
                 <div className='w-full flex flex-col'>
                     <h1 className='flex text-sm  font-bold'>Sell Note</h1>
@@ -896,8 +914,11 @@ const AddorEditSell = () => {
 
                         <select value={formData.deliveryPerson} onChange={(e) => { setFormData({ ...formData, deliveryPerson: e.target.value }) }} type='Text' placeholder='Enter Product name / SKU / Scan bar code' className='px-2 py-[2px] w-full border-[1px] border-gray-600 focus:outline-none'>
                             <option value={""}>Please Selecet</option>
-                            <option value={"Demo Admin"}>Demo Admin</option>f
-                            <option value={"Ismail Shah"}>Ismail Shah</option>f
+                            {usersData.map((user) => (
+                                <option key={user._id} value={user._id}>
+                                    {user.firstName + " " + user.lastName}
+                                </option>
+                            ))}
                         </select>
                     </div>
                     <div className='flex flex-col '>
@@ -905,26 +926,10 @@ const AddorEditSell = () => {
                         <input value={formData.deliveredTo} onChange={(e) => { setFormData({ ...formData, deliveredTo: e.target.value }) }} placeholder='Delivered to' type='text' className='px-2 py-[2px] w-full border-[1px] border-gray-600 focus:outline-none' />
 
                     </div>
-                    <div className=' flex flex-col '>
-                        <h2 className='text-start font-bold '> Shipping Documents:</h2>
-                        <div className='flex'>
-                            {/* value={formData.img_data} onChange={ (e)=>setFormData({...formData,  img_data: e.target.value})} */}
-                            <input type='text' className='px-3  border-[1px] border-gray-700  focus:outline-none w-[60%]' />
-                            <input className='px-3  focus:outline-none w-[60%] hidden' type='file' ref={inpuRef1} accept='application/pdf,text/csv,application/zip,application/msword,application/vnd.openxmlformats-officedocument.wordprocessingml.document,image/jpeg,image/jpg,image/png' />
-                            <div onClick={() => { inpuRef1.current?.click(); }} className='flex cursor-pointersu bg-blue-600 text-white w-[40%] items-center justify-center'>
-                                <AiTwotoneFolderOpen size={32} />
-                                Browse
-                            </div>
-                        </div>
-                        <p className='text-start  flex '>Max File size: 5MB:
-                            <br />
-                            Allowed File: .pdf, .csv, .zip,	.doc, .docx, .jpeg,	.jpg, .png
-                        </p>
-
-                    </div>
+                    
                 </div>
                 <div className='flex flex-col items-center justify-center'>
-                    <div onClick={() => { setAddExpenses(!addExpenses) }} className='flex w-[250px] px-2 py-2 items-center justify-center bg-blue-700 text-white'>
+                    <div onClick={() => { setAddExpenses(!addExpenses) }} className='flex w-[250px] px-2 py-2 mt-5 items-center justify-center bg-blue-700 text-white'>
                         <FaPlus size={15} />
                         <h1 className='text-sm mx-1'> Add Additional Expenses</h1>
                         <FaChevronCircleDown size={15} className={`${addExpenses ? "rotate-180" : ""}`} />
@@ -950,8 +955,8 @@ const AddorEditSell = () => {
                 </div>
                 <div className='flex items-end justify-end mt-5'>
                     <div className='flex '>
-                        <h1 className='font-bold mx-2'>Purchase Total:</h1>
-                        <h1 className=' mx-2'>Rs 0.00</h1>
+                        <h1 className='font-bold mx-2'>Total Payable:</h1>
+                        <h1 className=' mx-2'>Rs {total}</h1>
 
                     </div>
                 </div>
@@ -961,7 +966,7 @@ const AddorEditSell = () => {
             <div className='flex  w-full   flex-col  p-5 mt-5 bg-white border-t-[3px] rounded-md border-blue-600'>
                 <h1 className='flex text-sm text-start font-bold mb-5'>Add Payment</h1>
 
-                <h1 className='flex text-sm text-start font-bold'>Advance Balance: <p className='mx-2'> 0</p></h1>
+                {/* <h1 className='flex text-sm text-start font-bold'>Advance Balance: <p className='mx-2'> 0</p></h1> */}
 
                 <div className='grid grid-cols-1 md:grid-cols-3 gap-5'>
                     <div className='flex flex-col '>
@@ -973,7 +978,7 @@ const AddorEditSell = () => {
                         <div className='flex'>
                             < FaMoneyBillAlt size={15} className='w-8 h-8 p-2 border-[1px] border-gray-600' />
 
-                            <input value={formData.amount} onChange={(e) => { setFormData({ ...formData, amount: e.target.value }) }} type='number' placeholder='Select Date Time' className='px-2 py-[2px] w-full border-[1px] border-gray-600 focus:outline-none' />
+                            <input value={(id)?formData.amount:total} onChange={(e) => { setFormData({ ...formData, amount: e.target.value }) }} type='number' placeholder='Select Date Time' className='px-2 py-[2px] w-full border-[1px] border-gray-600 focus:outline-none' />
                         </div>
 
                     </div>
@@ -1017,16 +1022,18 @@ const AddorEditSell = () => {
                     <div className='flex flex-col '>
                         <div className='flex text-sm text-start font-bold'>
                             <h1>Payment Account:*</h1>
-                            <h2 className='text-red-400'>{isserror && formData.paymentAccount.length === 0 ? "Required field" : ""}</h2>
+                            {/* <h2 className='text-red-400'>{formData.paymentAccount.length === 0 ? "Required field" : ""}</h2> */}
 
                         </div>
                         <div className='flex'>
                             < FaMoneyBillAlt size={15} className='w-8 h-8 p-2 border-[1px] border-gray-600' />
                             <select value={formData.paymentAccount} onChange={(e) => { setFormData({ ...formData, paymentAccount: e.target.value }) }} type="text" className='px-2 py-1 w-full border-[1px] border-gray-600 focus:outline-none'>
                                 <option value={""}>None</option>
-                                <option value={"Test Account"}>Test Account</option>
-                                <option value={"Askari Bank"}>Askari Bank</option>
-                                <option value={"asd"}>asd</option>
+                                {AccountsData.map((acc) => (
+                                    <option key={acc._id} value={acc._id}>
+                                        {acc.name}
+                                    </option>
+                                ))}
 
                             </select>
                         </div>

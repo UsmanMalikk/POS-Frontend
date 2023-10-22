@@ -203,7 +203,7 @@ const AddorEditUsers = () => {
                             <option value={""}>--Select Role --</option>
                             {rolesData.map((role) => (
                                 <option key={role._id} value={role._id}>
-                                    {role.name}
+                                    {role.roleName}
                                 </option>
                             ))}
 

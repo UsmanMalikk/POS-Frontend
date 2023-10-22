@@ -5,12 +5,14 @@ const EditProduct = (props) => {
         unitPrice:"",
         discountType:"",
         discountAmount:"",
-        description: ""
-
+        description: "",
+        // name: props.name/
     })
     const handleClick = (e) => {
-
-        console.log("Handle Save", formData)
+        if (props.onSubmit) {
+            props.onSubmit(formData); // Call the callback function and pass the data.
+          }
+        // console.log("Handle Save", formData)
 
     }
     return (

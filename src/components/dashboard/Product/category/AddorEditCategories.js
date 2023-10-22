@@ -62,6 +62,8 @@ const AddorEditCategories = (props) => {
             const response = await axios.post(`http://localhost:8000/admin/categories`, formData);
             // console.log(response)
             if (response.status === 201) {
+                window.location.reload();
+
                 console.log("Success")
             }
         } catch (error) {
@@ -76,7 +78,9 @@ const AddorEditCategories = (props) => {
             // console.log(formData)
             const response = await axios.put(`http://localhost:8000/admin/categories/${_id}`, formData);
             console.log(response)
-
+            if (response.status === 200) {
+                window.location.reload();
+            }
         } catch (error) {
             console.error('Error Adding Units:', error);
         }

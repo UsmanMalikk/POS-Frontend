@@ -17,15 +17,15 @@ const AddorEditUnits = (props) => {
     const [unitsData, setUnitsData] = useState([]);
 
     const fetchUnits = async () => {
-    
-            try {
-                // const token = localStorage.getItem('token');
-                const response = await axios.get(`http://localhost:8000/admin/units`);
-                // console.log(response)
-                setUnitsData(response.data);
-            } catch (error) {
-                console.error('Error fetching units:', error);
-            }
+
+        try {
+            // const token = localStorage.getItem('token');
+            const response = await axios.get(`http://localhost:8000/admin/units`);
+            // console.log(response)
+            setUnitsData(response.data);
+        } catch (error) {
+            console.error('Error fetching units:', error);
+        }
     };
 
     const fetchUnitsById = async () => {
@@ -49,7 +49,7 @@ const AddorEditUnits = (props) => {
         else {
             fetchUnits()
         }
-        
+
 
     }, []);
 
@@ -61,7 +61,9 @@ const AddorEditUnits = (props) => {
             const response = await axios.post(`http://localhost:8000/admin/units`, formData);
             // console.log(response)
             if (response.status === 201) {
-            console.log("Success")
+                window.location.reload();
+
+                console.log("Success")
             }
         } catch (error) {
             console.error('Error Adding Unit:', error);
@@ -75,7 +77,10 @@ const AddorEditUnits = (props) => {
             // console.log(formData)
             const response = await axios.put(`http://localhost:8000/admin/units/${_id}`, formData);
             console.log(response)
+            if (response.status === 200) {
+                window.location.reload();
 
+            }
         } catch (error) {
             console.error('Error Adding Units:', error);
         }
@@ -149,7 +154,7 @@ const AddorEditUnits = (props) => {
                         </div>
 
                         <input type='text' className='border-[1px] border-gray-400 px-2 py-1 col-span-2 focus:outline-none' />
-                        <select  className='border-[1px] border-gray-400 px-2 py-1 focus:outline-none mx-2' >
+                        <select className='border-[1px] border-gray-400 px-2 py-1 focus:outline-none mx-2' >
                             <option value={""}>Select Base Unit</option>
                             {unitsData.map((unit) => (
                                 <option key={unit._id} value={unit._id}>

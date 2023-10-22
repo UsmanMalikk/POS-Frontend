@@ -135,17 +135,14 @@ const RolesTable = () => {
                         {record.map((value, index) => {
                             return <tr key={index} className=''>
 
-                                <td className=" py-1 px-1">{value.name}</td>
+                                <td className=" py-1 px-1">{value.roleName}</td>
                                 <td className='py-1 flex '>
                                     
                                     <Button as={Link} to={`/home/roles/editroles/${value._id}`} className='flex mx-1 p-1 items-center bg-blue-600 text-white justify-center'>
                                         <FaEdit size={15} />
                                         <h1 className='text-sm'>Edit</h1>
                                     </Button>
-                                    <div className='flex mx-1 p-1 items-center bg-blue-300 text-white justify-center'>
-                                        <FaEye size={15} />
-                                        <h1 className='text-sm'>View</h1>
-                                    </div>
+                                    
                                     <div className='flex mx-1 p-1 items-center bg-red-500 text-white justify-center'>
                                         <AiOutlineDelete size={15} />
                                         <h1 className='text-sm'>Delete</h1>
