@@ -587,8 +587,8 @@ const fetchExpanses = async () => {
                     <td className="px-1 py-1 text-sm">{date}</td>
                   )}
                   {col3 && <td className="px-1 py-1"> {value.invoiceNumber}</td>}
-                  {col5 && <td className="px-1 py-1">{value.expenseCategory.categoryName}</td>}
-                  {col6 && <td className=" py-1 px-1">{value.subCategory.categoryName}</td>}
+                  {col5 && <td className="px-1 py-1">{value.expenseCategory?.categoryName}</td>}
+                  {col6 && <td className=" py-1 px-1">{value.subCategory?.categoryName}</td>}
                   {col7 && <td className=" py-1 px-1">{value.businessLocation}</td>}
                   {col8 && (
                     <td className="px-1 py-1 text-sm">

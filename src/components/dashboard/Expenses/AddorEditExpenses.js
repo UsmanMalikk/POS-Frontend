@@ -168,7 +168,7 @@ const ExpenseAdd = () => {
       // console.log(response)
       setBusinessLocationsData(response.data);
     } catch (error) {
-      console.error('Error fetching products:', error);
+      console.error('Error fetching Locations:', error);
     }
   };
   const fetchExpanseCategories = async () => {

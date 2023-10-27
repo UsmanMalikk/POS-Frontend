@@ -21,9 +21,10 @@ import { useNavigate } from "react-router-dom"
 
 const AddStockTransfer = () => {
   const Navigate = useNavigate();
-
+ 
   const [productsData, setProductsData] = useState([]);
 
+  const [businessLocationData, setBusinessLocationData] = useState([]);
 
   const [inputValue, setInputValue] = useState("");
   const [inputValue1, setInputValue1] = useState("");
@@ -35,50 +36,22 @@ const AddStockTransfer = () => {
   const [info3, setInfo3] = useState(false);
 
   const [formData, setFormData] = useState({
-    invoiceNo: "",
+    referenceNumber: "",
     date: "",
     status: "",
-    // invoiceSchema: "",
-    // sellingPrice: "",
-    // tables: "",
-    // serviceStaff: "",
-    fromLocation: "",
-    toLocation: "",
+    
+    fromLocation: null,
+    toLocation: null,
 
     inputData: [],
-    // payTerm: "",
-    // payTerm1: "",
-    // discountType: "",
-    // discountAmount: 0,
-    // redeemed: "",
-    // available: "",
-    // redeemedAmount: "",
-    // discount: 0,
-    // orderTaxType: "",
-    // orderTax: 0,
-    // sellNotes: "",
+    
     shippingDetails: "",
     // shippingAddress: "",
     shippingCharges: 0,
-    // shippingStatus: "",
-    // deliveredTo: "",
-    // additionalExpenseName: "",
-    // additionalExpenseAmount: 0,
-    // additionalExpenseName1: "",
-    // additionalExpenseAmount1: 0,
-    // additionalExpenseName2: "",
-    // additionalExpenseAmount2: 0,
-    // additionalExpenseName3: "",
-    // additionalExpenseAmount3: 0,
-    // amount: "",
-    // paymentDate: "",
-    // paymentMethod: "",
-    // paymentAccount: "",
-    // paymentNote: "",
+    totalAmount: 0
   });
   const params = useParams();
   const id = params.id;
-
   const handleChange = (e, index) => {
     const updatedData = formData.inputData.map((item, ind) => {
       if (ind === index) {
@@ -90,7 +63,7 @@ const AddStockTransfer = () => {
       }
       return item;
     });
-    console.log(updatedData);
+    // console.log(updatedData);
     setFormData({ ...formData, inputData: updatedData });
   };
 
@@ -108,7 +81,8 @@ const AddStockTransfer = () => {
     return total;
   };
   const total = findTotal();
-
+  const totalAmount = parseFloat(total) + parseFloat(formData.shippingCharges)
+  formData.totalAmount = totalAmount
   const [isserror, setIsserror] = useState(false);
 
 
@@ -126,13 +100,25 @@ const AddStockTransfer = () => {
   };
 
 
+  const fetchLocations = async () => {
 
+    try {
+      // const token = localStorage.getItem('token');
+      const response = await axios.get(`http://localhost:8000/admin/business-locations`);
+      // console.log(response.data)
+      setBusinessLocationData(response.data);
+      // console.log(variationData)
+
+    } catch (error) {
+      console.error('Error fetching Locations:', error);
+    }
+  };
   const fetchProducts = async () => {
 
     try {
       // const token = localStorage.getItem('token');
       const response = await axios.get(`http://localhost:8000/admin/products`);
-      // console.log(response)
+      console.log(response)
       setProductsData(response.data);
     } catch (error) {
       console.error('Error fetching products:', error);
@@ -144,6 +130,7 @@ const AddStockTransfer = () => {
       // const token = localStorage.getItem('token');
       const response = await axios.get(`http://localhost:8000/admin/stock-transfers/${id}`);
       // console.log(response)
+      response.data.date = new Date(response.data.date).toLocaleDateString("fr-CA")
       setFormData(response.data);
     } catch (error) {
       console.error('Error fetching Stock Tranfers:', error);
@@ -154,11 +141,11 @@ const AddStockTransfer = () => {
     if (id) {
       fetchProducts()
       fetchSTKById()
-
+      fetchLocations()
     }
     else {
       fetchProducts()
-
+      fetchLocations()
     }
 
 
@@ -184,8 +171,10 @@ const AddStockTransfer = () => {
       // const token = localStorage.getItem('token');
       // console.log(formData)
       const response = await axios.put(`http://localhost:8000/admin/stock-transfers/${id}`, formData);
-      console.log(response)
-
+      // console.log(response)
+      if (response.status === 200) {
+        Navigate("/home/stock-transfer");
+      }
     } catch (error) {
       console.error('Error Adding Product:', error);
     }
@@ -243,9 +232,9 @@ const AddStockTransfer = () => {
           <div className="flex flex-col">
             <h1 className="flex text-sm text-start font-bold">Reference No:</h1>
             <input
-              value={formData.invoiceNo}
+              value={formData.referenceNumber}
               onChange={(e) => {
-                setFormData({ ...formData, invoiceNo: e.target.value });
+                setFormData({ ...formData, referenceNumber: e.target.value });
               }}
               type="Text"
               placeholder="Reference No"
@@ -301,8 +290,8 @@ const AddStockTransfer = () => {
               <option value={"Completed"}>Completed</option>
             </select>
           </div>
-          <div className="flex flex-col text-sm text-start font-bold">
-            <h2>Location(From):</h2>
+          <div className="flex flex-col text-sm text-start">
+            <h2 className="font-bold">Location(From):</h2>
             <div className="flex  w-full  relative">
               <FaMapMarker
                 size={15}
@@ -318,9 +307,12 @@ const AddStockTransfer = () => {
                 type="text"
                 className="px-2 py-1 w-full border-[1px] border-gray-600 focus:outline-none"
               >
-                <option value={"Eziline Software House (Pvt.) Ltd (BL0001)"}>
-                  Eziline Software House (Pvt.) Ltd (BL0001)
-                </option>
+                <option value={""}>Please Select</option>
+                {businessLocationData.map((loc) => (
+                  <option key={loc._id} value={loc._id} disabled={loc._id === formData.toLocation}>
+                    {loc.name}
+                  </option>
+                ))}
               </select>
               <div className="flex items-center border-[1px] border-gray-400">
                 <FaInfoCircle
@@ -344,8 +336,8 @@ const AddStockTransfer = () => {
               </div>
             </div>
           </div>
-          <div className="flex flex-col text-sm text-start font-bold">
-            <h2>Location(To):</h2>
+          <div className="flex flex-col text-sm text-start">
+            <h2 className="font-bold">Location(To):</h2>
             <div className="flex  w-full  relative">
               <FaMapMarker
                 size={15}
@@ -360,9 +352,12 @@ const AddStockTransfer = () => {
                 type="text"
                 className="px-2 py-1 w-full border-[1px] border-gray-600 focus:outline-none"
               >
-                <option value={"Eziline Software House (Pvt.) Ltd (BL0001)"}>
-                  Eziline Software House (Pvt.) Ltd (BL0001)
-                </option>
+                <option value={""}>Please Select</option>
+                {businessLocationData.map((loc) => (
+                  <option key={loc._id} value={loc._id} disabled={loc._id === formData.fromLocation}>
+                    {loc.name}
+                  </option>
+                ))}
               </select>
               <div className="flex items-center border-[1px] border-gray-400">
                 <FaInfoCircle
@@ -408,6 +403,7 @@ const AddStockTransfer = () => {
                   type="Text"
                   placeholder="Enter Product name / SKU / Scan bar code"
                   className="px-2 w-full py-[2px] border-[1px] border-gray-600 focus:outline-none"
+                  disabled={!formData.fromLocation || !formData.toLocation}
                 />
               </div>
               {isClicked && (
@@ -437,7 +433,7 @@ const AddStockTransfer = () => {
                           setInputValue1(data?.productName);
                           // let name = data?.productName;
                           let array = formData.inputData;
-                          array = [...array, { product: data?._id, quantity: 0, unitPrice: 0, subtotal: 0 }];
+                          array = [...array, { product: data?._id, unit: data?.unit, quantity: 0, unitPrice: 0, subtotal: 0 }];
                           setFormData({ ...formData, inputData: array });
                           setInputValue1("");
                           setIsClicked(!isClicked);
@@ -458,6 +454,7 @@ const AddStockTransfer = () => {
               size={20}
               style={{ color: "blue" }}
               className="w-8 h-8 p-1 border-[1px] border-gray-600"
+              disabled={!formData.fromLocation || !formData.toLocation}
             />
           </div>
         </div>
@@ -538,7 +535,7 @@ const AddStockTransfer = () => {
                           }}
                           className="border-[1px] mt-2 w-full px-1 py-1 border-black focus:outline-none"
                         >
-                          <option value={"Litter"}>Litter</option>
+                          <option value={value.unit}>{value.unit?.name}</option>
                         </select>
                       </div>
                     </td>
@@ -634,7 +631,7 @@ const AddStockTransfer = () => {
         <div className="flex items-end justify-end mt-5">
           <div className="flex ">
             <h1 className="font-bold mx-2">Purchase Total:</h1>
-            <h1 className=" mx-2">Rs 0.00</h1>
+            <h1 className=" mx-2">Rs {totalAmount}</h1>
           </div>
         </div>
         <div className="flex items-center justify-center mt-5 ">

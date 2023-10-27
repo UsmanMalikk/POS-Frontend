@@ -120,7 +120,9 @@ const AddorEditUsers = () => {
             // console.log(finalFormData)
             const response = await axios.put(`http://localhost:8000/admin/users/${_id}`,userData);
             console.log(response)
-            
+            if (response.status === 200) {
+                Navigate("/home/users");
+            }
         } catch (error) {
             console.error('Error Adding User:', error);
         }
@@ -201,6 +203,8 @@ const AddorEditUsers = () => {
                         <h1 className='text-lg flex'>Role:* <span className='text-red-500 mx-2 mt-1 text-sm'> {iserror && userData.role.length === 0 ? "Required Field" : ""}</span></h1>
                         <select value={userData.role} onChange={(e) => setUserData({ ...userData, role: e.target.value })} type='text' className='focus:outline-none w-full md:w-1/2 border-[1px] border-gray-300 px-2  rounded-sm p-1' >
                             <option value={""}>--Select Role --</option>
+                            {/* <option value={userData.role?.roleName}>{(_id && userData.role)?userData.role.roleName:"--Select Role --"}</option> */}
+
                             {rolesData.map((role) => (
                                 <option key={role._id} value={role._id}>
                                     {role.roleName}

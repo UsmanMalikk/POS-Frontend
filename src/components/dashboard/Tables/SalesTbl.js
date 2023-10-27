@@ -186,8 +186,6 @@ const SalesTbl = () => {
             return <ViewSell id={showId} />;
         } else if (iseditship === true && editShipId !== 0) {
             return <EditShipping id={editShipId} />;
-        } else if (isShowPayment === true) {
-            return <ViewPayment id={paymentId} />;
         }
     }
     // const fetchContactById = async () => {         Instead .populate
@@ -207,7 +205,7 @@ const SalesTbl = () => {
         try {
             // const token = localStorage.getItem('token');
             const response = await axios.get(`http://localhost:8000/admin/sales/final`);
-            // console.log(response)
+            console.log(response)
             // console.log(response.data)
             setSalesData(response.data);
         } catch (error) {
@@ -225,7 +223,16 @@ const SalesTbl = () => {
     //     }
     // }, []);
 
-
+    const handleDeleteSale = async (saleId) => {
+        try {
+            // Make an API call to delete attendance for a specific record
+            const response = await axios.delete(`http://localhost:8000/admin/sales/final/${saleId}`);
+            console.log('Sale deleted:', response.data);
+            fetchSales()
+        } catch (error) {
+            console.error('Error deleting Sale:', error);
+        }
+    };
     useEffect(() => {
 
         fetchSales();
@@ -628,8 +635,8 @@ const SalesTbl = () => {
                                                         <li className="w-full">
                                                             <div
                                                                 onClick={() => {
-                                                                    setIsedit(!isedit);
-                                                                    setIsCliked(!isCliked);
+                                                                    
+                                                                    handleDeleteSale(value._id)
                                                                 }}
                                                                 className="flex px-2 py-1 w-full cursor-pointer hover:bg-gray-400 items-center "
                                                             >
@@ -650,38 +657,8 @@ const SalesTbl = () => {
                                                                 <h1 className="text-sm">Edit Shipping</h1>
                                                             </div>
                                                         </li>
-                                                        <li className="mt-5 w-full">
-                                                            <Link className="flex px-2 py-1 w-full cursor-pointer hover:bg-gray-400 items-center ">
-                                                                <FaMoneyBillAlt size={15} />
-                                                                <h1 className="text-sm">Add Payment</h1>
-                                                            </Link>
-                                                        </li>
-                                                        <li className="w-full">
-                                                            <Link className="flex px-2 py-1 w-full cursor-pointer hover:bg-gray-400 items-center ">
-                                                                <FaMoneyBillAlt size={15} />
-                                                                <h1 className="text-sm">View Payment</h1>
-                                                            </Link>
-                                                        </li>
-                                                        <li className="w-full">
-                                                            <Link className="flex px-2 py-1 w-full cursor-pointer hover:bg-gray-400 items-center ">
-                                                                <FaUndo size={15} />
-                                                                <h1 className="text-sm">Purchase Return</h1>
-                                                            </Link>
-                                                        </li>
-                                                        <li className="w-full">
-                                                            <Link className="flex px-2 py-1 w-full cursor-pointer hover:bg-gray-400 items-center ">
-                                                                <FaEdit size={15} />
-                                                                <h1 className="text-sm">Update Status</h1>
-                                                            </Link>
-                                                        </li>
-                                                        <li className="w-full">
-                                                            <Link className="flex px-2 py-1 w-full cursor-pointer hover:bg-gray-400 items-center ">
-                                                                <FaEnvelope size={15} />
-                                                                <h1 className="text-sm">
-                                                                    Item Received Notification
-                                                                </h1>
-                                                            </Link>
-                                                        </li>
+                                                        
+                                                        
                                                     </ul>
                                                 )}
                                             </div>
@@ -692,7 +669,7 @@ const SalesTbl = () => {
                                     {col4 && <td className="px-1 py-1">{value.customer}</td>}
                                     {col5 && <td className=" py-1 px-1">{contactNo}</td>}
 
-                                    {col6 && <td className=" py-1 px-1">{value.businesLocation}</td>}
+                                    {col6 && <td className=" py-1 px-1">{value.businesLocation?.name}</td>}
                                     {col7 && (
                                         <td className="px-1 py-1 text-sm">
                                             <button
@@ -716,7 +693,7 @@ const SalesTbl = () => {
                                     {/* {col13 && <td className="px-1 py-1"> {(value.totalSaleAmount - value.amount) < 0 ? value.totalSaleAmount - value.amount : ""}</td>}      */}
                                     {col14 && <td className="px-1 py-1">{value.shippingStatus}</td>}
                                     {col15 && <td className=" py-1 px-1">{value.inputData.length}</td>}
-                                    {col16 && <td className=" py-1 px-1">{(value.deliveryPerson)? value.deliveryPerson.firstName : ""}</td>}
+                                    {col16 && <td className=" py-1 px-1">{value.deliveryPersonUser?.firstName||value.deliveryPersonAdmin?.firstName}</td>}
                                     {col17 && <td className="px-1 py-1 text-sm">{value.sellNote}</td>}
                                     {col18 && <td className="px-1 py-1"> {value.shippingDetails}</td>}
                                 </tr>

@@ -1,4 +1,4 @@
-import React, { useState , useEffect} from "react";
+import React, { useState, useEffect } from "react";
 import {
   FaCalendar,
   FaInfoCircle,
@@ -25,6 +25,7 @@ const AddStockAdjustment = () => {
   const Navigate = useNavigate();
 
   const [productsData, setProductsData] = useState([]);
+  const [businessLocationData, setBusinessLocationData] = useState([]);
 
 
   const [inputValue, setInputValue] = useState("");
@@ -36,16 +37,25 @@ const AddStockAdjustment = () => {
 
   const [formData, setFormData] = useState({
     date: "",
-    businesLocation: "",
+    businesLocation: null,
     totalamountRecovered: 0,
     inputData: [],
     reason: "",
     referenceNumber: "",
     adjustmentType: "",
+
   });
   const params = useParams();
   const id = params.id;
-
+  const handleIncDec = (index, type) => {
+    const val = formData.inputData
+    if (type === "Inc") {
+        val[index].quantity += 1
+    } else {
+        val[index].quantity -= 1
+    }
+    setFormData({ ...formData, inputData: val })
+}
   const handleChange = (e, index) => {
     const updatedData = formData.inputData.map((item, ind) => {
       if (ind === index) {
@@ -77,7 +87,7 @@ const AddStockAdjustment = () => {
   const total = findTotal();
 
   const [isserror, setIsserror] = useState(false);
-  
+
 
   const [isCliked, setIsCliked] = useState(false);
   const [newProduct, setNewProduct] = useState(false);
@@ -92,9 +102,21 @@ const AddStockAdjustment = () => {
     }
   };
 
+  const fetchLocations = async () => {
 
+    try {
+      // const token = localStorage.getItem('token');
+      const response = await axios.get(`http://localhost:8000/admin/business-locations`);
+      console.log(response.data)
+      setBusinessLocationData(response.data);
+      // console.log(variationData)
+
+    } catch (error) {
+      console.error('Error fetching Locations:', error);
+    }
+  };
   const fetchProducts = async () => {
-  
+
     try {
       // const token = localStorage.getItem('token');
       const response = await axios.get(`http://localhost:8000/admin/products`);
@@ -104,14 +126,32 @@ const AddStockAdjustment = () => {
       console.error('Error fetching products:', error);
     }
   };
-useEffect(() => {
-    // Make an API call to fetch SPG's records
-  
+  const fetchSAJById = async () => {
+
+    try {
+      // const token = localStorage.getItem('token');
+      const response = await axios.get(`http://localhost:8000/admin/stock-adjustment/${id}`);
+      // console.log(response)
+      response.data.date = new Date(response.data.date).toLocaleDateString("fr-CA")
+
+      setFormData(response.data);
+    } catch (error) {
+      console.error('Error fetching Stock Tranfers:', error);
+    }
+  };
+  useEffect(() => {
+    if (id) {
+      fetchLocations()
       fetchProducts()
+      fetchSAJById()
+    } else {
+      fetchLocations()
+      fetchProducts()
+    }
 
 
   }, []);
-const addSAJ = async () => {
+  const addSAJ = async () => {
 
     try {
       // const token = localStorage.getItem('token');
@@ -122,21 +162,35 @@ const addSAJ = async () => {
         Navigate("/home/stock-transfer");
       }
     } catch (error) {
-      console.error('Error Adding Product:', error);
+      console.error('Error Adding Stock Tranfers:', error);
     }
   };
+  const addSAJById = async () => {
 
+    try {
+      // const token = localStorage.getItem('token');
+      // console.log(formData)
+      const response = await axios.put(`http://localhost:8000/admin/stock-adjustment/${id}`, formData);
+      // console.log(response)
+      if (response.status === 200) {
+        Navigate("/home/stock-transfer");
+      }
+    } catch (error) {
+      console.error('Error Adding Stock Tranfers:', error);
+    }
+  };
 
   const handleClick = (e) => {
     e.preventDefault();
     console.log(formData);
     if (
-      formData.businesLocation.length === 0 ||
-      formData.inputData.length === 0 
+      formData.businesLocation === null ||
+      formData.inputData.length === 0
     ) {
       setIsserror(true);
       console.log(isserror);
     } else if (id) {
+      addSAJById()
       console.log("Handle Update", formData);
     } else {
       addSAJ()
@@ -166,10 +220,12 @@ const addSAJ = async () => {
                 type="text"
                 className="px-2 py-1 w-full border-[1px] border-gray-600 focus:outline-none"
               >
-                <option value={"Please Select"}>Please Select</option>
-                <option value={"Eziline Software House (Pvt.) Ltd (BL0001)"}>
-                  Eziline Software House (Pvt.) Ltd (BL0001)
-                </option>
+                <option value={""}>Please Select</option>
+                {businessLocationData.map((loc) => (
+                  <option key={loc._id} value={loc._id}>
+                    {loc.name}
+                  </option>
+                ))}
               </select>
             </div>
           </div>
@@ -292,26 +348,23 @@ const addSAJ = async () => {
               </div>
               {isClicked && (
                 <ul
-                  className={`bg-white w-full    border-[1px]   z-10 absolute top-8 border-gray-600  ${
-                    isClicked ? "max-h-60" : "max-h-0"
-                  } `}
+                  className={`bg-white w-full    border-[1px]   z-10 absolute top-8 border-gray-600  ${isClicked ? "max-h-60" : "max-h-0"
+                    } `}
                 >
                   {productsData?.map((data) => (
                     <li
                       key={data?.Name}
                       className={`p-1 px-9 text-start text-sm hover:bg-sky-600 hover:text-white
-                                ${
-                                  data?.productName?.toLowerCase() ===
-                                    inputValue1?.toLowerCase() &&
-                                  "bg-sky-600 text-white"
-                                }
-                                 ${
-                                   data?.productName?.toLowerCase().startsWith(
-                                     inputValue
-                                   )
-                                     ? "block"
-                                     : "hidden"
-                                 }`}
+                                ${data?.productName?.toLowerCase() ===
+                        inputValue1?.toLowerCase() &&
+                        "bg-sky-600 text-white"
+                        }
+                                 ${data?.productName?.toLowerCase().startsWith(
+                          inputValue
+                        )
+                          ? "block"
+                          : "hidden"
+                        }`}
                       onClick={() => {
                         if (
                           data?.productName?.toLowerCase() !==
@@ -319,7 +372,7 @@ const addSAJ = async () => {
                         ) {
                           setInputValue1(data?.productName);
                           let array = formData.inputData;
-                          array = [...array, { product: data?._id, quantity: 0, unitPrice: 0, subtotal: 0 }];
+                          array = [...array, { product: data?._id, unit: data?.unit, quantity: 0, unitPrice: 0, subtotal: 0 }];
                           setFormData({ ...formData, inputData: array });
                           setInputValue1("");
                           setIsClicked(!isClicked);
@@ -395,6 +448,7 @@ const addSAJ = async () => {
                       <div className="flex flex-col">
                         <div className="flex">
                           <FaMinus
+                            // onClick={() => { handleIncDec(index, "Dec") }}
                             size={15}
                             className="border-[1px] h-8 text-red-400 w-1/6 p-1 border-black"
                           />
@@ -403,8 +457,8 @@ const addSAJ = async () => {
                             name="quantity"
                             value={value.quantity}
                             onChange={(e) => {
-                            handleChange(e, index);
-                          }}
+                              handleChange(e, index);
+                            }}
                             className="border-[1px] w-4/6 px-1 py-1 border-black focus:outline-none"
                           />
                           <FaPlus
@@ -420,7 +474,7 @@ const addSAJ = async () => {
                           }}
                           className="border-[1px] mt-2 w-full px-1 py-1 border-black focus:outline-none"
                         >
-                          <option value={"Litter"}>Litter</option>
+                          <option value={value.unit}>{value.unit?.name}</option>
                         </select>
                       </div>
                     </td>
@@ -511,12 +565,7 @@ const addSAJ = async () => {
           </div>
         </div>
 
-        <div className="flex items-end justify-end mt-5">
-          <div className="flex ">
-            <h1 className="font-bold mx-2">Purchase Total:</h1>
-            <h1 className=" mx-2">Rs 0.00</h1>
-          </div>
-        </div>
+
         <div className="flex items-center justify-center mt-5 ">
           <button
             onClick={handleClick}

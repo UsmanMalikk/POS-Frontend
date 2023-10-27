@@ -10,59 +10,9 @@ import { MdCancel } from 'react-icons/md';
 import AddorEditSellingPriceGrp from '../Product/sellingPriceGrp/AddorEditSellingPriceGrp';
 import axios from 'axios';
 
-
 const SellingPriceGrpTbl = () => {
-    // const dummyData = [
-    //     {
-    //         id: 1,
-    //         Username: "username",
-    //         Name: "User",
-    //         Role: "Admin",
-    //         Email: "username@gmail.com"
-    //     },
-    //     {
-    //         id: 2,
-    //         Username: "username1",
-    //         Name: "User1",
-    //         Role: "Admin",
-    //         Email: "username@gmail.com"
-    //     },
-    //     {
-    //         id: 3,
-    //         Username: "username2",
-    //         Name: "User2",
-    //         Role: "Admin",
-    //         Email: "username2@gmail.com"
-    //     },
-    //     {
-    //         id: 4,
-    //         Username: "username3",
-    //         Name: "User3",
-    //         Role: "Admin",
-    //         Email: "username3@gmail.com"
-    //     },
-    //     {
-    //         id: 5,
-    //         Username: "username4",
-    //         Name: "User4",
-    //         Role: "Admin",
-    //         Email: "username4@gmail.com"
-    //     },
-    //     {
-    //         id: 6,
-    //         Username: "username5",
-    //         Name: "User5",
-    //         Role: "Admin",
-    //         Email: "username5@gmail.com"
-    //     },
-    //     {
-    //         id: 7,
-    //         Username: "username6",
-    //         Name: "User6",
-    //         Role: "Admin",
-    //         Email: "username6@gmail.com"
-    //     }
-    // ]
+
+    
     const printRef = useRef()
     let xlDatas = []
     //Export to Excel
@@ -160,8 +110,37 @@ const SellingPriceGrpTbl = () => {
             console.error('Error fetching spg:', error);
         }
     };
+    // const fetchSPGById = async (spgbyid) => {
 
+    //     try {
+    //         // const token = localStorage.getItem('token');
+    //         const response = await axios.get(`http://localhost:8000/admin/selling-price-groups/${spgbyid}`);
+    //         // console.log(response)
+    //         setSpgByIdData(response.data);
 
+    //     } catch (error) {
+    //         console.error('Error fetching Selling price Group:', error);
+    //     }
+    // };
+
+    const addSpgById = async (spgbyid, bool) => {
+        // console.log(bool)
+        try {
+            // const token = localStorage.getItem('token');
+            // console.log(formData)
+            const response = await axios.put(`http://localhost:8000/admin/selling-price-groups/${spgbyid}`, {
+                isDefault : bool
+            });
+            // console.log(response)
+            if (response.status === 200) {
+                window.location.reload();
+
+                console.log("Success")
+            }
+        } catch (error) {
+            console.error('Error Adding Accounnt:', error);
+        }
+    };
     const handleDeleteSPG = async (spgId) => {
         try {
           // Make an API call to delete attendance for a specific record
@@ -276,10 +255,10 @@ const SellingPriceGrpTbl = () => {
                                         <FaEdit size={15} />
                                         <h1 className='text-sm mx-1'>Delete</h1>
                                     </button>
-                                    <button  className='flex mx-3 p-1 items-center bg-red-500 text-white justify-center'>
+                                    <button  onClick={ ()=> {addSpgById(value._id, (value.isDefault) ? false : true)}} className='flex mx-3 p-1 items-center bg-red-500 text-white justify-center'>
                                         <FaPowerOff size={15} />
-                                        <h1 className='text-sm mx-1'>Deactivate</h1>
-                                        {/* <h1 className='text-sm mx-1'>{spgData.isDefault ? "ACtivate" : "Deactivate"}</h1> */}
+                                        {/* <h1 className='text-sm mx-1'>Deactivate</h1> */}
+                                        <h1 className='text-sm mx-1'>{value.isDefault ? "Activate" : "Deactivate"}</h1>
 
                                     </button>
                                 </td>}

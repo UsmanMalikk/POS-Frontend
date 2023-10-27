@@ -26,90 +26,11 @@ import ViewSell from "../sell/ViewSell";
 import EditShipping from "../sell/EditShipping";
 import ViewPayment from "../payments/ViewPayment";
 import axios from 'axios';
-
+import ViewStockTransfer from "../StockTransfer/ViewStockTransfer";
+import UpdateStatus from "../StockTransfer/UpdateStatus";
 
 const StockTransferTbl = () => {
-  //FOR DUMMY DATA
 
-  // const dummyData = [
-  //   {
-  //     id: 1,
-  //     date: "11/12/23",
-  //     fromLocation: "islamabad",
-  //     toLocation: "rawalpindi",
-  //     status: "pending",
-  //     Email: "username@gmail.com",
-  //     charges: "50$",
-  //     totalAmount: "100$",
-  //     action: "transfer",
-  //   },
-  //   {
-  //     id: 2,
-  //     date: "11/12/23",
-  //     fromLocation: "islamabad",
-  //     toLocation: "rawalpindi",
-  //     status: "pending",
-  //     Email: "username@gmail.com",
-  //     charges: "50$",
-  //     totalAmount: "100$",
-  //     action: "transfer",
-  //   },
-  //   {
-  //     id: 3,
-  //     date: "11/12/23",
-  //     fromLocation: "islamabad",
-  //     toLocation: "rawalpindi",
-  //     status: "pending",
-  //     Email: "username2@gmail.com",
-  //     charges: "50$",
-  //     totalAmount: "100$",
-  //     action: "transfer",
-  //   },
-  //   {
-  //     id: 4,
-  //     date: "11/12/23",
-  //     fromLocation: "islamabad",
-  //     toLocation: "rawalpindi",
-  //     status: "pending",
-  //     Email: "username3@gmail.com",
-  //     charges: "50$",
-  //     totalAmount: "100$",
-  //     action: "transfer",
-  //   },
-  //   {
-  //     id: 5,
-  //     date: "11/12/23",
-  //     fromLocation: "islamabad",
-  //     toLocation: "rawalpindi",
-  //     status: "pending",
-  //     Email: "username4@gmail.com",
-  //     charges: "50$",
-  //     totalAmount: "100$",
-  //     action: "transfer",
-  //   },
-  //   {
-  //     id: 6,
-  //     date: "11/12/23",
-  //     fromLocation: "islamabad",
-  //     toLocation: "rawalpindi",
-  //     status: "pending",
-  //     Email: "username5@gmail.com",
-  //     charges: "50$",
-  //     totalAmount: "100$",
-  //     action: "transfer",
-  //   },
-  //   {
-  //     id: 7,
-  //     date: "11/12/23",
-  //     fromLocation: "islamabad",
-  //     toLocation: "rawalpindi",
-  //     status: "pending",
-  //     Email: "username6@gmail.com",
-  //     charges: "50$",
-  //     totalAmount: "100$",
-  //     action: "transfer",
-  //   },
-  // ];
   const printRef = useRef();
 
   let xlDatas = [];
@@ -161,10 +82,7 @@ const StockTransferTbl = () => {
   const [col9, setCol9] = useState(true);
 
   const [isedit, setIsedit] = useState(false);
-  const [isShowPayment, setIsShowPayment] = useState(false);
-  const [paymentId, setPaymentId] = useState(0);
-  const [editShipId, setEditShipId] = useState(0);
-  const [iseditship, setIseditship] = useState(false);
+
   const [isCliked, setIsCliked] = useState(false);
   const [actionList, setActionList] = useState(
     Array(record.length).fill(false)
@@ -200,16 +118,16 @@ const StockTransferTbl = () => {
         totalAmount,
         action,
       }) => [
-        id,
-        date,
-        fromLocation,
-        toLocation,
-        status,
-        Email,
-        charges,
-        totalAmount,
-        action,
-      ]
+          id,
+          date,
+          fromLocation,
+          toLocation,
+          status,
+          Email,
+          charges,
+          totalAmount,
+          action,
+        ]
     ),
   ];
 
@@ -234,14 +152,12 @@ const StockTransferTbl = () => {
 
   const [isshow, setIsshow] = useState(false);
   const [showId, setShowId] = useState(0);
+  const [upId, setUpId] = useState(0)
+  const [dynWidthd, setDynWidthd] = useState('')
   const displayData = () => {
     if (showId !== 0 && isshow === true) {
-      return <ViewSell id={showId} />;
-    } else if (iseditship === true && editShipId !== 0) {
-      return <EditShipping id={editShipId} />;
-    } else if (isShowPayment === true) {
-      return <ViewPayment id={paymentId} />;
-    }
+      return <ViewStockTransfer id={showId} />;
+    } 
   };
 
   const fetchSTK = async () => {
@@ -258,17 +174,17 @@ const StockTransferTbl = () => {
   useEffect(() => {
     // Make an API call to fetch user's user records
     fetchSTK();
-}, []);
-const handleDeleteTransfer = async (stkId) => {
-  try {
-    // Make an API call to delete attendance for a specific record
-    const response = await axios.delete(`http://localhost:8000/admin/stock-transfers/${stkId}`);
-    console.log('Stoct Tranfer deleted:', response.data); // Handle success response
-    fetchSTK()
-  } catch (error) {
-    console.error('Error deleting Stoct Tranfer:', error);
-  }
-};
+  }, []);
+  const handleDeleteTransfer = async (stkId) => {
+    try {
+      // Make an API call to delete attendance for a specific record
+      const response = await axios.delete(`http://localhost:8000/admin/stock-transfers/${stkId}`);
+      console.log('Stoct Tranfer deleted:', response.data); // Handle success response
+      fetchSTK()
+    } catch (error) {
+      console.error('Error deleting Stoct Tranfer:', error);
+    }
+  };
   return (
     <div>
       <div className="flex  flex-col md:flex-row  items-center justify-center mt-3 md:justify-between mx-5">
@@ -320,9 +236,8 @@ const handleDeleteTransfer = async (stkId) => {
               <div className="absolute top-7 shadow-md shadow-gray-400 bg-white w-[150px]">
                 <ul className="flex flex-col items-center justify-center">
                   <li
-                    className={` w-full py-1 ${
-                      col1 ? "" : "bg-blue-600"
-                    } hover:bg-blue-400 `}
+                    className={` w-full py-1 ${col1 ? "" : "bg-blue-600"
+                      } hover:bg-blue-400 `}
                     onClick={() => {
                       setCol1(!col1);
                     }}
@@ -330,9 +245,8 @@ const handleDeleteTransfer = async (stkId) => {
                     Date
                   </li>
                   <li
-                    className={` w-full py-1 ${
-                      col2 ? "" : "bg-blue-600"
-                    } hover:bg-blue-400 `}
+                    className={` w-full py-1 ${col2 ? "" : "bg-blue-600"
+                      } hover:bg-blue-400 `}
                     onClick={() => {
                       setCol2(!col2);
                     }}
@@ -340,9 +254,8 @@ const handleDeleteTransfer = async (stkId) => {
                     Reference Number
                   </li>
                   <li
-                    className={` w-full py-1 ${
-                      col3 ? "" : "bg-blue-600"
-                    } hover:bg-blue-400 `}
+                    className={` w-full py-1 ${col3 ? "" : "bg-blue-600"
+                      } hover:bg-blue-400 `}
                     onClick={() => {
                       setCol3(!col3);
                     }}
@@ -350,9 +263,8 @@ const handleDeleteTransfer = async (stkId) => {
                     Location(From)
                   </li>
                   <li
-                    className={` w-full py-1 ${
-                      col4 ? "" : "bg-blue-600"
-                    } hover:bg-blue-400 `}
+                    className={` w-full py-1 ${col4 ? "" : "bg-blue-600"
+                      } hover:bg-blue-400 `}
                     onClick={() => {
                       setCol4(!col4);
                     }}
@@ -360,9 +272,8 @@ const handleDeleteTransfer = async (stkId) => {
                     Location(to)
                   </li>
                   <li
-                    className={` w-full py-1 ${
-                      col5 ? "" : "bg-blue-600"
-                    } hover:bg-blue-400 `}
+                    className={` w-full py-1 ${col5 ? "" : "bg-blue-600"
+                      } hover:bg-blue-400 `}
                     onClick={() => {
                       setCol5(!col5);
                     }}
@@ -370,9 +281,8 @@ const handleDeleteTransfer = async (stkId) => {
                     Status
                   </li>
                   <li
-                    className={` w-full py-1 ${
-                      col6 ? "" : "bg-blue-600"
-                    } hover:bg-blue-400 `}
+                    className={` w-full py-1 ${col6 ? "" : "bg-blue-600"
+                      } hover:bg-blue-400 `}
                     onClick={() => {
                       setCol6(!col6);
                     }}
@@ -380,9 +290,8 @@ const handleDeleteTransfer = async (stkId) => {
                     Shipping Charges
                   </li>
                   <li
-                    className={` w-full py-1 ${
-                      col7 ? "" : "bg-blue-600"
-                    } hover:bg-blue-400 `}
+                    className={` w-full py-1 ${col7 ? "" : "bg-blue-600"
+                      } hover:bg-blue-400 `}
                     onClick={() => {
                       setCol7(!col7);
                     }}
@@ -390,9 +299,8 @@ const handleDeleteTransfer = async (stkId) => {
                     Total Amount
                   </li>
                   <li
-                    className={` w-full py-1 ${
-                      col8 ? "" : "bg-blue-600"
-                    } hover:bg-blue-400 `}
+                    className={` w-full py-1 ${col8 ? "" : "bg-blue-600"
+                      } hover:bg-blue-400 `}
                     onClick={() => {
                       setCol8(!col8);
                     }}
@@ -400,9 +308,8 @@ const handleDeleteTransfer = async (stkId) => {
                     Additional Notes
                   </li>
                   <li
-                    className={` w-full py-1 ${
-                      col9 ? "" : "bg-blue-600"
-                    } hover:bg-blue-400 `}
+                    className={` w-full py-1 ${col9 ? "" : "bg-blue-600"
+                      } hover:bg-blue-400 `}
                     onClick={() => {
                       setCol9(!col9);
                     }}
@@ -494,8 +401,8 @@ const handleDeleteTransfer = async (stkId) => {
                 <tr key={index} className="">
                   {col1 && <td className="px-1 py-1 text-sm">{date}</td>}
                   {col2 && <td className="px-1 py-1"> {value.invoiceNumber}</td>}
-                  {col3 && <td className="px-1 py-1">{value.fromLocation}</td>}
-                  {col4 && <td className=" py-1 px-1">{value.toLocation}</td>}
+                  {col3 && <td className="px-1 py-1">{value.fromLocation?.name}</td>}
+                  {col4 && <td className=" py-1 px-1">{value.toLocation?.name}</td>}
                   {col5 && (
                     <td className="px-1 py-1 text-sm">
                       <button
@@ -525,19 +432,19 @@ const handleDeleteTransfer = async (stkId) => {
                         <h1 className="text-sm">Action</h1>
                         <AiFillCaretDown size={10} />
                         {actionList[index] && (
-                          <ul className="absolute top-5 left-10 z-20 flex flex-col items-start w-[200px] bg-white text-gray-600 shadow-xl shadow-gray-400 ">
+                          <ul className="absolute top-5 right-10 z-20 flex flex-col items-start w-[80px] bg-white text-gray-600 shadow-xl shadow-gray-400 ">
                             <li className="w-full">
-                              <Link
+                              <div
                                 onClick={() => {
                                   setIsCliked(true);
                                   setIsshow(true);
-                                  setShowId(value.id);
+                                  setShowId(value._id);
                                 }}
                                 className="flex px-2 py-1 w-full cursor-pointer hover:bg-gray-400 items-center "
                               >
                                 <FaEye size={15} />
                                 <h1 className="text-sm">View</h1>
-                              </Link>
+                              </div>
                             </li>
                             <li className="w-full">
                               <div
@@ -553,7 +460,7 @@ const handleDeleteTransfer = async (stkId) => {
                             </li>
                             <li className="w-full">
                               <Link
-                                to={`/home/sells/edit/${value.id}`}
+                                to={`/home/stock-transfers/edit/${value._id}`}
                                 onClick={() => {
                                   setIsedit(!isedit);
                                   setIsCliked(!isCliked);
@@ -567,8 +474,7 @@ const handleDeleteTransfer = async (stkId) => {
                             <li className="w-full">
                               <div
                                 onClick={() => {
-                                  setIsedit(!isedit);
-                                  setIsCliked(!isCliked);
+                                
                                   handleDeleteTransfer(value._id)
                                 }}
                                 className="flex px-2 py-1 w-full cursor-pointer hover:bg-gray-400 items-center "
@@ -577,51 +483,7 @@ const handleDeleteTransfer = async (stkId) => {
                                 <h1 className="text-sm">Delete</h1>
                               </div>
                             </li>
-                            <li className="w-full">
-                              <div
-                                onClick={() => {
-                                  setEditShipId(value.id);
-                                  setIseditship(!iseditship);
-                                  setIsCliked(!isCliked);
-                                }}
-                                className="flex px-2 py-1 w-full cursor-pointer hover:bg-gray-400 items-center "
-                              >
-                                <FaTruck size={15} />
-                                <h1 className="text-sm">Edit Shipping</h1>
-                              </div>
-                            </li>
-                            <li className="mt-5 w-full">
-                              <Link className="flex px-2 py-1 w-full cursor-pointer hover:bg-gray-400 items-center ">
-                                <FaMoneyBillAlt size={15} />
-                                <h1 className="text-sm">Add Payment</h1>
-                              </Link>
-                            </li>
-                            <li className="w-full">
-                              <Link className="flex px-2 py-1 w-full cursor-pointer hover:bg-gray-400 items-center ">
-                                <FaMoneyBillAlt size={15} />
-                                <h1 className="text-sm">View Payment</h1>
-                              </Link>
-                            </li>
-                            <li className="w-full">
-                              <Link className="flex px-2 py-1 w-full cursor-pointer hover:bg-gray-400 items-center ">
-                                <FaUndo size={15} />
-                                <h1 className="text-sm">Purchase Return</h1>
-                              </Link>
-                            </li>
-                            <li className="w-full">
-                              <Link className="flex px-2 py-1 w-full cursor-pointer hover:bg-gray-400 items-center ">
-                                <FaEdit size={15} />
-                                <h1 className="text-sm">Update Status</h1>
-                              </Link>
-                            </li>
-                            <li className="w-full">
-                              <Link className="flex px-2 py-1 w-full cursor-pointer hover:bg-gray-400 items-center ">
-                                <FaEnvelope size={15} />
-                                <h1 className="text-sm">
-                                  Item Received Notification
-                                </h1>
-                              </Link>
-                            </li>
+                            
                           </ul>
                         )}
                       </div>
@@ -652,9 +514,8 @@ const handleDeleteTransfer = async (stkId) => {
             return (
               <li
                 key={i}
-                className={`${
-                  crpage === n ? "bg-blue-500" : ""
-                } py-3 px-4 mx-1 border-[1px] border-gray-400`}
+                className={`${crpage === n ? "bg-blue-500" : ""
+                  } py-3 px-4 mx-1 border-[1px] border-gray-400`}
               >
                 <button
                   onClick={() => {

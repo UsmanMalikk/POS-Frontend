@@ -1,32 +1,61 @@
-import React, { useRef, useState } from 'react'
+import React, { useRef, useState, useEffect } from 'react'
 import { useParams } from 'react-router-dom'
-
+import axios from 'axios';
+import { useNavigate } from "react-router-dom"
 const EditShipping = (props) => {
-
-
-
-
+    const Navigate = useNavigate();
+    let id = props.id
     const [formData, setFormData] = useState({
         shippingDetails: "",
         shippingAddress: "",
         shippingStatus: "",
         deliveredTo: ""
     })
-    const params = useParams()
-    const id = params.id
+   
+
     const handleClick = (e) => {
+        addSaleById()
         console.log("Handle Update")
     }
     const inpuRef1 = useRef()
 
-    const record = []
 
+    const fetchSaleById = async () => {
 
+        try {
+            // const token = localStorage.getItem('token');
+            const response = await axios.get(`http://localhost:8000/admin/sales/final/${id}`);
+            console.log(response)
 
+            setFormData(response.data);
+        } catch (error) {
+            console.error('Error fetching sale:', error);
+        }
+    };
+    const addSaleById = async () => {
 
+        try {
+            // const token = localStorage.getItem('token');
+            // console.log(finalFormData)
+            const response = await axios.put(`http://localhost:8000/admin/sales/final/${id}`, formData);
+            console.log(response)
+            if (response.status === 200) {
+                Navigate("/home/sells");
+
+            }
+            
+        } catch (error) {
+            console.error('Error Adding Sale:', error);
+        }
+    };
+    useEffect(() => {
+        // Make an API call to fetch SPG's records
+        fetchSaleById()
+        
+    }, [])
     return (
         <div className='w-full p-5 bg-gray-100'>
-            <h1 className='text-xl text-start font-bold '>Edit Shipping {props.id}</h1>
+            <h1 className='text-xl text-start font-bold '>Edit Shipping</h1>
 
             <div className='flex  w-full   flex-col  p-5 mt-5 bg-white border-t-[3px] rounded-md border-blue-600'>
                 <div className='grid grid-cols-1 md:grid-cols-2 gap-5'>
@@ -86,36 +115,6 @@ const EditShipping = (props) => {
 
             
 
-            <div className='flex flex-col justify-center items-center mt-5 mx-5'  >
-                <table id='usertbl' className="table-fixed w-full mb-10  whitespace-no-wrap ">
-                    <thead>
-                        <tr>
-                            <th className=" py-2 title-font  tracking-wider font-medium text-gray-900 text-sm bg-gray-200">Date</th>
-                            <th className=" py-2 title-font  tracking-wider font-medium text-gray-900 text-sm bg-gray-200">Action</th>
-                            <th className=" py-2 title-font  tracking-wider font-medium text-gray-900 text-sm bg-gray-200">By</th>
-                            <th className=" py-2 title-font  tracking-wider font-medium text-gray-900 text-sm bg-gray-200">Note</th>
-                        </tr>
-                    </thead>
-                    {record.length === 0 ? <p className='text-center w-full'>No records found</p> :
-                        <tbody >
-                            {record.map((value, index) => {
-                                return <tr key={index} className=''>
-
-                                    <td className="px-1 py-1 text-sm">{value.Username}</td>
-                                    <td className="px-1 py-1"> {value.Name}</td>
-                                    <td className="px-1 py-1">{value.Role}</td>
-                                    <td className=" py-1 px-1">{value.Email}</td>
-
-                                </tr>
-                            })}
-
-
-                        </tbody>
-                    }
-
-                </table>
-
-            </div>
 
             <div className='flex items-end justify-end mt-5'>
                 <button onClick={handleClick} className='bg-green-500 px-2 py-2 items-center justify-center flex'>{id ? "Update" : "Save"}</button>

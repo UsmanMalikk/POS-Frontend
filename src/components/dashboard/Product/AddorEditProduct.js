@@ -5,7 +5,8 @@ import JoditEditor from 'jodit-react';
 import { AiTwotoneFolderOpen } from 'react-icons/ai';
 import { useNavigate, useParams } from 'react-router-dom';
 import axios from 'axios';
-
+import { MdCancel } from 'react-icons/md';
+import AddorEditUnits from './units/AddorEditUnits';
 
 const AddorEditProduct = () => {
   const editor = useRef(null)
@@ -13,60 +14,12 @@ const AddorEditProduct = () => {
   const _id = params.id
 
 
-  const dummyData = [
-    {
-      id: 1,
-      Username: "username",
-      Name: "User",
-      Role: "Admin",
-      Email: "username@gmail.com"
-    },
-    {
-      id: 2,
-      Username: "username1",
-      Name: "User1",
-      Role: "Admin",
-      Email: "username@gmail.com"
-    },
-    {
-      id: 3,
-      Username: "username2",
-      Name: "User2",
-      Role: "Admin",
-      Email: "username2@gmail.com"
-    },
-    {
-      id: 4,
-      Username: "username3",
-      Name: "User3",
-      Role: "Admin",
-      Email: "username3@gmail.com"
-    },
-    {
-      id: 5,
-      Username: "username4",
-      Name: "User4",
-      Role: "Admin",
-      Email: "username4@gmail.com"
-    },
-    {
-      id: 6,
-      Username: "username5",
-      Name: "User5",
-      Role: "Admin",
-      Email: "username5@gmail.com"
-    },
-    {
-      id: 7,
-      Username: "username6",
-      Name: "User6",
-      Role: "Admin",
-      Email: "username6@gmail.com"
-    }
-  ]
+
   const [unitsData, setUnitsData] = useState([]);
   const [productsData, setProductsData] = useState([]);
   const [variationData, setVariationData] = useState([]);
+  const [businessLocationData, setBusinessLocationData] = useState([]);
+  const [spgData, setSpgData] = useState([]);
 
   const [skuInfor, setSkuInfor] = useState(false)
   const [skuInfor1, setSkuInfor1] = useState(false)
@@ -84,19 +37,22 @@ const AddorEditProduct = () => {
   const [inputValue1, setInputValue1] = useState('')
   const [inputValue2, setInputValue2] = useState('')
   const [isClicked, setIsClicked] = useState(false)
-  const [isAdSlngPrcGrp, setIsAdSlngPrcGrp] = useState(false)
-  const [isOpeningStock, setIsOpeningStock] = useState(false)
-  const [isAddOther, setIsAddOther] = useState(false)
-  const [isSave, setIsSave] = useState(false)
+  // const [isAdSlngPrcGrp, setIsAdSlngPrcGrp] = useState(false)
+  // const [isOpeningStock, setIsOpeningStock] = useState(false)
+  // const [isAddOther, setIsAddOther] = useState(false)
+  // const [isSave, setIsSave] = useState(false)
+  const [isAddUnit, setIsAddUnit] = useState(false)
 
+  const [seletedValue, setSeletedValue] = useState('')
+  const [open1, setOpen1] = useState(false)
   const navigate = useNavigate()
   const [formData, setFormData] = useState({
     productName: "",
     sku: 0,
     barcodeType: "",
-    unit: "",
-    unitName:"",
-    businessLocation: "",
+    unit: null,
+    unitName: "",
+    businessLocation: [],
     manageStock: false,
     // alertQuantity: 0,
     productDescription: "",
@@ -108,12 +64,17 @@ const AddorEditProduct = () => {
     // servieStaffTime: "",
     // woocommerceSync: false,
     productType: "",
-    variationType: [{ variationTempleateID: null, variation: [{ subSKU: "", value: "", variationImage: "" }] }],
+    variationType: [{ variationTempleateID: null, variation: [{ subSKU: "", value: ""}] }],
     combo: [],
     netTotal: 0,
     dfltSellingPrice: 0,
     margin: 0
   })
+  const handleDelete = (index) => {
+    let newArray = [...formData.businessLocation]
+    newArray.splice(index, 1)
+    setFormData({ ...formData, businessLocation: newArray })
+  }
   // if (index === -1)
   const handleSubChange = (e, index, i) => {
 
@@ -131,7 +92,12 @@ const AddorEditProduct = () => {
     });
     setFormData({ ...formData, variationType: updatedData });
   }
-
+  const [isCliked, setisCliked] = useState(false)
+  const displayData = () => {
+    if (isAddUnit) {
+      return <AddorEditUnits />
+    }
+  }
   const handleChange = (e, index) => {
     const updatedData = formData.variationType.map((item, ind) => {
       if (ind === index) {
@@ -172,7 +138,7 @@ const AddorEditProduct = () => {
       if (ind === index) {
         // Create a new copy of the item with the modified subItem
         return {
-          ...item, variation: [...item.variation, { subSKU: "", value: e.target.value, variationImage: "" }]
+          ...item, variation: [...item.variation, { subSKU: "", value: e.target.value }]
         };
       }
       return item;
@@ -194,10 +160,17 @@ const AddorEditProduct = () => {
     setFormData({ ...formData, combo: updatedData1 });
   }
 
+  const handleFileUpload = (e) => {
+    const file = e.target.files[0]; // Get the selected file
+    setFormData({
+      ...formData,
+      productImage: file, // Set the file object in the state
+    });
+  };
 
   const addRow = () => {
     let newArray = formData.variationType
-    newArray = [...newArray, { variationTempleateID: null, variation: [{ subSKU: "", value: "", variationImage: "" }] }]
+    newArray = [...newArray, { variationTempleateID: null, variation: [{ subSKU: "", value: "" }] }]
     setFormData({ ...formData, variationType: newArray })
   }
   // const handleUpdate = () => {
@@ -207,7 +180,7 @@ const AddorEditProduct = () => {
 
   const handleOpeningStock = () => {
     if (formData.productName.length === 0 ||
-      formData.unit.length === 0 
+      formData.unit.length === 0
     ) {
       setIsserror(true)
       console.log(isserror)
@@ -217,19 +190,20 @@ const AddorEditProduct = () => {
 
   const handleSellingPriceGroup = () => {
     if (formData.productName.length === 0 ||
-      formData.unit.length === 0 
+      formData.unit.length === 0
     ) {
       setIsserror(true)
       console.log(isserror)
-    }    navigate("/home/products/add-selling-prices", { state: { formData } });
+    } navigate("/home/products/add-selling-prices", { state: { formData, spgData  }});
   };
 
   const handleAddOther = () => {
     if (formData.productName.length === 0 ||
-      formData.unit.length === 0 
+      formData.unit.length === 0
     ) {
       setIsserror(true)
-      console.log(isserror)}
+      console.log(isserror)
+    }
     setTimeout(() => {
       navigate("/home/products/create");
     }, 1000);
@@ -237,21 +211,33 @@ const AddorEditProduct = () => {
 
   const handleSave = () => {
     if (formData.productName.length === 0 ||
-      formData.unit.length === 0 
+      formData.unit.length === 0
     ) {
       setIsserror(true)
       console.log(isserror)
-    }else if(_id){
+    } else if (_id) {
       addProductById()
       console.log("Handle update ", formData);
 
-    }else{
+    } else {
       addProduct()
       console.log("Handle save ", formData);
     }
-       
-  };
 
+  };
+  const fetchLocations = async () => {
+
+    try {
+      // const token = localStorage.getItem('token');
+      const response = await axios.get(`http://localhost:8000/admin/business-locations`);
+      // console.log(response.data)
+      setBusinessLocationData(response.data);
+      // console.log(variationData)
+
+    } catch (error) {
+      console.error('Error fetching spg:', error);
+    }
+  };
 
   const fetchUnits = async () => {
 
@@ -302,18 +288,37 @@ const AddorEditProduct = () => {
       console.error('Error fetching Product:', error);
     }
   };
+  const fetchSPG = async () => {
+
+    try {
+        // const token = localStorage.getItem('token');
+        const response = await axios.get(`http://localhost:8000/admin/selling-price-groups`);
+        // console.log(response.data)
+        setSpgData(response.data);
+        // console.log(variationData)
+
+    } catch (error) {
+        console.error('Error fetching spg:', error);
+    }
+};
   useEffect(() => {
     // Make an API call to fetch SPG's records
     if (_id) {
       fetchUnits()
+      fetchLocations()
       fetchProducts()
       fetchProductById();
       fetchVariations()
+      fetchSPG()
+
     }
     else {
       fetchUnits()
+      fetchLocations()
       fetchProducts()
       fetchVariations()
+      fetchSPG()
+
     }
 
 
@@ -323,8 +328,26 @@ const AddorEditProduct = () => {
 
     try {
       // const token = localStorage.getItem('token');
-      // console.log(formData)
-      const response = await axios.post(`http://localhost:8000/admin/products`, formData);
+      const formDataForSubmission = new FormData();
+      formDataForSubmission.append('productName', formData.productName);
+      formDataForSubmission.append('sku', formData.sku);
+      formDataForSubmission.append('barcodeType', formData.barcodeType);
+      formDataForSubmission.append('unit', formData.unit);
+      formDataForSubmission.append('businessLocation', formData.businessLocation);
+      formDataForSubmission.append('manageStock', formData.manageStock);
+      formDataForSubmission.append('productImage', formData.productImage);
+      formDataForSubmission.append('productDescription', formData.productDescription);
+      formDataForSubmission.append('productType', formData.productType);
+      if(formData.variationType[0]?.variationTempleateID !== null){
+        formDataForSubmission.append('variationType', formData.variationType);
+      }
+      formDataForSubmission.append('combo', formData.combo);
+      formDataForSubmission.append('netTotal', formData.netTotal);
+      formDataForSubmission.append('dfltSellingPrice', formData.dfltSellingPrice);
+      formDataForSubmission.append('margin', formData.margin);
+
+      // console.log(formDataForSubmission)
+      const response = await axios.post(`http://localhost:8000/admin/products`, formDataForSubmission);
       // console.log(response)
       if (response.status === 201) {
         navigate("/home/products")
@@ -395,7 +418,7 @@ const AddorEditProduct = () => {
   //     // else {
   //     //   console.log("Error")
   //     // }
-    
+
 
   //   // if (isAdSlngPrcGrp) {
   //   //   navigate("/home/products/add-selling-prices")
@@ -408,10 +431,10 @@ const AddorEditProduct = () => {
   //   // }
   // }}
 
- 
+
   return (
     <div className='w-full flex flex-col bg-gray-100 p-5 min-h-screen'>
-      <h1 className='text-xl  text-start mb-4'>{_id? "Edit":"Add new"}  Product</h1>
+      <h1 className='text-xl  text-start mb-4'>{_id ? "Edit" : "Add new"}  Product</h1>
       <div className='w-full p-5 border-t-[3px] bg-white  border-blue-600 pb-[100px] rounded-xl'>
         <div className='grid grid-cols-1 md:grid-cols-3 gap-4'>
           <div className='flex flex-col'>
@@ -501,7 +524,7 @@ const AddorEditProduct = () => {
           <div className='flex flex-col '>
             <h1 className='flex text-start font-bold'>
               Unit:*
-              <span className='text-red-400'>{isserror && formData.unit.length === 0 ? "Required field" : ""}</span>
+              <span className='text-red-400'>{isserror && formData.unit?.length === 0 ? "Required field" : ""}</span>
 
             </h1>
             <div className='flex flex-col relative'>
@@ -509,14 +532,13 @@ const AddorEditProduct = () => {
                 <input
                   onClick={() => setOpen(!open)}
                   className='bg-white w-full  flex items-center  focus:outline-none justify-between px-2  border-[1px] border-gray-600'
-                  value={(_id ) ? (formData.unit.name +" "+ formData.unit.shortName): formData.unitName}
+                  value={(_id) ? (formData.unit?.name + ' ' + formData.unit?.shortName) : formData.unitName}
                   onChange={(e) => { setFormData({ ...formData, unit: e.target.value }) }}
                   placeholder='Select Value'
                 />
                 <BiChevronDown size={20} className={`${open && "rotate-180"} absolute top-1 right-7`} />
 
-                <FaPlusCircle size={20} style={{ color: "skyblue" }} className='w-8 h-8 p-1  border-[1px] border-gray-600' />
-
+                <FaPlusCircle onClick={() => { setisCliked(true); setIsAddUnit(true); }} size={20} style={{ color: "blue" }} className='w-8 h-8 p-1 cursor-pointer  border-[1px] border-gray-600' />
               </div>
               {open &&
                 <ul
@@ -535,16 +557,16 @@ const AddorEditProduct = () => {
                     <li
                       key={data?._id}
                       className={`p-2 text-sm hover:bg-sky-600 hover:text-white
-                                        ${data?.name?.toLowerCase() === formData.unit?.toLowerCase() &&
-                        "bg-sky-600 text-white"
+                                        ${data?.name?.toLowerCase() === (formData.unitName?.toLowerCase() &&
+                          "bg-sky-600 text-white")
                         }
                                          ${data?.name?.toLowerCase().startsWith(inputValue)
                           ? "block"
                           : "hidden"
                         }`}
                       onClick={() => {
-                        if (data?.name?.toLowerCase() !== formData.unit.toLowerCase()) {
-                          setFormData({ ...formData, unit: data?._id ,unitName: data?.name + ' ' + data?.shortName})
+                        if (data?.name?.toLowerCase() !== formData.unitName?.toLowerCase()) {
+                          setFormData({ ...formData, unit: data?._id, unitName: data?.name + ' ' + data?.shortName })
                           setOpen(false);
                           setInputValue("");
                         }
@@ -560,35 +582,10 @@ const AddorEditProduct = () => {
           </div>
 
         </div>
-        <div className='grid grid-cols-1 md:grid-cols-3 gap-4'>
+
+        <div className='grid grid-cols-1 md:grid-cols-3 gap-4 mt-5'>
 
 
-          <div className='flex flex-col relative mt-7'>
-            <div className='flex'>
-              <input value={formData.manageStock} onChange={(e) => { setFormData({ ...formData, manageStock: e.target.value }) }} type='checkbox' className='w-6 h-6 border-[1px] px-2 py-1 border-gray-400 focus:outline-none' />
-              <div className='flex mx-2'>
-                <h1 className='text-start font-bold'>Manage Stock?</h1>
-                <FaInfoCircle onMouseOver={() => { setSkuInfor1(true) }} onMouseLeave={() => { setSkuInfor1(false) }} size={15} style={{ color: "skyblue" }} className='mx-1 mt-1 cursor-help' />
-                {skuInfor1 &&
-                  <div className='flex flex-col w-[280px] rounded-md border-[2px] border-gray-400 absolute top-8 p-2 z-10 bg-white shadow-md shadow-gray-300'>
-                    <p className='text-start'>Enable or disable stock management for product</p>
-                    <p className='text-start mt-2 text-gray-600'>Stock management should be disable mostly for services. Example Hair Cutting, Repairing etc</p>
-
-                  </div>
-                }
-              </div>
-
-            </div>
-            <h1 className='text-start text-gray-500'>Enable Stock management at product level</h1>
-
-          </div>
-        </div>
-        <div className='grid grid-cols-1 md:grid-cols-3 gap-4'>
-
-          {/* <div className='flex flex-col'>
-            <h1 className='flex text-start font-bold'>Alert Quantity:</h1>
-            <input value={formData.alertQuantity} onChange={(e) => { setFormData({ ...formData, alertQuantity: e.target.value }) }} type='text' placeholder='Alert Quantity' className='border-[1px] px-2 py-1 border-gray-400 focus:outline-none' />
-          </div> */}
           <div className='flex flex-col relative'>
             <div className='flex '>
               <h1 className='text-start font-bold'>Business Location:</h1>
@@ -600,14 +597,86 @@ const AddorEditProduct = () => {
                 </div>
               }
             </div>
-            <input value={formData.businessLocation} onChange={(e) => { setFormData({ ...formData, businessLocation: e.target.value }) }} type='text' placeholder='Business Location' className='border-[1px] px-2 py-1 border-gray-400 focus:outline-none' />
+            {/* <input value={location} onChange={(e) => {  hadleLocation(e.target.value) }} type='text' placeholder='Business Location' className='border-[1px] px-2 py-1 border-gray-400 focus:outline-none' /> */}
+
+            <div className='flex flex-col relative'>
+              <div className='flex'>
+                <input
+                  onClick={() => setOpen1(!open1)}
+                  className='bg-white w-full  flex items-center  focus:outline-none justify-between px-2  py-1 mt-1 border-[1px] border-gray-600'
+                  value={seletedValue}
+                  onChange={(e) => { setSeletedValue(e.target.value) }}
+
+                  placeholder='Select Value'
+                />
+
+
+              </div>
+              {open1 &&
+                <ul
+
+                  className={`bg-white z-10  w-full -right-7 mx-[30px] border-[1px] absolute top-9 border-gray-600  overflow-y-auto ${open1 ? "max-h-60" : "max-h-0"} `}
+                >
+                  <div className="flex items-center px-1 sticky top-0 bg-white">
+                    <input
+                      type="text"
+                      value={inputValue1}
+                      onChange={(e) => setInputValue1(e.target.value.toLowerCase())}
+                      className="placeholder:text-gray-700 w-full p-1 outline-none border-[1px] border-gray-500"
+                    />
+                  </div>
+                  {businessLocationData?.map((data) => (
+                    <li
+                      key={data?._id}
+                      className={`p-2 text-sm text-start hover:bg-sky-600 hover:text-white
+                                                        ${data?.name?.toLowerCase() === seletedValue?.toLowerCase() &&
+                        "bg-sky-600 text-white"
+                        }
+                                                         ${data?.name?.toLowerCase().startsWith(inputValue1)
+                          ? "block"
+                          : "hidden"
+                        }`}
+                      onClick={() => {
+                        if (data?.name?.toLowerCase() !== seletedValue.toLowerCase()) {
+                          let darray = formData.businessLocation
+                          darray = [...darray, data?._id]
+                          // console.log(darray)
+                          setFormData({ ...formData, businessLocation: darray })
+                          setOpen1(false);
+                          setInputValue1("");
+                        }
+                      }}
+                    >
+                      {data?.name}
+                    </li>
+                  ))}
+                </ul>
+              }
+            </div>
+            {formData.businessLocation &&
+
+              <div className='w-full border-[1px] border-gray-400 py-1 px-1'>
+                <ul className='grid grid-cols-2 gap-1'>
+                  {formData.businessLocation.map((val, index) => {
+                    return <li key={index} className='flex items-center py-1 rounded-md px-2 bg-blue-500 text-white text-xs mx-2'>
+                      <p onClick={() => { handleDelete(index) }} className='mx-1 mb-1 cursor-pointer'>X</p>
+                      <h1>{val.name}</h1>
+                    </li>
+
+                  })}
+                </ul>
+              </div>
+            }
           </div>
-          <div className='flex flex-col'>
+
+        </div>
+        <div className='grid grid-cols-1 md:grid-cols-3 gap-4'>
+          <div className='flex flex-col mt-1'>
             <h1 className='flex text-start font-bold'>Weight:</h1>
             <input value={formData.weight} onChange={(e) => { setFormData({ ...formData, weight: e.target.value }) }} type='number' placeholder='Weight' className='border-[1px] px-2 py-1 border-gray-400 focus:outline-none' />
           </div>
         </div>
-        <div className='flex w-full mt-3'>
+        <div className='flex w-full mt-2'>
 
           <div className='flex flex-col w-[67%]'>
             <h1 className='flex text-start font-bold'>Description:</h1>
@@ -621,8 +690,8 @@ const AddorEditProduct = () => {
             <h2 className='text-start font-bold '> Product Image:</h2>
             <div className='flex'>
               {/* value={formData.img_data} onChange={ (e)=>setFormData({...formData,  img_data: e.target.value})} */}
-              <input value={formData.productImage} readOnly type='text' className='px-3  border-[1px] border-gray-700  focus:outline-none w-[60%]' />
-              <input value={formData.productImage} onChange={(e) => { setFormData({ ...formData, productImage: e.target.value }) }} className='px-3   focus:outline-none w-[60%] hidden' type='file' ref={inpuRef} accept='application/pdf,text/csv,application/zip,application/msword,application/vnd.openxmlformats-officedocument.wordprocessingml.document,image/jpeg,image/jpg,image/png' />
+              {/* <input value={formData.productImage} readOnly type='file' className='px-3  border-[1px] border-gray-700  focus:outline-none w-[60%]' /> */}
+              <input onChange={handleFileUpload} className='px-3   focus:outline-none w-[60%] hidden' type='file' ref={inpuRef} accept='application/pdf,text/csv,application/zip,application/msword,application/vnd.openxmlformats-officedocument.wordprocessingml.document,image/jpeg,image/jpg,image/png' />
               <div onClick={() => { inpuRef.current?.click(); }} className='flex cursor-pointersu bg-blue-600 text-white w-[40%] items-center justify-center'>
                 <AiTwotoneFolderOpen size={32} />
                 Browse
@@ -637,28 +706,6 @@ const AddorEditProduct = () => {
 
 
         </div>
-
-        {/* <div className=' flex flex-col mt-5 w-[30%] mx-[1.5%]'>
-          <h2 className='text-start font-bold '> Product Broucher:</h2>
-          <div className='flex'>
-            
-            <input value={formData.productBroucher} readOnly type='text' className='px-3  border-[1px] border-gray-700  focus:outline-none w-[60%]' />
-            <input value={formData.productBroucher} onChange={(e) => { setFormData({ ...formData, productBroucher: e.target.value }) }} className='px-3   focus:outline-none w-[60%] hidden' type='file' ref={inpuRef1} accept='application/pdf,text/csv,application/zip,application/msword,application/vnd.openxmlformats-officedocument.wordprocessingml.document,image/jpeg,image/jpg,image/png' />
-            <div onClick={() => { inpuRef1.current?.click(); }} className='flex cursor-pointersu bg-blue-600 text-white w-[40%] items-center justify-center'>
-              <AiTwotoneFolderOpen size={32} />
-              Browse
-            </div>
-          </div>
-          <p className='text-start  flex '>Max File size: 5MB:
-            <br />
-            Allowed File: .pdf, .csv, .zip, .doc, .docx, .jpeg, .jpg, .png
-          </p>
-
-        </div> */}
-
-
-
-
 
       </div>
       {/* <div className='w-full p-5 border-t-[3px] bg-white  mt-5 border-blue-600 pb-[100px] rounded-xl'>
@@ -860,10 +907,7 @@ const AddorEditProduct = () => {
                                   <input type='text' name='value' value={data.value || ""} onChange={(e) => handleSubChange(e, index, i)} className='border-[1px] w-full border-black focus:outline-none' />
 
                                 </td>
-                                <td>
-                                  <input type='file' name='variationImage' accept="image/*" value={data.variationImage || ''} onChange={(e) => handleSubChange(e, index, i)} className=' w-full px-3  focus:outline-none' />
-
-                                </td>
+                                
                                 <td>
                                   <div onClick={() => { handleRemove(index, i) }} className='flex items-center justify-center bg-red-500 cursor-pointer rounded-sm px-1 py-1  '>
                                     <FaMinus size={15} style={{ color: "white" }} />
@@ -960,7 +1004,7 @@ const AddorEditProduct = () => {
                         <input type='number' name='quantity' required value={value.quantity} onChange={(e) => { handleComboCahange(index, e) }} className='border-[1px] px-2  w-1/3 border-gray-400 focus:outline-none' />
                         <select value={value.unit} name='unit' onChange={(e) => { handleComboCahange(index, e) }} type='text' className='border-[1px] px-2  border-gray-400 focus:outline-none'>
                           {/* {value.unitType.map((val, ind) => { */}
-                            <option value={productsData.value}>{productsData.value}</option>
+                          <option value={productsData.value}>{productsData.value}</option>
 
                           {/* })} */}
                         </select>
@@ -1018,11 +1062,25 @@ const AddorEditProduct = () => {
 
         
         <button onClick={() => {handleClick(); setIsSave(true)}}className='bg-green-500 text-lg px-2 py-2 items-center justify-center flex'>Save</button> */}
-        <button onClick={() => {  handleSellingPriceGroup() }} className='bg-orange-500 text-lg px-2 py-2 items-center justify-center flex'>{_id? "Update":"Save"} & Add Selling-Price-Group Prices</button>
-        <button onClick={() => {  handleOpeningStock() }} className='bg-blue-500 text-lg px-2 py-2 text-white items-center justify-center flex'>{_id? "Update":"Save"} & Add Opening Stock</button>
-        <button onClick={() => {  handleAddOther() }} className='bg-red-500 text-lg px-2 py-2 text-white items-center justify-center flex'>{_id? "Update":"Save"} & Add Another</button>
-        <button onClick={() => {  handleSave() }} className='bg-green-500 text-lg px-2 py-2 items-center justify-center flex'>{_id? "Update":"Save"}</button>
+        <button onClick={() => { handleSellingPriceGroup() }} className='bg-orange-500 text-lg px-2 py-2 items-center justify-center flex'>{_id ? "Update" : "Save"} & Add Selling-Price-Group Prices</button>
+        <button onClick={() => { handleOpeningStock() }} className='bg-blue-500 text-lg px-2 py-2 text-white items-center justify-center flex'>{_id ? "Update" : "Save"} & Add Opening Stock</button>
+        <button onClick={() => { handleAddOther() }} className='bg-red-500 text-lg px-2 py-2 text-white items-center justify-center flex'>{_id ? "Update" : "Save"} & Add Another</button>
+        <button onClick={() => { handleSave() }} className='bg-green-500 text-lg px-2 py-2 items-center justify-center flex'>{_id ? "Update" : "Save"}</button>
       </div>
+      {isCliked &&
+        <div className='absolute top-0 flex flex-col items-center z-10 justify-center right-0 bg-black/70 w-full min-h-screen'>
+          <div className='flex flex-col   w-full md:w-[50%]  mt-10 bg-white px-5 pt-2'>
+            <div className='flex items-end justify-end '>
+              <MdCancel onClick={() => { setisCliked(!isCliked); setIsAddUnit(false) }} size={20} />
+
+            </div>
+            <div className='flex items-start justify-center'>
+              {displayData()}
+            </div>
+          </div>
+        </div>
+
+      }
     </div>
   )
 }

@@ -71,6 +71,7 @@ const AddorEditSell = () => {
     const [usersData, setUsersData] = useState([]);
     // const [unitsData, setUnitsData] = useState([]);
     const [AccountsData, setAccountsData] = useState([]);
+    const [businessLocationData, setBusinessLocationData] = useState([]);
 
 
     const [inputValue, setInputValue] = useState('')
@@ -94,7 +95,7 @@ const AddorEditSell = () => {
         status: "",
         invoiceSchema: "",
         sellingPrice: "",
-        sellingPriceName:"",
+        sellingPriceName: "",
         // tables: "",
         // serviceStaff: "",
         businesLocation: "",
@@ -131,8 +132,8 @@ const AddorEditSell = () => {
         paymentDate: "",
         paymentMethod: "",
         paymentAccount: null,
-        paymentNote: ""
-
+        paymentNote: "",
+        totalSaleAmount:0
     })
     const params = useParams()
     const id = params.id
@@ -190,6 +191,8 @@ const AddorEditSell = () => {
         return total
     }
     const total = findTotal()
+    const totalSaleAmount = parseFloat(total) + parseFloat(formData.shippingCharges)
+    formData.totalSaleAmount = totalSaleAmount
 
     const [isserror, setIsserror] = useState(false)
 
@@ -209,13 +212,28 @@ const AddorEditSell = () => {
             return <AddorEditContact id={0} />
         }
     }
+    const fetchLocations = async () => {
 
+        try {
+            // const token = localStorage.getItem('token');
+            const response = await axios.get(`http://localhost:8000/admin/business-locations`);
+            console.log(response.data)
+            setBusinessLocationData(response.data);
+            // console.log(variationData)
+
+        } catch (error) {
+            console.error('Error fetching spg:', error);
+        }
+    };
     const fetchSaleById = async () => {
 
         try {
             // const token = localStorage.getItem('token');
             const response = await axios.get(`http://localhost:8000/admin/sales/${type}/${id}`);
             console.log(response)
+            response.data.salesDate = new Date(response.data.salesDate).toLocaleDateString("fr-CA")
+            response.data.paymentDate = new Date(response.data.paymentDate).toLocaleDateString("fr-CA")
+
             setFormData(response.data);
         } catch (error) {
             console.error('Error fetching sale:', error);
@@ -347,12 +365,14 @@ const AddorEditSell = () => {
             fetchUsers()
             fetchSaleById();
             fetchAccounts()
+            fetchLocations()
         }
         else {
             fetchSPGs()
             fetchProducts()
             fetchUsers()
             fetchAccounts()
+            fetchLocations()
         }
     }, [])
     const handleClick = (e) => {
@@ -379,7 +399,12 @@ const AddorEditSell = () => {
             <div className='flex my-3 w-full md:w-1/3 relative'>
                 < FaMapMarker size={15} className='w-8 h-8 p-2 border-[1px] border-gray-600' />
                 <select value={formData.businesLocation} onChange={(e) => { setFormData({ ...formData, businesLocation: e.target.value }) }} type="text" className='px-2 py-1 w-full border-[1px] border-gray-600 focus:outline-none'>
-                    <option value={"Eziline Software House (Pvt.) Ltd (BL0001)"}>Eziline Software House (Pvt.) Ltd (BL0001)</option>
+                    <option value={""}>Please Select</option>
+                    {businessLocationData.map((loc) => (
+                        <option key={loc._id} value={loc._id}>
+                            {loc.name}
+                        </option>
+                    ))}
                 </select>
                 <div className='flex items-center border-[1px] border-gray-400'>
                     <FaInfoCircle onMouseOver={() => { setInfo3(true) }} onMouseLeave={() => { setInfo3(false) }} size={15} style={{ color: "skyblue" }} className='mx-2  cursor-help' />
@@ -400,7 +425,7 @@ const AddorEditSell = () => {
                     <input
                         onClick={() => setOpen1(!open1)}
                         className='bg-white w-full  flex items-center  focus:outline-none justify-between px-2  border-[1px] border-gray-600'
-                        value={(id ) ? formData.sellingPrice.name : formData.sellingPriceName}
+                        value={(id) ? formData.sellingPrice.name : formData.sellingPriceName}
                         onChange={(e) => { setFormData({ ...formData, sellingPrice: e.target.value }) }}
                         placeholder='Select Value'
                     />
@@ -727,7 +752,7 @@ const AddorEditSell = () => {
 
                                             </div>
                                             <select name="unit" value={value.unit} onChange={(e) => { handleChange(e, index) }} className='border-[1px] mt-2 w-full px-1 py-1 border-black focus:outline-none'>
-                                                <option value={value.unit}>{(value.unit) ? value.unit.name : ""}</option>
+                                                <option value={value.unit}>{value.unit?.name}</option>
                                             </select>
                                         </div>
                                     </td>
@@ -926,7 +951,7 @@ const AddorEditSell = () => {
                         <input value={formData.deliveredTo} onChange={(e) => { setFormData({ ...formData, deliveredTo: e.target.value }) }} placeholder='Delivered to' type='text' className='px-2 py-[2px] w-full border-[1px] border-gray-600 focus:outline-none' />
 
                     </div>
-                    
+
                 </div>
                 <div className='flex flex-col items-center justify-center'>
                     <div onClick={() => { setAddExpenses(!addExpenses) }} className='flex w-[250px] px-2 py-2 mt-5 items-center justify-center bg-blue-700 text-white'>
@@ -956,7 +981,7 @@ const AddorEditSell = () => {
                 <div className='flex items-end justify-end mt-5'>
                     <div className='flex '>
                         <h1 className='font-bold mx-2'>Total Payable:</h1>
-                        <h1 className=' mx-2'>Rs {total}</h1>
+                        <h1 className=' mx-2'>Rs {parseFloat(total) + parseFloat(formData.shippingCharges)}</h1>
 
                     </div>
                 </div>
@@ -978,7 +1003,8 @@ const AddorEditSell = () => {
                         <div className='flex'>
                             < FaMoneyBillAlt size={15} className='w-8 h-8 p-2 border-[1px] border-gray-600' />
 
-                            <input value={(id)?formData.amount:total} onChange={(e) => { setFormData({ ...formData, amount: e.target.value }) }} type='number' placeholder='Select Date Time' className='px-2 py-[2px] w-full border-[1px] border-gray-600 focus:outline-none' />
+                            <input value={formData.amount} onChange={(e) => { setFormData({ ...formData, amount: e.target.value }) }} type='number' placeholder='Amount' className='px-2 py-[2px] w-full border-[1px] border-gray-600 focus:outline-none' />
+                            <div></div>
                         </div>
 
                     </div>
@@ -1012,7 +1038,7 @@ const AddorEditSell = () => {
                                 <option value={"Checque"}>Checque</option>
                                 <option value={"Bank Transfer"}>Bank Transfer</option>
                                 <option value={"Other"}>Other</option>
-                                <option value={"Easypais"}>Easypais</option>
+                                <option value={"Easypaisa"}>Easypaisa</option>
                                 <option value={"Custom Payment 6"}>Custom Payment 6</option>
 
                             </select>
@@ -1047,17 +1073,17 @@ const AddorEditSell = () => {
                     <textarea rows={4} value={formData.paymentNote} onChange={(e) => { setFormData({ ...formData, paymentNote: e.target.value }) }} className='px-2 py-[2px] w-full border-[1px] border-gray-600 focus:outline-none' />
                 </div>
                 <div className='w-full h-[1px] bg-black my-5'></div>
-                <div className='flex flex-col items-start'>
+                {/* <div className='flex flex-col items-start'>
                     <h1 className='font-bold mx-2'>Change Return:</h1>
                     <h1 className='font-bold text-xl mx-2'>Rs 0.00:</h1>
 
-                </div>
+                </div> */}
                 <div className='w-full h-[1px] bg-black my-5'></div>
 
                 <div className='flex items-end justify-end mt-5'>
                     <div className='flex '>
                         <h1 className='font-bold mx-2'>Payment Due:</h1>
-                        <h1 className=' mx-2'>Rs 0.00</h1>
+                        <h1 className=' mx-2'>Rs {((parseFloat(total) + parseFloat(formData.shippingCharges)) - formData.amount) >= 0 ? (parseFloat(total) + parseFloat(formData.shippingCharges)) - formData.amount : 0}</h1>
 
                     </div>
                 </div>

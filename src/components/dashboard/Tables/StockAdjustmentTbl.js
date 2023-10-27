@@ -229,9 +229,7 @@ const StockAdjustmentTbl = () => {
       return <ViewStock id={showId} />;
     } else if (iseditship === true && editShipId !== 0) {
       return <EditShipping id={editShipId} />;
-    } else if (isShowPayment === true) {
-      return <ViewPayment id={paymentId} />;
-    }
+    } 
   };
 
 
@@ -242,7 +240,7 @@ const StockAdjustmentTbl = () => {
     try {
       // const token = localStorage.getItem('token');
       const response = await axios.get(`http://localhost:8000/admin/stock-adjustment`);
-      // console.log(response)
+      console.log(response)
       setstkData(response.data);
     } catch (error) {
       console.error('Error fetching Stock Tranfers:', error);
@@ -516,7 +514,7 @@ const StockAdjustmentTbl = () => {
                             </li>
                             <li className="w-full">
                               <Link
-                                to={`/home/sells/edit/${value.id}`}
+                                to={`/home/stock-adjustments/edit/${value._id}`}
                                 onClick={() => {
                                   setIsedit(!isedit);
                                   setIsCliked(!isCliked);
@@ -530,8 +528,7 @@ const StockAdjustmentTbl = () => {
                             <li className="w-full">
                               <div
                                 onClick={() => {
-                                  setIsedit(!isedit);
-                                  setIsCliked(!isCliked);
+                                 
                                   handleDeleteAdjustment(value._id)
 
                                 }}
@@ -544,7 +541,7 @@ const StockAdjustmentTbl = () => {
                             <li className="w-full">
                               <div
                                 onClick={() => {
-                                  setEditShipId(value.id);
+                                  setEditShipId(value._id);
                                   setIseditship(!iseditship);
                                   setIsCliked(!isCliked);
                                 }}
@@ -554,38 +551,7 @@ const StockAdjustmentTbl = () => {
                                 <h1 className="text-sm">Edit Shipping</h1>
                               </div>
                             </li>
-                            {/* <li className="mt-5 w-full">
-                              <Link className="flex px-2 py-1 w-full cursor-pointer hover:bg-gray-400 items-center ">
-                                <FaMoneyBillAlt size={15} />
-                                <h1 className="text-sm">Add Payment</h1>
-                              </Link>
-                            </li>
-                            <li className="w-full">
-                              <Link className="flex px-2 py-1 w-full cursor-pointer hover:bg-gray-400 items-center ">
-                                <FaMoneyBillAlt size={15} />
-                                <h1 className="text-sm">View Payment</h1>
-                              </Link>
-                            </li>
-                            <li className="w-full">
-                              <Link className="flex px-2 py-1 w-full cursor-pointer hover:bg-gray-400 items-center ">
-                                <FaUndo size={15} />
-                                <h1 className="text-sm">Purchase Return</h1>
-                              </Link>
-                            </li>
-                            <li className="w-full">
-                              <Link className="flex px-2 py-1 w-full cursor-pointer hover:bg-gray-400 items-center ">
-                                <FaEdit size={15} />
-                                <h1 className="text-sm">Update Status</h1>
-                              </Link>
-                            </li>
-                            <li className="w-full">
-                              <Link className="flex px-2 py-1 w-full cursor-pointer hover:bg-gray-400 items-center ">
-                                <FaEnvelope size={15} />
-                                <h1 className="text-sm">
-                                  Item Received Notification
-                                </h1>
-                              </Link>
-                            </li> */}
+                            
                           </ul>
                         )}
                       </div>
@@ -593,7 +559,7 @@ const StockAdjustmentTbl = () => {
                   )}
                   {col2 && <td className="px-1 py-1 text-sm">{date}</td>}
                   {col3 && <td className="px-1 py-1"> {value.referenceNumber}</td>}
-                  {col4 && <td className="px-1 py-1">{value.businessLocation}</td>}
+                  {col4 && <td className="px-1 py-1">{value.businesLocation?.name}</td>}
                   {col5 && (
                     <td className=" py-1 px-1">{value.adjustmentType}</td>
                   )}

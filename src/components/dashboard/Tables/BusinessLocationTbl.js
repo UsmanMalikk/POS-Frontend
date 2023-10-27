@@ -1,95 +1,31 @@
-import React, { useRef, useState } from 'react'
+import React, { useRef, useState, useEffect } from 'react'
 import { FaEdit, FaPowerOff, FaSearch, FaWrench } from 'react-icons/fa'
 
 import { AiFillCaretDown, AiOutlinePlus } from 'react-icons/ai';
 import { MdCancel } from 'react-icons/md';
 import { Link } from 'react-router-dom';
 import AddorEditBusinessLocation from '../settings/businesLocation/AddorEditBusinessLocation';
+import axios from 'axios';
 
 
 const BusinessLocationTbl = () => {
-    const dummyData = [
-        {
-            id: 1,
-            Username: "username",
-            Name: "User",
-            Role: "Admin",
-            Email: "username@gmail.com"
-        },
-        {
-            id: 2,
-            Username: "username1",
-            Name: "User1",
-            Role: "Admin",
-            Email: "username@gmail.com"
-        },
-        {
-            id: 3,
-            Username: "username2",
-            Name: "User2",
-            Role: "Admin",
-            Email: "username2@gmail.com"
-        },
-        {
-            id: 4,
-            Username: "username3",
-            Name: "User3",
-            Role: "Admin",
-            Email: "username3@gmail.com"
-        },
-        {
-            id: 5,
-            Username: "username4",
-            Name: "User4",
-            Role: "Admin",
-            Email: "username4@gmail.com"
-        },
-        {
-            id: 6,
-            Username: "username5",
-            Name: "User5",
-            Role: "Admin",
-            Email: "username5@gmail.com"
-        },
-        {
-            id: 7,
-            Username: "username6",
-            Name: "User6",
-            Role: "Admin",
-            Email: "username6@gmail.com"
-        }
-    ]
+
     const printRef = useRef()
-
-    
-
-
-
-
+    const [businessLocationData, setBusinessLocationData] = useState([]);
 
     const [crpage, setCrpage] = useState(1)
     const rcrdprpg = 5
     const lasIndex = crpage * rcrdprpg
     const frstIndex = lasIndex - rcrdprpg
-    const record = dummyData.slice(frstIndex, lasIndex)
-    const npage = Math.ceil(dummyData.length / rcrdprpg)
+    const record = businessLocationData.slice(frstIndex, lasIndex)
+    const npage = Math.ceil(businessLocationData.length / rcrdprpg)
     const numbers = [...Array(npage + 1).keys()].slice(1)
 
     const [actionList, setActionList] = useState(Array(record.length).fill(false))
 
     const toggleDropdown = (index) => {
         const dropDownAction = [...actionList];
-        dropDownAction.map((val, i) => {
-            if (i === index) {
-                dropDownAction[i] = !dropDownAction[i];
-
-            } else {
-                dropDownAction[i] = false
-            }
-            return dropDownAction
-        })
-        
-        console.log(dropDownAction)
+        dropDownAction[index] = !dropDownAction[index];
         setActionList(dropDownAction);
     };
 
@@ -121,8 +57,41 @@ const BusinessLocationTbl = () => {
             return <AddorEditBusinessLocation id={iseidtId} />
         }
     }
+    const fetchLocations = async () => {
 
+        try {
+            // const token = localStorage.getItem('token');
+            const response = await axios.get(`http://localhost:8000/admin/business-locations`);
+            console.log(response.data)
+            setBusinessLocationData(response.data);
+            // console.log(variationData)
 
+        } catch (error) {
+            console.error('Error fetching spg:', error);
+        }
+    };
+    const addLocationById = async (spgbyid, bool) => {
+        // console.log(bool)
+        try {
+            // const token = localStorage.getItem('token');
+            // console.log(formData)
+            const response = await axios.put(`http://localhost:8000/admin/selling-price-groups/${spgbyid}`, {
+                isDefault: bool
+            });
+            // console.log(response)
+            if (response.status === 200) {
+                window.location.reload();
+
+                console.log("Success")
+            }
+        } catch (error) {
+            console.error('Error Adding Accounnt:', error);
+        }
+    };
+    useEffect(() => {
+        // Make an API call to fetch user's user records
+        fetchLocations();
+    }, []);
     return (
         <div className='bg-white w-full border-t-[3px] border-blue-600 rounded-md py-5 px-2'>
             <div className='flex justify-between mt-2 text-sm mx-5'>
@@ -160,57 +129,51 @@ const BusinessLocationTbl = () => {
                             <th className=" py-2 title-font border-l-[1px] border-r-[1px] border-white tracking-wider font-medium text-gray-900 text-sm bg-gray-200 relative">State</th>
                             <th className=" py-2 title-font border-l-[1px] border-r-[1px] border-white tracking-wider font-medium text-gray-900 text-sm bg-gray-200 relative">Country</th>
                             <th className=" py-2 title-font border-l-[1px] border-r-[1px] border-white tracking-wider font-medium text-gray-900 text-sm bg-gray-200 relative">Price Group</th>
-                            <th className=" py-2 title-font border-l-[1px] border-r-[1px] border-white tracking-wider font-medium text-gray-900 text-sm bg-gray-200 relative">Invoice Scheme</th>
-                            <th className=" py-2 title-font border-l-[1px] border-r-[1px] border-white tracking-wider font-medium text-gray-900 text-sm bg-gray-200 relative">Invoice Layout for POS</th>
-                            <th className=" py-2 title-font border-l-[1px] border-r-[1px] border-white tracking-wider font-medium text-gray-900 text-sm bg-gray-200 relative">Invoice Layout for Sale</th>
                             <th className=" py-2 title-font border-l-[1px] border-r-[1px] border-white tracking-wider font-medium text-gray-900 text-sm bg-gray-200 relative">Action</th>
                         </tr>
                     </thead>
                     <tbody >
                         {record.map((value, index) => {
                             return <tr key={index} className={`${(index + 1) % 2 === 0 ? "bg-gray-100" : ""}`}>
-                                <td className="px-1 py-1 text-sm">{value.Username}</td>
-                                <td className="px-1 py-1"> {value.Name}</td>
-                                <td className="px-1 py-1 text-sm">{value.Username}</td>
-                                <td className="px-1 py-1"> {value.Name}</td>
-                                <td className="px-1 py-1 text-sm">{value.Username}</td>
-                                <td className="px-1 py-1"> {value.Name}</td>
-                                <td className="px-1 py-1"> {value.Name}</td>
-                                <td className="px-1 py-1 text-sm">{value.Username}</td>
-                                <td className="px-1 py-1"> {value.Name}</td>
-                                <td className="px-1 py-1 text-sm">{value.Username}</td>
-                                <td className="px-1 py-1"> {value.Name}</td>
+                                <td className="px-1 py-1 text-sm">{value.name}</td>
+                                <td className="px-1 py-1"> {value.locationId}</td>
+                                <td className="px-1 py-1 text-sm">{value.landmark}</td>
+                                <td className="px-1 py-1"> {value.city}</td>
+                                <td className="px-1 py-1 text-sm">{value.zipCode}</td>
+                                <td className="px-1 py-1"> {value.state}</td>
+                                <td className="px-1 py-1"> {value.country}</td>
+                                <td className="px-1 py-1 text-sm">{value.defaultSellingPriceGroup?.name}</td>
                                 <td className='py-1 flex '>
-                                        <div onClick={() => { toggleDropdown(index) }} className='flex px-2 py-1 relative cursor-pointer items-center bg-blue-400 rounded-md text-white justify-center'>
-                                            <h1 className='text-sm'>Action</h1>
-                                            <AiFillCaretDown size={10} />
-                                            {actionList[index] &&
-                                                <ul className='absolute top-5 right-10 z-20 flex flex-col items-start w-[130px] bg-white text-gray-600 shadow-xl shadow-gray-400 '>
+                                    <div onClick={() => { toggleDropdown(index) }} className='flex px-2 py-1 relative cursor-pointer items-center bg-blue-400 rounded-md text-white justify-center'>
+                                        <h1 className='text-sm'>Action</h1>
+                                        <AiFillCaretDown size={10} />
+                                        {actionList[index] &&
+                                            <ul className='absolute top-5 right-10 z-20 flex flex-col items-start w-[130px] bg-white text-gray-600 shadow-xl shadow-gray-400 '>
 
-                                                    <li className='w-full'>
-                                                        <div onClick={() => { setIsClicked(true); setIsEdit(true); setIseidtId(value.id) }} className='flex px-2 py-1 w-full cursor-pointer hover:bg-gray-400 items-center '>
-                                                            <FaEdit size={15}  className='mx-1'/>
-                                                            <h1 className='text-sm'>Edit</h1>
-                                                        </div >
-                                                    </li>
-                                                    <li className='w-full'>
-                                                        <Link to={`/home/accounts/accounts/${value.id}`} className='flex px-2 py-1 w-full cursor-pointer hover:bg-gray-400 items-center '>
+                                                <li className='w-full'>
+                                                    <div onClick={() => { setIsClicked(true); setIsEdit(true); setIseidtId(value._id) }} className='flex px-2 py-1 w-full cursor-pointer hover:bg-gray-400 items-center '>
+                                                        <FaEdit size={15} className='mx-1' />
+                                                        <h1 className='text-sm'>Edit</h1>
+                                                    </div >
+                                                </li>
+                                                {/* <li className='w-full'>
+                                                        <Link to={`/home/business-location/settings/${value._id}`} className='flex px-2 py-1 w-full cursor-pointer hover:bg-gray-400 items-center '>
                                                             <FaWrench size={15}  className='mx-1'/>
-                                                            <h1 className='text-sm'>Account Book</h1>
+                                                            <h1 className='text-sm'>Settings</h1>
                                                         </Link>
-                                                    </li>
-                                                    <li className='w-full'>
-                                                        <div onClick={()=>{}} className='flex px-2 py-1 w-full cursor-pointer hover:bg-gray-400 items-center '>
-                                                        <FaPowerOff size={15}  className='mx-1'/>
-                                                            
-                                                            <h1 className='text-sm'>Fund Transfer</h1>
-                                                        </div >
-                                                    </li>
-                                                    
-                                                </ul>
-                                            }
-                                        </div>
-                                    </td>
+                                                    </li> */}
+                                                <li className='w-full'>
+                                                    <div onClick={() => { addLocationById(value._id, (value.isActive) ? false : true) }} className='flex px-2 py-1 w-full cursor-pointer hover:bg-gray-400 items-center '>
+                                                        <FaPowerOff size={15} className='mx-1' />
+
+                                                        <h1 className='text-sm'>{value.isActive ? "Deactivate Location" : "Activate Location"}</h1>
+                                                    </div >
+                                                </li>
+
+                                            </ul>
+                                        }
+                                    </div>
+                                </td>
                             </tr>
                         })}
 

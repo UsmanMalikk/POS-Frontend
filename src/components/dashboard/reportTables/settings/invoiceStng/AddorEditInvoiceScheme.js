@@ -1,98 +1,43 @@
-import React, { useState, useEffect } from 'react'
+import React, { useState } from 'react'
 import { FaCheckCircle, FaInfo, FaInfoCircle } from 'react-icons/fa';
-import axios from 'axios';
-import { useNavigate } from "react-router-dom"
 
 const AddorEditInvoiceScheme = (props) => {
-    const Navigate = useNavigate();
     const [formData, setFormData] = useState({
-        invoiceNumberFormat: "",
-        name: '',
+        Name:'',
         numberingTypes: '',
-        isDefault: false,
-        numberofDigits:"",
-        namePrefix: ""
+        isDefault:false,
+        prefix:"",
 
     })
     const [isserror, setIsserror] = useState(false);
     const handleClick = (e) => {
         if (
-            formData.name.length === 0
+            formData.categoryName.length === 0
         ) {
             setIsserror(true);
             console.log(isserror);
         } else if (props.id) {
-            addInvoiceById()
             console.log("Handle Update", formData);
         } else {
-            addInvoice()
             console.log("Handle Save", formData);
         }
     };
     const [format1, setFormat1] = useState(false)
     const [formt2, setFormt2] = useState(false)
     const [col5, setCol5] = useState(false)
-    const fetchInvoiceById = async () => {
-
-        try {
-            // const token = localStorage.getItem('token');
-            const response = await axios.get(`http://localhost:8000/admin/invoices/${props.id}`);
-            // console.log(response)
-
-            setFormData(response.data);
-        } catch (error) {
-            console.error('Error fetching Invoice:', error);
-        }
-    };
-    useEffect(() => {
-        if (props.id) {
-            fetchInvoiceById()
-
-        }
-
-    }, []);
-    const addInvoice = async () => {
-
-        try {
-            // const token = localStorage.getItem('token');
-            // console.log(formData)
-            const response = await axios.post("http://localhost:8000/admin/invoices", formData);
-            console.log(response)
-            if (response.status === 201) {
-                window.location.reload();
-            }
-            
-        } catch (error) {
-            console.error('Error Adding Invoice:', error);
-        }
-    };
-    const addInvoiceById = async () => {
-
-        try {
-            // const token = localStorage.getItem('token');
-            // console.log(formData)
-            const response = await axios.put(`http://localhost:8000/admin/invoices/${props.id}`, formData);
-            // console.log(response)
-            if (response.status === 200) {
-                window.location.reload();
-            }
-        } catch (error) {
-            console.error('Error Adding Invoice:', error);
-        }
-    };
-
-
     return (
         <div className='flex flex-col w-full bg-white p-3'>
             <h1 className="text-xl text-start font-bold ">{props.id ? "Edit" : "Add"} Invoice Scheme</h1>
 
             <div className='grid mt-5 grid-cols-1 md:grid-cols-3 gap-5'>
-            <div onClick={() => { setFormat1(true); setFormt2(false); setFormData({ ...formData, invoiceNumberFormat: "XXXX" }) }} className='flex h-[100px] bg-gray-300 items-center justify-between'>                    <h1 className='text-xl font-bold'>FORMAT: XXXX</h1>
+                <div onClick={() => { setFormat1(true); setFormt2(false) }} className='flex h-[100px] bg-gray-300 items-center justify-between'>
+                    <h1 className='text-xl font-bold'>FORMAT: XXXX</h1>
                     {format1 &&
                         <FaCheckCircle style={{ color: "red" }} />
                     }
                 </div>
-                <div onClick={() => { setFormat1(false); setFormt2(true); setFormData({ ...formData, invoiceNumberFormat: "2023-XXXX" }) }} className='flex h-[100px] bg-gray-300 items-center justify-between'>                    <h1 className='text-xl font-bold'>FORMAT: 2023-XXXX</h1>
+                <div onClick={() => { setFormat1(false); setFormt2(true) }} className='flex h-[100px] bg-gray-300 items-center justify-between'>
+                    <h1 className='text-xl font-bold'>FORMAT: 2023-XXXX</h1>
                     {formt2 &&
                         <FaCheckCircle style={{ color: "red" }} />
                     }
@@ -110,12 +55,12 @@ const AddorEditInvoiceScheme = (props) => {
                     <h2 className="text-start text-gray-500 flex ">
                         Name:*
                         <h2 className="text-red-400">
-                            {isserror && formData.name.length === 0
+                            {isserror && formData.Name.length === 0
                                 ? "Required field"
                                 : ""}
                         </h2>
                     </h2>
-                    <input type="text" placeholder='Name' value={formData.name} onChange={(e) => { setFormData({ ...formData, name: e.target.value }) }} className="px-2 py-1 w-full border-[1px] border-gray-600 focus:outline-none" />
+                    <input type="text" placeholder='Name' value={formData.Name} onChange={(e) => { setFormData({ ...formData, Name: e.target.value }) }} className="px-2 py-1 w-full border-[1px] border-gray-600 focus:outline-none" />
                 </div>
                 <div className='flex flex-col mt-5'>
                     <h2 className="text-start text-gray-500 flex relative ">
@@ -136,12 +81,12 @@ const AddorEditInvoiceScheme = (props) => {
 
                     </h2>
                     <select type="text" placeholder='Category Code' value={formData.numberingTypes} onChange={(e) => { setFormData({ ...formData, numberingTypes: e.target.value }) }} className="px-2 py-1 w-full border-[1px] border-gray-600 focus:outline-none" >
-                        <option value={"Sequential"}>Sequential</option>
-                        <option value={"Aleatory/randomly"}>Aleatory/randomly</option>
+                        <option value={"0"}>Sequential</option>
+                        <option value={"1"}>Aleatory/randomly</option>
 
                     </select>
                 </div>
-                {formData.invoiceNumberFormat.length > 0 &&
+                {formData.numberingTypes.length > 0 &&
                     <div className='grid grid-cols-1 md:grid-cols-2'>
                         <div className='flex flex-col mt-5 mx-5'>
                             <h2 className="text-start flex ">
@@ -149,10 +94,10 @@ const AddorEditInvoiceScheme = (props) => {
                             </h2>
                             <div className='flex'>
                                 <FaInfo size={15} className='p-1 border-[1px] border-gray-600 w-8 h-9' />
-                                <input type="text" placeholder='Name' value={formData.namePrefix} onChange={(e) => { setFormData({ ...formData, namePrefix: e.target.value }) }} className=" w-full py-1 px-2 border-[1px] border-gray-600 focus:outline-none" />
+                                <input type="text" placeholder='Name' value={formData.prefix} onChange={(e) => { setFormData({ ...formData, prefix: e.target.value }) }} className=" w-full py-1 px-2 border-[1px] border-gray-600 focus:outline-none" />
                             </div>
                         </div>
-                        {/* {formData.numberingTypes === '0' &&
+                        {formData.numberingTypes === '0' &&
                             <div className='flex flex-col mt-5 mx-5'>
                                 <h2 className="text-start flex ">
                                     <b>Start From</b>
@@ -162,7 +107,7 @@ const AddorEditInvoiceScheme = (props) => {
                                     <input type="text" placeholder='Name' value={formData.startFrom} onChange={(e) => { setFormData({ ...formData, startFrom: e.target.value }) }} className=" w-full py-1 px-2 border-[1px] border-gray-600 focus:outline-none" />
                                 </div>
                             </div>
-                        } */}
+                        }
                         <div className='flex flex-col mt-5 mx-5'>
                             <h2 className="text-start flex ">
                                 <b>Number of digits</b>
@@ -184,7 +129,7 @@ const AddorEditInvoiceScheme = (props) => {
                 }
 
             </div>
-            <div className='flex items-end mt-5 justify-end'>
+            <div className='flex items-end justify-end'>
                 <button
                     onClick={handleClick}
                     className="bg-green-500 w-[100px] px-2 py-2 items-center justify-center flex"

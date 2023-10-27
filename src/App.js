@@ -103,9 +103,9 @@ import AddorEditExpenses from './components/dashboard/Expenses/AddorEditExpenses
 import UserProfile from './components/dashboard/Users/UserProfile';
 import ExpenseCategory from './components/dashboard/Expenses/ExpenseCategory';
 import InvoiceStng from './components/dashboard/settings/invoiceStng/InvoiceStng';
-import AddorEditInvoiceLayout from './components/dashboard/settings/invoiceStng/AddorEditInvoiceLayout';
+// import AddorEditInvoiceLayout from './components/dashboard/settings/invoiceStng/AddorEditInvoiceLayout';
 import BusinessLocation from './components/dashboard/settings/businesLocation/BusinessLocation';
-
+import Settings from './components/dashboard/settings/businesLocation/Settings';
 import BalanceSheet from './components/dashboard/PaymentsAccounts/BalanceSheet';
 import TrialBalance from './components/dashboard/PaymentsAccounts/TrialBalance';
 import CashFlow from './components/dashboard/PaymentsAccounts/CashFlow';
@@ -206,6 +206,7 @@ function App() {
             <Route path='/home/discounts' element={<Discount />} />
             <Route path="/home/stock-transfer" element={<ListStockTransfer />} />
             <Route path="/home/stock-transfers/create" element={<AddStockTransfer />} />
+            <Route path="/home/stock-transfers/edit/:id" element={<AddStockTransfer />} />
 
 
             <Route path="/home/expenses" element={<Expenses />} />
@@ -265,6 +266,7 @@ function App() {
             <Route path='/home/reports/stock-report' element={<StockRpt />} />
             <Route path='/home/stock-adjustments' element={<ListStockAdjustment />} />
             <Route path='/home/stock-adjustments/create' element={<AddStockAdjustment />} />
+            <Route path='/home/stock-adjustments/edit/:id' element={<AddStockAdjustment />} />
             <Route path='/home/reports/purchase-payment-report' element={<PurchasePaymentRpt />} />
             <Route path='/home/reports/sell-payment-report' element={<SellPaymentRpt />} />
             <Route path='/home/reports/expense-report' element={<ExpenseRpt />} />
@@ -282,8 +284,10 @@ function App() {
 
             <Route path='/home/reports/activity-log' element={<ActivityLogRpt />} />
             <Route path='/home/invoice-scheme' element={<InvoiceStng />} />
-            <Route path='/home/invoice-layout/create' element={<AddorEditInvoiceLayout />} />
-            <Route path='/home/invoice-layout/:id/edit' element={<AddorEditInvoiceLayout />} />
+            {/* <Route path='/home/invoice-layout/create' element={<AddorEditInvoiceLayout />} /> */}
+            {/* <Route path='/home/invoice-layout/:id/edit' element={<AddorEditInvoiceLayout />} /> */}
+            <Route path='/home/business-location' element={<BusinessLocation />} />
+            <Route path='/home/business-location/settings/:id' element={<Settings />} />
 
           </Route>
           <Route path='/pos/create' element={<AddPos />} />

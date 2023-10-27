@@ -1,63 +1,14 @@
-import React, { useRef, useState } from 'react'
-import { FaEdit, FaInfoCircle, FaSearch } from 'react-icons/fa'
+import React, { useRef, useState, useEffect } from 'react'
+import { FaEdit, FaInfoCircle, FaSearch, FaBan } from 'react-icons/fa'
 
 import { AiOutlinePlus } from 'react-icons/ai';
 import { MdCancel } from 'react-icons/md';
 import AddorEditInvoiceScheme from '../settings/invoiceStng/AddorEditInvoiceScheme';
+import axios from 'axios';
 
 
 const InvoiceSchemaTbl = () => {
-    const dummyData = [
-        {
-            id: 1,
-            Username: "username",
-            Name: "User",
-            Role: "Admin",
-            Email: "username@gmail.com"
-        },
-        {
-            id: 2,
-            Username: "username1",
-            Name: "User1",
-            Role: "Admin",
-            Email: "username@gmail.com"
-        },
-        {
-            id: 3,
-            Username: "username2",
-            Name: "User2",
-            Role: "Admin",
-            Email: "username2@gmail.com"
-        },
-        {
-            id: 4,
-            Username: "username3",
-            Name: "User3",
-            Role: "Admin",
-            Email: "username3@gmail.com"
-        },
-        {
-            id: 5,
-            Username: "username4",
-            Name: "User4",
-            Role: "Admin",
-            Email: "username4@gmail.com"
-        },
-        {
-            id: 6,
-            Username: "username5",
-            Name: "User5",
-            Role: "Admin",
-            Email: "username5@gmail.com"
-        },
-        {
-            id: 7,
-            Username: "username6",
-            Name: "User6",
-            Role: "Admin",
-            Email: "username6@gmail.com"
-        }
-    ]
+
     const printRef = useRef()
 
     const [col1, setCol1] = useState(false)
@@ -70,20 +21,15 @@ const InvoiceSchemaTbl = () => {
 
 
 
+    const [invoicesData, setInvoicesData] = useState([]);
 
     const [crpage, setCrpage] = useState(1)
     const rcrdprpg = 5
     const lasIndex = crpage * rcrdprpg
     const frstIndex = lasIndex - rcrdprpg
-    const record = dummyData.slice(frstIndex, lasIndex)
-    const npage = Math.ceil(dummyData.length / rcrdprpg)
+    const record = invoicesData.slice(frstIndex, lasIndex)
+    const npage = Math.ceil(invoicesData.length / rcrdprpg)
     const numbers = [...Array(npage + 1).keys()].slice(1)
-
-
-
-
-
-
 
     //Function to print
 
@@ -109,7 +55,33 @@ const InvoiceSchemaTbl = () => {
             return <AddorEditInvoiceScheme id={iseidtId} />
         }
     }
+    const fetchInvoices = async () => {
+        // let final = "final"
+        try {
+            // const token = localStorage.getItem('token');
+            const response = await axios.get(`http://localhost:8000/admin/invoices`);
+            console.log(response)
+            setInvoicesData(response.data);
+        } catch (error) {
+            console.error('Error fetching Expenses:', error);
+        }
+    };
+    useEffect(() => {
 
+        fetchInvoices();
+
+
+    }, []);
+    const handleDeleteInvoice = async (expId) => {
+        try {
+            // Make an API call to delete attendance for a specific record
+            const response = await axios.delete(`http://localhost:8000/admin/invoices/${expId}`);
+            console.log('Expense deleted:', response.data); // Handle success response
+            fetchInvoices()
+        } catch (error) {
+            console.error('Error deleting Expense:', error);
+        }
+    };
 
     return (
         <div className='bg-white w-full '>
@@ -178,19 +150,7 @@ const InvoiceSchemaTbl = () => {
                                     }
                                 </div>
                             </th>
-                            <th className=" py-2 title-font  tracking-wider font-medium text-gray-900 text-sm bg-gray-200 relative">
-                                <div className="flex">
-                                    Start From
-                                    <FaInfoCircle onMouseOver={() => { setCol4(true) }} onMouseLeave={() => { setCol4(false) }} size={15} style={{ color: "skyblue" }} className='mx-1 mt-1 cursor-help' />
-                                    {col4 &&
-                                        <div className='flex flex-col w-[280px] rounded-md border-[2px] border-gray-400 absolute top-8 p-2 z-10 bg-white shadow-md shadow-gray-300'>
-                                            <p className='text-start mt-2 text-gray-800'>Start number for invoice numbering.</p>
-                                            <p className='text-start mt-2 text-xs text-gray-500'>You can make it 1 or any other number from which numbering will start.</p>
 
-                                        </div>
-                                    }
-                                </div>
-                            </th>
                             <th className=" py-2 title-font  tracking-wider font-medium text-gray-900 text-sm bg-gray-200 relative">
                                 <div className="flex">
                                     Invoice Count
@@ -227,20 +187,27 @@ const InvoiceSchemaTbl = () => {
                     <tbody >
                         {record.map((value, index) => {
                             return <tr key={index} className={`${(index + 1) % 2 === 0 ? "bg-gray-100" : ""}`}>
-                                <td className="px-1 py-1 text-sm">{value.Username}</td>
-                                <td className="px-1 py-1"> {value.Name}</td>
-                                <td className="px-1 py-1 text-sm">{value.Username}</td>
-                                <td className="px-1 py-1"> {value.Name}</td>
-                                <td className="px-1 py-1 text-sm">{value.Username}</td>
-                                <td className="px-1 py-1"> {value.Name}</td>
+                                <td className="px-1 py-1 text-sm">{value.name}</td>
+                                <td className="px-1 py-1"> {value.namePrefix}</td>
+                                <td className="px-1 py-1 text-sm">{value.numberingTypes}</td>
+                                <td className="px-1 py-1"> {value.currentInvoiceNumber}</td>
+                                <td className="px-1 py-1 text-sm">{value.numberOfDigits}</td>
                                 <td className='py-1 flex justify-center'>
-                                    <button onClick={() => { setIsClicked(true); setIsEdit(true); setIseidtId(value.id) }} className='flex mx-1 p-1 items-center bg-blue-600 text-white justify-center'>
+                                    <button onClick={() => { setIsClicked(true); setIsEdit(true); setIseidtId(value._id) }} className='flex mx-1 p-1 items-center bg-blue-600 text-white justify-center'>
                                         <FaEdit size={15} />
                                         <h1 className='text-sm mx-1'>Edit</h1>
                                     </button>
-                                    <button className='flex mx-3 p-1 items-center bg-red-600 text-white justify-center'>
-                                        <FaEdit size={15} />
-                                        <h1 className='text-sm mx-1'>Delete</h1>
+                                    <button
+                                        className={`flex mx-3 p-1 items-center text-white justify-center ${value.isDefault ? 'bg-green-600' : 'bg-red-600'
+                                            }`}
+                                        onClick={() => {
+                                            if (!value.isDefault) {
+                                                handleDeleteInvoice(value._id);
+                                            }
+                                        }}
+                                        disabled={value.isDefault}
+                                    >
+                                         {value.isDefault ? 'Default' : 'Delete'}
                                     </button>
 
                                 </td>

@@ -1,61 +1,11 @@
-import React, { useRef,useEffect,useState } from "react";
+import React, { useRef, useEffect, useState } from "react";
 import { FaPrint } from "react-icons/fa";
 import { useReactToPrint } from "react-to-print";
 import axios from 'axios';
 
 const ViewStock = (props) => {
   // console.log(props.id)
-  const dummyData = [
-    {
-      id: 1,
-      Username: "username",
-      Name: "User",
-      Role: "Admin",
-      Email: "username@gmail.com",
-    },
-    {
-      id: 2,
-      Username: "username1",
-      Name: "User1",
-      Role: "Admin",
-      Email: "username@gmail.com",
-    },
-    {
-      id: 3,
-      Username: "username2",
-      Name: "User2",
-      Role: "Admin",
-      Email: "username2@gmail.com",
-    },
-    {
-      id: 4,
-      Username: "username3",
-      Name: "User3",
-      Role: "Admin",
-      Email: "username3@gmail.com",
-    },
-    {
-      id: 5,
-      Username: "username4",
-      Name: "User4",
-      Role: "Admin",
-      Email: "username4@gmail.com",
-    },
-    {
-      id: 6,
-      Username: "username5",
-      Name: "User5",
-      Role: "Admin",
-      Email: "username5@gmail.com",
-    },
-    {
-      id: 7,
-      Username: "username6",
-      Name: "User6",
-      Role: "Admin",
-      Email: "username6@gmail.com",
-    },
-  ];
+  
   const [stkData, setstkData] = useState([]);
 
   const printRef = useRef();
@@ -70,17 +20,16 @@ const ViewStock = (props) => {
       // const token = localStorage.getItem('token');
       const response = await axios.get(`http://localhost:8000/admin/stock-adjustment/${props.id}`);
       console.log(response.data)
-      // let date = new Date(response.data.date).toLocaleDateString()
+      response.data.date = new Date(response.data.date).toLocaleDateString()
 
       setstkData(response.data);
     } catch (error) {
-      console.error('Error fetching Stock Tranfers:', error);
+      console.error('Error fetching Stock Ajustments:', error);
     }
   };
   useEffect(() => {
     // Make an API call to fetch user's user records
     fetchSTK();
-    console.log("FDSd")
 
   }, []);
   return (
@@ -94,7 +43,7 @@ const ViewStock = (props) => {
         <div className="h-[1px] bg-gray-300 mt-1 w-full"></div>
         <div className="flex items-end justify-end">
           <p className="font-bold">Date:</p>
-          <p className="mx-1">{stkData.referenceNumber}</p>
+          <p className="mx-1">{stkData.date}</p>
         </div>
         <div className="grid grid-cols-1 mt-4 gap-2 md:grid-cols-3">
           <div className="flex  items-start flex-col ">
@@ -103,17 +52,17 @@ const ViewStock = (props) => {
             </div>
             <div className="flex">
               <h1 className="font-bold">
-              {stkData.businesLocation}      
+                {stkData.businesLocation?.name}
               </h1>
             </div>
             <div className="flex">
-              <h1>PSO pump </h1>
+              <h1>{stkData.businesLocation?.landmark}</h1>
             </div>
             <div className="flex">
-              <h1>Rawalpindi,Punjab,Pakistan</h1>
+              <h1>{stkData.businesLocation?.city},{stkData.businesLocation?.state},{stkData.businesLocation?.country}</h1>
             </div>
             <div className="flex">
-              <h1>Mobile: Through Popultion</h1>
+              <h1>Mobile: {stkData.businesLocation?.mobileNo}</h1>
             </div>
           </div>
           <div className="flex  items-start flex-col ">
@@ -161,19 +110,22 @@ const ViewStock = (props) => {
               </tr>
             </thead>
             <tbody>
-              {stkData.inputData.map((value, index) => {
+              {(stkData.inputData) && stkData.inputData.map((value, index) => {
+                return (
                   <tr
                     key={index}
                     className={`${(index + 1) % 2 === 0 ? "bg-gray-200" : ""}`}
                   >
                     <td className=" py-1 px-1">{index + 1}</td>
-                    <td className=" py-1 px-1">{(value.product) ? value.product.productName :""}</td>
+                    <td className=" py-1 px-1">{value.product?.productName}</td>
                     {/* <td className="px-1 py-1 text-sm">{value.Username}</td> */}
-                    <td className="px-1 py-1"> {value.Name}</td>
-                    <td className="px-1 py-1">{value.Role}</td>
+                    <td className="px-1 py-1"> {value.quantity}</td>
+                    <td className="px-1 py-1">{value.unitPrice}</td>
 
-                    <td className="px-1 py-1"> {value.Name}</td>
+                    <td className="px-1 py-1"> {value.subtotal}</td>
                   </tr>
+                );
+
               })}
             </tbody>
             <tfoot>
@@ -182,44 +134,17 @@ const ViewStock = (props) => {
           </table>
         </div>
 
-        <div className="flex flex-col mt-5 ">
-          <h1 className="font-bold text-start">Activities</h1>
-          <table
-            id="usertbl"
-            className="table-fixed w-full mb-10  whitespace-no-wrap "
-          >
-            <thead>
-              <tr>
-                <th className=" py-2 title-font  tracking-wider font-medium text-gray-900 text-sm bg-gray-200">
-                  Date
-                </th>
-                <th className=" py-2 title-font  tracking-wider font-medium text-gray-900 text-sm bg-gray-200">
-                  Action
-                </th>
-                <th className=" py-2 title-font  tracking-wider font-medium text-gray-900 text-sm bg-gray-200">
-                  By
-                </th>
-                <th className=" py-2 title-font  tracking-wider font-medium text-gray-900 text-sm bg-gray-200">
-                  Note
-                </th>
-              </tr>
-            </thead>
-            <tbody>
-              {dummyData.map((value, index) => {
-                return (
-                  <tr
-                    key={index}
-                    className={`${(index + 1) % 2 === 0 ? "bg-gray-200" : ""}`}
-                  >
-                    <td className="px-1 py-1 text-sm">{value.Username}</td>
-                    <td className="px-1 py-1"> {value.Name}</td>
-                    <td className="px-1 py-1">{value.Role}</td>
-                    <td className=" py-1 px-1">{value.Email}</td>
-                  </tr>
-                );
-              })}
-            </tbody>
-          </table>
+        <div className='flex flex-col mt-11'>
+          <div className='flex justify-between border-t-[1px] border-b-[1px] border-gray-200 py-1'>
+            <h1 className='font-bold'>Total Amount:</h1>
+            <h1 className=''>Rs {stkData.totalAmount}</h1>
+          </div>
+          <div className='flex justify-between border-t-[1px] border-b-[1px] border-gray-200 py-1'>
+            <h1 className='font-bold'>Total Amount Recovered:</h1>
+            <h1 className=''>Rs {stkData.totalamountRecovered}</h1>
+          </div>
+
+
         </div>
       </div>
       <div className="flex items-end justify-end mx-4">

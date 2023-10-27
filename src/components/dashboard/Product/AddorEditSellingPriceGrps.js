@@ -1,34 +1,44 @@
-import React, { useState, useEffect  } from 'react'
+import React, { useState, useEffect } from 'react'
 import { FaInfoCircle } from 'react-icons/fa'
-import axios from 'axios';
 import { useLocation } from 'react-router-dom';
+import { useNavigate } from 'react-router-dom';
+import axios from 'axios';
 
 const AddorEditSellingPriceGrps = () => {
+    const navigate = useNavigate()
+
     const location = useLocation();
     const formDataFromPreviousPage = location.state?.formData;
+    const spgsFromPreviousPage = location.state?.spgData;
+    const [isAddOther, setIsAddOther] = useState(false)
+    const [isOpeningStock, setIsOpeningStock] = useState(false)
+    const [actionList, setActionList] = useState(Array(spgsFromPreviousPage.length).fill(false))
 
-    const [info, setInfo] = useState(false)
-    const [info1, setInfo1] = useState(false)
-    const [info2, setInfo2] = useState(false)
-    const [info3, setInfo3] = useState(false)
-    const [spgData, setSpgData] = useState([]);
+    const toggleDropdown = (data, index) => {
+        const dropDownAction = [...actionList];
+        dropDownAction.map((val, i) => {
+            if (i === index) {
+                dropDownAction[i] = data;
+
+            }
+
+            return dropDownAction
+        })
+
+        setActionList(dropDownAction);
+    };
+    const resultData = spgsFromPreviousPage.map((spg) => {
+        return { spg: spg?._id, amount: 0, type: "" }
+    })
 
     const [formData, setFormData] = useState({
-        productName: "Fetch From Data Base",
-        productId: '',
-        
-        grpPrices: [{
-            dfltSlngPrice: "1200.00",
-            retailAmount: "",
-            retailType: "Fixed",
-            salemanAmount: "",
-            salemanType: "Fixed",
-            minimumPriceAmount: "",
-            minimumPriceType: "Fixed",
-            salePointsAmount: "",
-            salePointsType: "Fixed"
-        }]
+        ...formDataFromPreviousPage,
+
+        grpPrices: resultData
     })
+
+
+
     const handleChange = (e, index) => {
         const updatedData = formData.grpPrices.map((item, ind) => {
             if (ind === index) {
@@ -42,27 +52,100 @@ const AddorEditSellingPriceGrps = () => {
         setFormData({ ...formData, grpPrices: updatedData });
     }
 
-    const handleSaveorEdit = () => {
-
-        console.log("Handle Save", formData)
-
+    const handleOpeningStock = () => {
+        navigate("/home/opening-stock/add", { state: { formData } });
     }
-    const fetchSPG = async () => {
+    const handleAddOther = () => {
+
+        setTimeout(() => {
+            navigate("/home/products/create");
+        }, 1000);
+    };
+
+    const handleSave = () => {
+        if (formDataFromPreviousPage._id) {
+            addProductById()
+            console.log("Handle update ", formData);
+
+        } else {
+            addProduct()
+            console.log("Handle save ", formData);
+        }
+
+    };
+    const fetchProductById = async () => {
 
         try {
             // const token = localStorage.getItem('token');
-            const response = await axios.get(`http://localhost:8000/admin/selling-price-groups`);
-            console.log(response.data)
-            setSpgData(response.data);
-            // console.log(variationData)
+            const response = await axios.get(`http://localhost:8000/admin/products/${formDataFromPreviousPage._id}`);
+            console.log(response)
+
+            setFormData(response.data);
 
         } catch (error) {
-            console.error('Error fetching spg:', error);
+            console.error('Error fetching Product:', error);
+        }
+    };
+    const addProduct = async () => {
+
+        try {
+            // const token = localStorage.getItem('token');
+            // console.log(formData)
+            const formDataForSubmission = new FormData();
+            formDataForSubmission.append('productName', formDataFromPreviousPage.productName);
+            formDataForSubmission.append('sku', formDataFromPreviousPage.sku);
+            formDataForSubmission.append('barcodeType', formDataFromPreviousPage.barcodeType);
+            formDataForSubmission.append('unit', formDataFromPreviousPage.unit);
+            formDataForSubmission.append('businessLocation', formDataFromPreviousPage.businessLocation);
+            formDataForSubmission.append('manageStock', formDataFromPreviousPage.manageStock);
+            formDataForSubmission.append('productImage', formDataFromPreviousPage.productImage);
+            formDataForSubmission.append('productDescription', formDataFromPreviousPage.productDescription);
+            formDataForSubmission.append('productType', formDataFromPreviousPage.productType);
+            if (formDataFromPreviousPage.variationType[0]?.variationTempleateID !== null) {
+                formDataForSubmission.append('variationType', formDataFromPreviousPage.variationType);
+            }
+            formDataForSubmission.append('combo', formDataFromPreviousPage.combo);
+            formDataForSubmission.append('netTotal', formDataFromPreviousPage.netTotal);
+            formDataForSubmission.append('dfltSellingPrice', formDataFromPreviousPage.dfltSellingPrice);
+            formDataForSubmission.append('margin', formDataFromPreviousPage.margin);
+
+
+            formData.grpPrices.forEach((grpPrice, index) => {
+                formDataForSubmission.append(`grpPrices[${index}][spg]`, grpPrice.spg);
+                formDataForSubmission.append(`grpPrices[${index}][amount]`, grpPrice.amount);
+                formDataForSubmission.append(`grpPrices[${index}][type]`, grpPrice.type);
+            });
+            const response = await axios.post(`http://localhost:8000/admin/products`, formDataForSubmission);
+            console.log(response)
+            if (response.status === 201) {
+                navigate("/home/products");
+            }
+        } catch (error) {
+            console.error('Error Adding Product:', error);
+        }
+    };
+    const addProductById = async () => {
+
+        try {
+            // const token = localStorage.getItem('token');
+            // console.log(formData)
+            const response = await axios.put(`http://localhost:8000/admin/products/${formDataFromPreviousPage._id}`, formData);
+            //   console.log(response)
+
+            if (response.status === 200) {
+                navigate("/home/products")
+                console.log("Success")
+            }
+        } catch (error) {
+            console.error('Error Adding Product:', error);
         }
     };
     useEffect(() => {
-        // Make an API call to fetch user's user records
-        fetchSPG();
+
+        if (formDataFromPreviousPage._id) {
+            fetchProductById()
+
+        }
     }, []);
     return (
         <div className='flex flex-col w-full px-5 bg-white '>
@@ -72,8 +155,8 @@ const AddorEditSellingPriceGrps = () => {
             <div className='flex flex-col p-5 bg-gray-100'>
                 <div className='flex'>
                     <h1 className=' font-semibold text-start '>Product:</h1>
-                    <h1 className=' font-semibold text-start mx-1 '>{formData.productName}</h1>
-                    <h1 className=' font-semibold text-start mx-1'>({formData.productId})</h1>
+                    <h1 className=' font-semibold text-start mx-1 '>{formDataFromPreviousPage.productName}</h1>
+                    {/* <h1 className=' font-semibold text-start mx-1'>({formDataFromPreviousPage.sku})</h1> */}
 
                 </div>
                 <table className="table-auto mt-5  w-full  items-start">
@@ -84,124 +167,51 @@ const AddorEditSellingPriceGrps = () => {
                                     <h1 className='text-start font-bold text-white'>Default Selling Price (Inc. Tax)</h1>
                                 </div>
                             </th>
-                            <th>
-                                <div className='flex px-2 py-1 border-[1px] border-white  relative  Fixed'>
+                            {spgsFromPreviousPage.map((val, index) => {
+                                return <th key={index}>
+                                    <div className='flex px-2 py-1 border-[1px] border-white  relative  Fixed'>
 
-                                    <h1 className='text-start font-bold text-white'>retail</h1>
-                                    <FaInfoCircle onMouseOver={() => { setInfo(true) }} onMouseLeave={() => { setInfo(false) }} size={15} style={{ color: "skyblue" }} className='mx-1 mt-1 cursor-help' />
-                                    {info &&
-                                        <div className='flex flex-col w-[180px] rounded-md  border-[2px] border-gray-400 absolute top-8 p-2 20 bg-white shadow-md shadow-gray-300'>
-                                            <p className='text-start'>
-                                                if <span className='font-bold'>Fixedd</span>
-                                                - the entered price will be used. if
-                                                <span className='font-bold'>Percentage</span> - price will be that much % of default selling price </p>
+                                        <h1 className='text-start font-bold text-white'>{val.name}</h1>
+                                        <FaInfoCircle onMouseOver={() => { toggleDropdown(true, index) }} onMouseLeave={() => { toggleDropdown(false, index) }} size={15} style={{ color: "skyblue" }} className='mx-1 mt-1 cursor-help' />
+                                        {actionList[index] &&
+                                            <div className='flex text-gray-500 flex-col w-[180px] rounded-md  border-[2px] border-gray-400 absolute top-8 p-2 20 bg-white shadow-md shadow-gray-300'>
+                                                <p className='text-start'>
+                                                    if <span className='font-bold'>Fixedd</span>
+                                                    - the entered price will be used. if
+                                                    <span className='font-bold'>Percentage</span> - price will be that much % of default selling price </p>
 
-                                        </div>
-                                    }
-                                </div>
-                            </th>
-                            <th>
-                                <div className='flex px-2 py-1 border-[1px] border-white  relative  '>
-
-                                    <h1 className='text-start font-bold text-white'>Saleman</h1>
-                                    <FaInfoCircle onMouseOver={() => { setInfo1(true) }} onMouseLeave={() => { setInfo1(false) }} size={15} style={{ color: "skyblue" }} className='mx-1 mt-1 cursor-help' />
-                                    {info1 &&
-                                        <div className='flex flex-col w-[180px] rounded-md  border-[2px] border-gray-400 absolute top-8 p-2 20 bg-white shadow-md shadow-gray-300'>
-                                            <p className='text-start'>
-                                                if <span className='font-bold'>Fixedd</span>
-                                                - the entered price will be used. if
-                                                <span className='font-bold'>Percentage</span> - price will be that much % of default selling price </p>
-
-                                        </div>
-                                    }
-                                </div>
-                            </th>
-                            <th>
-                                <div className='flex px-2 py-1 border-[1px] border-white  relative  '>
-
-                                    <h1 className='text-start font-bold text-white'>Minimum Price</h1>
-                                    <FaInfoCircle onMouseOver={() => { setInfo2(true) }} onMouseLeave={() => { setInfo2(false) }} size={15} style={{ color: "skyblue" }} className='mx-1 mt-1 cursor-help' />
-                                    {info2 &&
-                                        <div className='flex flex-col w-[180px] rounded-md  border-[2px] border-gray-400 absolute top-8 p-2 20 bg-white shadow-md shadow-gray-300'>
-                                            <p className='text-start'>
-                                                if <span className='font-bold'>Fixedd</span>
-                                                - the entered price will be used. if
-                                                <span className='font-bold'>Percentage</span> - price will be that much % of default selling price </p>
-
-                                        </div>
-                                    }
-                                </div>
-                            </th>
-                            <th>
-                                <div className='flex px-2 py-1 border-[1px] border-white  relative  '>
-
-                                    <h1 className='text-start font-bold text-white'>Sale Points</h1>
-                                    <FaInfoCircle onMouseOver={() => { setInfo3(true) }} onMouseLeave={() => { setInfo3(false) }} size={15} style={{ color: "skyblue" }} className='mx-1 mt-1 cursor-help' />
-                                    {info3 &&
-                                        <div className='flex flex-col w-[180px] rounded-md  border-[2px] border-gray-400 absolute top-8 p-2 20 bg-white shadow-md shadow-gray-300'>
-                                            <p className='text-start'>
-                                                if <span className='font-bold'>Fixedd</span>
-                                                - the entered price will be used. if
-                                                <span className='font-bold'>Percentage</span> - price will be that much % of default selling price </p>
-
-                                        </div>
-                                    }
-                                </div>
-
-                            </th>
+                                            </div>
+                                        }
+                                    </div>
+                                </th>
+                            })}
                         </tr>
                     </thead>
                     <tbody>
-                        {formData.grpPrices.map((val,index)=>{
-                            return  <tr key={index}>
+                        <tr >
                             <td>
-                                <h1>{val.dfltSlngPrice}</h1>
+                                <h1>{formDataFromPreviousPage.dfltSellingPrice}</h1>
                             </td>
-                            <td >
-                                <div className='flex flex-col'>
-                                    <input type='number' name='retailAmount' value={val.retailAmount} onChange={(e) => { handleChange(e,index)  }} className='border-[1px] px-2 py-1 border-gray-400 focus:outline-none' />
-                                    <select name='retailType' value={formData.retailType} onChange={(e) => { handleChange(e,index)  }} className='border-[1px] px-2 py-1 border-gray-400 focus:outline-none' >
-                                        <option value={"Fixed"}>Fixed</option>
-                                        <option value={"Percentage"}>Percentage</option>
+                            {formData.grpPrices.map((val, index) => {
+                                {/* console.log(formData.grpPrices) */ }
+                                return <td key={index}>
+                                    <div className='flex flex-col'>
+                                        <input type='number' name={"amount"} value={val.amount} onChange={(e) => { handleChange(e, index) }} className='border-[1px] px-2 py-1 border-gray-400 focus:outline-none' />
+                                        <select name={`type`} value={val.type} onChange={(e) => { handleChange(e, index) }} className='border-[1px] px-2 py-1 border-gray-400 focus:outline-none' >
+                                            <option value={"Fixed"}>Fixed</option>
+                                            <option value={"Percentage"}>Percentage</option>
 
-                                    </select>
-                                </div>
+                                        </select>
+                                    </div>
 
 
-                            </td>
-                            <td >
-                                <div className='flex flex-col'>
-                                    <input type='number' name='salemanAmount' value={formData.salemanAmount} onChange={(e) => { handleChange(e,index)  }} className='border-[1px] px-2 py-1 border-gray-400 focus:outline-none' />
-                                    <select name='salemanType' value={formData.salemanType} onChange={(e) => { handleChange(e,index)  }} className='border-[1px] px-2 py-1 border-gray-400 focus:outline-none' >
-                                        <option value={"Fixed"}>Fixed</option>
-                                        <option value={"Percentage"}>Percentage</option>
+                                </td>
+                            })}
 
-                                    </select>
-                                </div>
-                            </td>
-                            <td >
-                                <div className='flex flex-col'>
-                                    <input type='number' name='minimumPriceAmount' value={formData.minimumPriceAmount}  className='border-[1px] px-2 py-1 border-gray-400 focus:outline-none' />
-                                    <select name='minimumPriceType' value={formData.minimumPriceType} onChange={(e) => { handleChange(e,index)  }} className='border-[1px] px-2 py-1 border-gray-400 focus:outline-none' >
-                                        <option value={"Fixed"}>Fixed</option>
-                                        <option value={"Percentage"}>Percentage</option>
 
-                                    </select>
-                                </div>
-                            </td>
-                            <td >
-                                <div className='flex flex-col'>
-                                    <input name='salePointsAmount' type='number' value={formData.salePointsAmount} onChange={(e) => { handleChange(e,index)  }} className='border-[1px] px-2 py-1 border-gray-400 focus:outline-none' />
-                                    <select name='salePointsType' value={formData.salePointsType} onChange={(e) => { handleChange(e,index)  }} className='border-[1px] px-2 py-1 border-gray-400 focus:outline-none' >
-                                        <option value={"Fixed"}>Fixed</option>
-                                        <option value={"Percentage"}>Percentage</option>
-
-                                    </select>
-                                </div>
-                            </td>
                         </tr>
-                        })}
-                       
+
+
 
 
                     </tbody>
@@ -212,11 +222,11 @@ const AddorEditSellingPriceGrps = () => {
 
 
             <div className='justify-end items-end flex py-5'>
-                <button onClick={handleSaveorEdit} className='bg-green-400 text-white'>
-                    <h1 className=' font-bold text-start px-3 py-2'>Save</h1>
-
-                </button>
+                <button onClick={() => { handleOpeningStock() }} className='bg-blue-500  px-2 py-2 text-white items-center justify-center flex'>Save & Add Opening Stock</button>
+                <button onClick={() => { handleAddOther() }} className='bg-red-500  px-2 py-2 text-white items-center justify-center flex'>Save & Add Another</button>
+                <button onClick={() => { handleSave() }} className='bg-green-400 text-white'><h1 className='  text-start px-3 py-2'>Save</h1></button>
             </div>
+
         </div>
     )
 }

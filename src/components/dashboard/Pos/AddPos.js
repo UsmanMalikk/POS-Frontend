@@ -791,14 +791,7 @@ const AddPos = () => {
                 }
               </div>
 
-              <div className='flex mt-4'>
-                < FaTable size={15} className='w-8 h-8 p-2 border-[1px] border-gray-600' />
-                <select value={formData.tables} onChange={(e) => { setFormData({ ...formData, tables: e.target.value }) }} type='text' className='px-2 w-full py-[3px]  border-[1px] border-gray-600 focus:outline-none'>
-                  <option value={""}>Select Table</option>
-                  <option value={"woo"}>woo</option>
-                  <option value={"pepsi"}>pepsi</option>
-                </select>
-              </div>
+              
             </div>
             <div className='flex flex-col mx-2 mt-6 w-2/3'>
               <div className='flex w-3/4 items-center  '>
@@ -847,13 +840,7 @@ const AddPos = () => {
               <div className='flex mt-6'>
 
               </div>
-              <div className='flex items-end w-2/3 mt-10'>
-                < FaUserSecret size={15} className='w-8 h-8 p-2 border-[1px] border-gray-600' />
-                <select value={formData.serviceStaff} onChange={(e) => { setFormData({ ...formData, serviceStaff: e.target.value }) }} type='text' className='px-2 w-full py-[3px]  border-[1px] border-gray-600 focus:outline-none'>
-                  <option value={""}>Select Service Staff</option>
-
-                </select>
-              </div>
+              
             </div>
           </div>
 

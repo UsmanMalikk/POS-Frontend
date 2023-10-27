@@ -1,58 +1,15 @@
-import React, { useState } from 'react'
+import React, { useState, useEffect } from 'react'
 import { FaInfoCircle } from 'react-icons/fa';
+import axios from 'axios';
+import { useNavigate } from 'react-router-dom';
 
-const AddorEditBusinessLocation = ({id}) => {
-    const dummyData = [
-        {
-            id: 1,
-            Username: "username",
-            Name: "User",
-            Role: "Admin",
-            Email: "username@gmail.com"
-        },
-        {
-            id: 2,
-            Username: "username1",
-            Name: "User1",
-            Role: "Admin",
-            Email: "username@gmail.com"
-        },
-        {
-            id: 3,
-            Username: "username2",
-            Name: "User2",
-            Role: "Admin",
-            Email: "username2@gmail.com"
-        },
-        {
-            id: 4,
-            Username: "username3",
-            Name: "User3",
-            Role: "Admin",
-            Email: "username3@gmail.com"
-        },
-        {
-            id: 5,
-            Username: "username4",
-            Name: "User4",
-            Role: "Admin",
-            Email: "username4@gmail.com"
-        },
-        {
-            id: 6,
-            Username: "username5",
-            Name: "User5",
-            Role: "Admin",
-            Email: "username5@gmail.com"
-        },
-        {
-            id: 7,
-            Username: "username6",
-            Name: "User6",
-            Role: "Admin",
-            Email: "username6@gmail.com"
-        }
-    ]
+const AddorEditBusinessLocation = ({ id }) => {
+    const navigate = useNavigate()
+
+
+    const [AccountsData, setAccountsData] = useState([]);
+    const [spgData, setSpgData] = useState([]);
+
     const [col1, setCol1] = useState(false)
     const [col2, setCol2] = useState(false)
     const [col3, setCol3] = useState(false)
@@ -69,38 +26,46 @@ const AddorEditBusinessLocation = ({id}) => {
     const [open1, setOpen1] = useState(false)
     const [inputValue1, setInputValue1] = useState('')
     const [seletedValue, setSeletedValue] = useState('')
-    
+
     const [formData, setFormData] = useState({
+
         name: '',
-        city:'',
-        zipCode:"",
-        state:"",
-        country:"",
-        featureProducts: [],
-        paymentOption:[
-            { paymentMethod:"Cash", is_enabled:false, acount:""},
-            { paymentMethod:"Card", is_enabled:false, acount:"" },
-            { paymentMethod:"Cheque", is_enabled:false, acount:"" },
-            { paymentMethod:"Bank Transfer", is_enabled:false, acount:"" },
-            { paymentMethod:"Other", is_enabled:false, acount:"" },
-            { paymentMethod:"Easy Paisa", is_enabled:false, acount:"" },
-            { paymentMethod:"Custom Payment 2", is_enabled:false, acount:"" },
-            { paymentMethod:"Custom Payment 3", is_enabled:false, acount:"" },
-            { paymentMethod:"Custom Payment 4", is_enabled:false, acount:"" },
-            { paymentMethod:"Custom Payment 5", is_enabled:false, acount:"" },
-            { paymentMethod:"Custom Payment 6", is_enabled:false, acount:"" },
-            { paymentMethod:"Custom Payment 7", is_enabled:false, acount:"" },
-            ]
+        city: '',
+        locationId: null,
+        zipCode: "",
+        state: "",
+        country: "",
+        landmark: "",
+        mobileNo: null,
+        altContactNo: null,
+        email: "",
+        website: "",
+        defaultSellingPriceGroup: null,
+        // featureProducts: [],
+        paymentOption: [
+            { paymentMethod: "Cash", is_enabled: false, acount: null },
+            { paymentMethod: "Card", is_enabled: false, acount: null },
+            { paymentMethod: "Cheque", is_enabled: false, acount: null },
+            { paymentMethod: "Bank Transfer", is_enabled: false, acount: null },
+            { paymentMethod: "Other", is_enabled: false, acount: null },
+            { paymentMethod: "Easy Paisa", is_enabled: false, acount: null },
+            { paymentMethod: "Custom Payment 2", is_enabled: false, acount: null },
+            { paymentMethod: "Custom Payment 3", is_enabled: false, acount: null },
+            { paymentMethod: "Custom Payment 4", is_enabled: false, acount: null },
+            { paymentMethod: "Custom Payment 5", is_enabled: false, acount: null },
+            { paymentMethod: "Custom Payment 6", is_enabled: false, acount: null },
+            { paymentMethod: "Custom Payment 7", is_enabled: false, acount: null },
+        ]
 
 
     })
     const handleChange = (e, index) => {
-        
+
         const updatedData = formData.paymentOption.map((item, ind) => {
             if (ind === index) {
                 // Create a new copy of the item with the modified subItem
                 return {
-                    ...item, [e.target.name]: e.target.name === "account" ? e.target.value : e.target.checked
+                    ...item, [e.target.name]: e.target.name === "acount" ? e.target.value : e.target.checked
                 };
             }
             return item;
@@ -113,20 +78,99 @@ const AddorEditBusinessLocation = ({id}) => {
             formData.name.length === 0 ||
             formData.city.length === 0 ||
             formData.zipCode.length === 0 ||
-            formData.country.length ===  0 ||
-            formData.state.length === 0 
+            formData.country.length === 0 ||
+            formData.state.length === 0
         ) {
             setIsserror(true);
             console.log(isserror);
         } else if (id) {
-           
+            addLocationById()
             console.log("Handle Update", formData);
         } else {
+            addLocation()
             console.log("Handle Save", formData);
         }
     };
+    const fetchAccounts = async () => {
 
+        try {
+            // const token = localStorage.getItem('token');
+            const response = await axios.get(`http://localhost:8000/admin/add-accounts`);
 
+            // console.log(response)
+            setAccountsData(response.data);
+        } catch (error) {
+            console.error('Error fetching Accounnt:', error);
+        }
+    };
+    const fetchLocationById = async () => {
+
+        try {
+            // const token = localStorage.getItem('token');
+            const response = await axios.get("http://localhost:8000/admin/business-locations");
+            // console.log(response)
+            setFormData(response.data);
+        } catch (error) {
+            console.error('Error fetching Location:', error);
+        }
+    };
+    const fetchSPG = async () => {
+
+        try {
+            // const token = localStorage.getItem('token');
+            const response = await axios.get(`http://localhost:8000/admin/selling-price-groups`);
+            // console.log(response.data)
+            setSpgData(response.data);
+            // console.log(variationData)
+
+        } catch (error) {
+            console.error('Error fetching spg:', error);
+        }
+    };
+    const addLocation = async () => {
+
+        try {
+            // const token = localStorage.getItem('token');
+            // console.log(formData)
+            const response = await axios.post(`http://localhost:8000/admin/business-locations`, formData);
+            console.log(response)
+            if (response.status === 201) {
+                navigate("/home/business-location")
+                console.log("Success")
+            }
+        } catch (error) {
+            console.error('Error Adding Accounnt:', error);
+        }
+    };
+
+    const addLocationById = async () => {
+
+        try {
+            // const token = localStorage.getItem('token');
+            // console.log(formData)
+            const response = await axios.put(`http://localhost:8000/admin/business-locations/${id}`, formData);
+            console.log(response)
+            if (response.status === 200) {
+                navigate("/home/business-location")
+
+                console.log("Success")
+            }
+        } catch (error) {
+            console.error('Error Adding Accounnt:', error);
+        }
+    };
+    useEffect(() => {
+        // Make an API call to fetch SPG's records
+        if (id) {
+            fetchAccounts()
+            fetchLocationById()
+            fetchSPG()
+        }
+        else {
+            fetchAccounts()
+            fetchSPG()
+        }
+    }, [])
     return (
         <div className='flex flex-col w-full bg-white p-3'>
             <h1 className="text-2xl text-start font-semibold ">{id ? "Edit" : "Add a new"} business location</h1>
@@ -143,7 +187,7 @@ const AddorEditBusinessLocation = ({id}) => {
                 <input type="text" placeholder='Name' value={formData.name} onChange={(e) => { setFormData({ ...formData, name: e.target.value }) }} className="px-2 py-1 w-full border-[1px] border-gray-600 focus:outline-none" />
             </div>
 
-           
+
             <div className='grid grid-cols-1 md:grid-cols-2 gap-5'>
                 <div className='flex flex-col mt-5'>
                     <h2 className="text-start text-gray-500 flex ">
@@ -224,8 +268,8 @@ const AddorEditBusinessLocation = ({id}) => {
                         Mobile:
                     </h2>
                     <input type="text" placeholder='Mobile'
-                        value={formData.mobile}
-                        onChange={(e) => { setFormData({ ...formData, mobile: e.target.value }) }}
+                        value={formData.mobileNo}
+                        onChange={(e) => { setFormData({ ...formData, mobileNo: e.target.value }) }}
                         className="px-2 py-1 w-full border-[1px] border-gray-600 focus:outline-none" />
                 </div>
                 <div className='flex flex-col mt-5'>
@@ -242,8 +286,8 @@ const AddorEditBusinessLocation = ({id}) => {
                         Alternate Contact Number:
                     </h2>
                     <input type="text" placeholder='Alternate Contact Number'
-                        value={formData.alternateContactNumber}
-                        onChange={(e) => { setFormData({ ...formData, alternateContactNumber: e.target.value }) }}
+                        value={formData.altContactNo}
+                        onChange={(e) => { setFormData({ ...formData, altContactNo: e.target.value }) }}
                         className="px-2 py-1 w-full border-[1px] border-gray-600 focus:outline-none" />
                 </div>
                 <div className='flex flex-col mt-5'>
@@ -256,90 +300,6 @@ const AddorEditBusinessLocation = ({id}) => {
                         className="px-2 py-1 w-full border-[1px] border-gray-600 focus:outline-none" />
                 </div>
 
-
-                <div className='flex flex-col mt-5'>
-                    <h2 className="text-start text-gray-500 flex relative">
-                        Invoice Scheme For POS:
-                        <FaInfoCircle onMouseOver={() => { setCol1(true) }} onMouseLeave={() => { setCol1(false) }} size={15} style={{ color: "skyblue" }} className='mx-1 mt-1 cursor-help' />
-                        {col1 &&
-                            <div className='flex flex-col w-[280px] rounded-md border-[2px] border-gray-400 absolute top-8 p-2 z-10 bg-white shadow-md shadow-gray-300'>
-                                <p className='text-start mt-2 text-gray-800'>Invoice scheme means invoice numbering formta. Select the scheme to be used for this business location.</p>
-                                <p className='text-start mt-2 text-xs text-gray-500'>You can add new Invoice Scheme in Invoice Settings </p>
-
-                            </div>
-                        }
-                        
-                    </h2>
-                    <select type="text" placeholder='Alternate Contact Number'
-                        value={formData.invoiceSchemeForPOS}
-                        onChange={(e) => { setFormData({ ...formData, invoiceSchemeForPOS: e.target.value }) }}
-                        className="px-2 py-1 w-full border-[1px] border-gray-600 focus:outline-none" >
-                        <option value={""}>Please Select</option>
-                        <option value={"Default"}>Default</option>
-
-                    </select>
-                </div>
-                <div className='flex flex-col mt-5'>
-                    <h2 className="text-start text-gray-500 flex relative">
-                        Invoice Scheme For Sale:
-
-                        
-                        
-                    </h2>
-                    <select type="text"
-                        value={formData.invoiceSchemeForSale}
-                        onChange={(e) => { setFormData({ ...formData, invoiceSchemeForSale: e.target.value }) }}
-                        className="px-2 py-1 w-full border-[1px] border-gray-600 focus:outline-none" >
-                        <option value={""}>Please Select</option>
-                        <option value={"Default"}>Default</option>
-
-                    </select>
-                </div>
-                <div className='flex flex-col mt-5'>
-                    <h2 className="text-start text-gray-500 flex relative">
-                        Invoice Layout For POS:
-                        <FaInfoCircle onMouseOver={() => { setCol2(true) }} onMouseLeave={() => { setCol2(false) }} size={15} style={{ color: "skyblue" }} className='mx-1 mt-1 cursor-help' />
-                        {col2 &&
-                            <div className='flex flex-col w-[280px] rounded-md border-[2px] border-gray-400 absolute top-8 p-2 z-10 bg-white shadow-md shadow-gray-300'>
-                                <p className='text-start mt-2 text-gray-800'>Invoice Layout to be used for this location.</p>
-                                <p className='text-start mt-2 text-gray-500'>You can add new Invoice Layout in Invoice Settings</p>
-
-                            </div>
-                        }
-                        
-                    </h2>
-                    <select type="text" placeholder='Alternate Contact Number'
-                        value={formData.invoiceLayoutForPOS}
-                        onChange={(e) => { setFormData({ ...formData, invoiceLayoutForPOS: e.target.value }) }}
-                        className="px-2 py-1 w-full border-[1px] border-gray-600 focus:outline-none" >
-                        <option value={""}>Please Select</option>
-                        <option value={"Default"}>Default</option>
-                        <option value={"Test Layout"}>Test Layout</option>
-
-                    </select>
-                </div>
-                <div className='flex flex-col mt-5'>
-                    <h2 className="text-start text-gray-500 flex relative">
-                        Invoice Layout For Sale:
-                        <FaInfoCircle onMouseOver={() => { setCol3(true) }} onMouseLeave={() => { setCol2(false) }} size={15} style={{ color: "skyblue" }} className='mx-1 mt-1 cursor-help' />
-                        {col3 &&
-                            <div className='flex flex-col w-[280px] rounded-md border-[2px] border-gray-400 absolute top-8 p-2 z-10 bg-white shadow-md shadow-gray-300'>
-                                <p className='text-start mt-2 text-gray-800'>Invoice Layout for direct sale.</p>
-
-                            </div>
-                        }
-                        
-                    </h2>
-                    <select type="text" placeholder='Alternate Contact Number'
-                        value={formData.invoiceLayoutForSale}
-                        onChange={(e) => { setFormData({ ...formData, invoiceLayoutForSale: e.target.value }) }}
-                        className="px-2 py-1 w-full border-[1px] border-gray-600 focus:outline-none" >
-                        <option value={""}>Please Select</option>
-                        <option value={"Default"}>Default</option>
-                        <option value={"Test Layout"}>Test Layout</option>
-
-                    </select>
-                </div>
                 <div className='flex flex-col mt-5'>
                     <h2 className="text-start text-gray-500 flex relative">
                         Default Selling Price Group:
@@ -352,15 +312,15 @@ const AddorEditBusinessLocation = ({id}) => {
                         }
                     </h2>
                     <select type="text" placeholder='Alternate Contact Number'
-                        value={formData.dfltSlngPrcGrp}
-                        onChange={(e) => { setFormData({ ...formData, dfltSlngPrcGrp: e.target.value }) }}
+                        value={formData.defaultSellingPriceGroup}
+                        onChange={(e) => { setFormData({ ...formData, defaultSellingPriceGroup: e.target.value }) }}
                         className="px-2 py-1 w-full border-[1px] border-gray-600 focus:outline-none" >
                         <option value={""}>Please Select</option>
-                        <option value={"Default Selling Price"}>Default Selling Price</option>
-                        <option value={"retail"}>retail</option>
-                        <option value={"Saleman"}>Saleman</option>
-                        <option value={"Minimum Price"}>Minimum Price</option>
-                        <option value={"Sale Points"}>Sale Points</option>
+                        {spgData.map((spg) => (
+                            <option key={spg._id} value={spg._id}>
+                                {(spg.isDefault) ? "Default Selling Price" : spg.name}
+                            </option>
+                        ))}
 
                     </select>
                 </div>
@@ -406,91 +366,12 @@ const AddorEditBusinessLocation = ({id}) => {
                         className="px-2 py-1 w-full border-[1px] border-gray-600 focus:outline-none" />
                 </div>
             </div>
-            <div className='flex bg-black w-full h-[2px] mt-5'></div>
-            <div className='flex flex-col my-10'>
-                <div className='flex text-sm text-start font-bold relative'>
-                    <h1> POS Screnn featured products:</h1>
-                    <FaInfoCircle onMouseOver={() => { setCol5(true) }} onMouseLeave={() => { setCol5(false) }} size={15} style={{ color: "skyblue" }} className='mx-1 mt-1 cursor-help' />
-                    {col5 &&
-                        <div className='flex flex-col w-[280px] rounded-md border-[2px] border-gray-400 absolute top-8 p-2 z-10 bg-white shadow-md shadow-gray-300'>
-                            <p className='text-start mt-2 text-gray-800'>Seleceted product will be shown on the top of the POS screen product suggestion for quick access</p>
-
-                        </div>
-                    }
-                </div>
-                <div className='flex flex-col relative'>
-                    <div className='flex'>
-                        <input
-                            onClick={() => setOpen1(!open1)}
-                            className='bg-white w-full  flex items-center  focus:outline-none justify-between px-2  py-1 mt-1 border-[1px] border-gray-600'
-                            value={seletedValue}
-                            onChange={(e) => { setSeletedValue(e.target.value) }}
-
-                            placeholder='Select Value'
-                        />
 
 
-                    </div>
-                    {open1 &&
-                        <ul
-
-                            className={`bg-white z-10  w-full -right-7 mx-[30px] border-[1px] absolute top-9 border-gray-600  overflow-y-auto ${open1 ? "max-h-60" : "max-h-0"} `}
-                        >
-                            <div className="flex items-center px-1 sticky top-0 bg-white">
-                                <input
-                                    type="text"
-                                    value={inputValue1}
-                                    onChange={(e) => setInputValue1(e.target.value.toLowerCase())}
-                                    className="placeholder:text-gray-700 w-full p-1 outline-none border-[1px] border-gray-500"
-                                />
-                            </div>
-                            {dummyData?.map((data) => (
-                                <li
-                                    key={data?.Name}
-                                    className={`p-2 text-sm text-start hover:bg-sky-600 hover:text-white
-                                                        ${data?.Name?.toLowerCase() === seletedValue?.toLowerCase() &&
-                                        "bg-sky-600 text-white"
-                                        }
-                                                         ${data?.Name?.toLowerCase().startsWith(inputValue1)
-                                            ? "block"
-                                            : "hidden"
-                                        }`}
-                                    onClick={() => {
-                                        if (data?.Name?.toLowerCase() !== seletedValue.toLowerCase()) {
-                                            let darray = formData.featureProducts
-                                            darray = [...darray, data?.Name]
-                                            setFormData({ ...formData, featureProducts: darray })
-                                            setOpen1(false);
-                                            setInputValue1("");
-                                        }
-                                    }}
-                                >
-                                    {data?.Name}
-                                </li>
-                            ))}
-                        </ul>
-                    }
-                </div>
-            </div>
-            {formData.featureProducts.length > 0 &&
-
-                <div className='w-full border-[1px] border-gray-400 py-1 px-1'>
-                    <ul className='flex'>
-                        {formData.featureProducts.map((val, index) => {
-                            return <>
-                                <li key={index} className='flex items-center py-1 rounded-md px-2 bg-blue-500 text-white text-xs mx-2'>
-                                    <p onClick={() => { handleDelete(index) }} className='mx-1 mb-1 cursor-pointer'>x</p>
-                                    <h1>{val}</h1>
-                                </li>
-                            </>
-                        })}
-                    </ul>
-                </div>
-            }
             <div className='flex bg-black w-full h-[2px] mt-5'></div>
 
             <div className='flex flex-col justify-center items-center mt-5 mx-5'  >
-            <div className='flex text-sm text-start font-bold relative'>
+                <div className='flex text-sm text-start font-bold relative'>
                     <h1> Payment Options:</h1>
                     <FaInfoCircle onMouseOver={() => { setCol6(true) }} onMouseLeave={() => { setCol6(false) }} size={15} style={{ color: "skyblue" }} className='mx-1 mt-1 cursor-help' />
                     {col6 &&
@@ -504,10 +385,10 @@ const AddorEditBusinessLocation = ({id}) => {
                 <table id='usertbl' className="table-auto w-full mb-10  whitespace-no-wrap ">
                     <thead>
                         <tr>
-                            <th className=" py-2 title-font  tracking-wider font-medium text-gray-900 text-sm bg-gray-200">Name</th>
-                            <th className=" py-2 title-font  tracking-wider font-medium text-gray-900 text-sm bg-gray-200">Category Code</th>
-                            <th className=" py-2 title-font  tracking-wider font-medium text-gray-900 text-sm bg-gray-200">Description</th>
-                            
+                            <th className=" py-2 title-font  tracking-wider font-medium text-gray-900 text-sm bg-gray-200">Payment Method</th>
+                            <th className=" py-2 title-font  tracking-wider font-medium text-gray-900 text-sm bg-gray-200">Enable</th>
+                            <th className=" py-2 title-font  tracking-wider font-medium text-gray-900 text-sm bg-gray-200">Default Account</th>
+
 
                         </tr>
                     </thead>
@@ -517,29 +398,31 @@ const AddorEditBusinessLocation = ({id}) => {
                                 <td className="px-1 py-1 text-sm">{val.paymentMethod}</td>
                                 <td>
                                     <input type='checkbox' name='is_enabled' checked={val.is_enabled ? true : false}
-                                    onChange={(e)=>{handleChange(e,index)}}
+                                        onChange={(e) => { handleChange(e, index) }}
                                     />
                                 </td>
                                 <td className="px-1 py-1">
-                                        <div className='flex flex-col'>
-                                            <select name="acount" value={val.acount} onChange={(e) => { handleChange(e, index) }} className='border-[1px] mt-2 w-full px-1 py-1 border-black focus:outline-none'>
-                                                <option value={""}>None</option>
-                                                <option value={"Test Account"}>Test Account</option>
-                                                <option value={"Askari Bank"}>Askari Bank</option>
-                                                <option value={"asd"}>asd</option>
+                                    <div className='flex flex-col'>
+                                        <select name="acount" value={val.acount} onChange={(e) => { handleChange(e, index) }} className='border-[1px] mt-2 w-full px-1 py-1 border-black focus:outline-none'>
+                                            <option value={""}>None</option>
+                                            {AccountsData.map((acc) => (
+                                                <option key={acc._id} value={acc._id}>
+                                                    {(acc.name)}
+                                                </option>
+                                            ))}
 
-                                            </select>
+                                        </select>
 
-                                        </div>
-                                    </td>
-                                
+                                    </div>
+                                </td>
+
                             </tr>
                         })}
 
 
                     </tbody>
                 </table>
-                
+
             </div>
 
             <div className='flex items-end justify-end'>
