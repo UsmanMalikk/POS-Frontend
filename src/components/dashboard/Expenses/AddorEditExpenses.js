@@ -151,8 +151,12 @@ const ExpenseAdd = () => {
   const fetchUsers = async () => {
 
     try {
-      // const token = localStorage.getItem('token');
-      const response = await axios.get(`http://localhost:8000/admin/users`);
+      const token = localStorage.getItem('token');
+      const response = await axios.get(`http://localhost:8000/admin/users`,{
+                headers: {
+                    'Authorization': token
+                }
+            });
       // console.log(response)
       setUsersData(response.data);
     } catch (error) {
@@ -162,8 +166,12 @@ const ExpenseAdd = () => {
   const fetchBusinessLocations = async () => {
 
     try {
-      // const token = localStorage.getItem('token');
-      const response = await axios.get(`http://localhost:8000/admin/business-locations`);
+      const token = localStorage.getItem('token');
+      const response = await axios.get(`http://localhost:8000/admin/business-locations`,{
+                headers: {
+                    'Authorization': token
+                }
+            });
 
       // console.log(response)
       setBusinessLocationsData(response.data);
@@ -174,8 +182,12 @@ const ExpenseAdd = () => {
   const fetchExpanseCategories = async () => {
 
     try {
-      // const token = localStorage.getItem('token');
-      const response = await axios.get(`http://localhost:8000/admin/expense-categories`);
+      const token = localStorage.getItem('token');
+      const response = await axios.get(`http://localhost:8000/admin/expense-categories`,{
+                headers: {
+                    'Authorization': token
+                }
+            });
       // console.log(response)
       setExpanseCategoryData(response.data);
     } catch (error) {
@@ -185,8 +197,12 @@ const ExpenseAdd = () => {
   const fetchExpanseSubCategories = async () => {
 
     try {
-      // const token = localStorage.getItem('token');
-      const response = await axios.get(`http://localhost:8000/admin/expense-categories/subs`);
+      const token = localStorage.getItem('token');
+      const response = await axios.get(`http://localhost:8000/admin/expense-categories/subs`,{
+                headers: {
+                    'Authorization': token
+                }
+            });
       // console.log(response)
       setExpanseSubCategoryData(response.data);
     } catch (error) {
@@ -196,8 +212,12 @@ const ExpenseAdd = () => {
   const fetchExpanseById = async () => {
 
     try {
-      // const token = localStorage.getItem('token');
-      const response = await axios.get(`http://localhost:8000/admin/add-expenses/${id}`);
+      const token = localStorage.getItem('token');
+      const response = await axios.get(`http://localhost:8000/admin/add-expenses/${id}`,{
+                headers: {
+                    'Authorization': token
+                }
+            });
       // console.log(response)
       setFormData(response.data);
     } catch (error) {
@@ -208,9 +228,13 @@ const ExpenseAdd = () => {
   const addExpanse = async () => {
 
     try {
-      // const token = localStorage.getItem('token');
+      const token = localStorage.getItem('token');
       // console.log(formData)
-      const response = await axios.post(`http://localhost:8000/admin/add-expenses`, formData);
+      const response = await axios.post(`http://localhost:8000/admin/add-expenses`, formData,{
+                headers: {
+                    'Authorization': token
+                }
+            });
       // console.log(response)
       if (response.status === 201) {
         console.log("Success")
@@ -223,9 +247,13 @@ const ExpenseAdd = () => {
   const addExpanseById = async () => {
 
     try {
-      // const token = localStorage.getItem('token');
+      const token = localStorage.getItem('token');
       // console.log(formData)
-      const response = await axios.put(`http://localhost:8000/admin/add-expenses/${id}`, formData);
+      const response = await axios.put(`http://localhost:8000/admin/add-expenses/${id}`, formData,{
+        headers: {
+            'Authorization': token
+        }
+    });
       console.log(response)
 
     } catch (error) {

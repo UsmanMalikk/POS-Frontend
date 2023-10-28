@@ -71,8 +71,12 @@ const AddOpeningStock = () => {
     const fetchProductById = async () => {
 
         try {
-            // const token = localStorage.getItem('token');
-            const response = await axios.get(`http://localhost:8000/admin/products/${formDataFromPreviousPage._id}`);
+            const token = localStorage.getItem('token');
+            const response = await axios.get(`http://localhost:8000/admin/products/${formDataFromPreviousPage._id}`,{
+                headers: {
+                    'Authorization': token
+                }
+            });
             console.log(response)
 
             setFormData(response.data);
@@ -84,13 +88,21 @@ const AddOpeningStock = () => {
     const fetchUnitsById = async () => {
 
         try {
-            // const token = localStorage.getItem('token');
+            const token = localStorage.getItem('token');
             if (formDataFromPreviousPage._id) {
-                const response = await axios.get(`http://localhost:8000/admin/units/${formDataFromPreviousPage.unit._id}`);
+                const response = await axios.get(`http://localhost:8000/admin/units/${formDataFromPreviousPage.unit._id}`,{
+                    headers: {
+                        'Authorization': token
+                    }
+                });
                 setUnitData(response.data);
 
             } else {
-                const response = await axios.get(`http://localhost:8000/admin/units/${formDataFromPreviousPage.unit}`);
+                const response = await axios.get(`http://localhost:8000/admin/units/${formDataFromPreviousPage.unit}`,{
+                    headers: {
+                        'Authorization': token
+                    }
+                });
                 setUnitData(response.data);
             }
             // console.log(response)
@@ -103,7 +115,7 @@ const AddOpeningStock = () => {
     const addProduct = async () => {
 
         try {
-            // const token = localStorage.getItem('token');
+            const token = localStorage.getItem('token');
             console.log(formDataFromPreviousPage.productImage)
             const formDataForSubmission = new FormData();
             formDataForSubmission.append('productName', formDataFromPreviousPage.productName);
@@ -142,7 +154,11 @@ const AddOpeningStock = () => {
                 formDataForSubmission.append(`openingStock[${index}][subTotalBfrTax]`, stock.subTotalBfrTax);
                 formDataForSubmission.append(`openingStock[${index}][date]`, stock.date);
                 formDataForSubmission.append(`openingStock[${index}][note]`, stock.note);
-            });            const response = await axios.post(`http://localhost:8000/admin/products`, formDataForSubmission);
+            });            const response = await axios.post(`http://localhost:8000/admin/products`, formDataForSubmission,{
+                headers: {
+                    'Authorization': token
+                }
+            });
             console.log(response)
             if (response.status === 201) {
                 Navigate("/home/products");
@@ -154,11 +170,15 @@ const AddOpeningStock = () => {
     const addProductById = async () => {
 
         try {
-            // const token = localStorage.getItem('token');
+            const token = localStorage.getItem('token');
             // console.log(formData)
             
 
-            const response = await axios.put(`http://localhost:8000/admin/products/${formDataFromPreviousPage._id}`, formData);
+            const response = await axios.put(`http://localhost:8000/admin/products/${formDataFromPreviousPage._id}`, formData,{
+                headers: {
+                    'Authorization': token
+                }
+            });
             //   console.log(response)
 
             if (response.status === 200) {

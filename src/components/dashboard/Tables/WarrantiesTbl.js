@@ -101,8 +101,12 @@ const BrandsTbl = () => {
     const fetchWarranties = async () => {
 
         try {
-            // const token = localStorage.getItem('token');
-            const response = await axios.get(`http://localhost:8000/admin/warranties`);
+            const token = localStorage.getItem('token');
+            const response = await axios.get(`http://localhost:8000/admin/warranties`, {
+                headers: {
+                    'Authorization': token
+                }
+            });
             // console.log(response.data)
             setWarrantyData(response.data);
 

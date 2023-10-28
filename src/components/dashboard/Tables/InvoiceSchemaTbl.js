@@ -58,8 +58,12 @@ const InvoiceSchemaTbl = () => {
     const fetchInvoices = async () => {
         // let final = "final"
         try {
-            // const token = localStorage.getItem('token');
-            const response = await axios.get(`http://localhost:8000/admin/invoices`);
+            const token = localStorage.getItem('token');
+            const response = await axios.get(`http://localhost:8000/admin/invoices`, {
+                headers: {
+                  'Authorization': token
+                }
+              });
             console.log(response)
             setInvoicesData(response.data);
         } catch (error) {

@@ -134,8 +134,12 @@ const PosTbl = () => {
     const fetchSales = async () => {
         // let final = "final"
         try {
-            // const token = localStorage.getItem('token');
-            const response = await axios.get(`http://localhost:8000/admin/pos`);
+            const token = localStorage.getItem('token');
+            const response = await axios.get(`http://localhost:8000/admin/pos`, {
+                headers: {
+                  'Authorization': token
+                }
+              });
             // console.log(response)
             setPosData(response.data);
         } catch (error) {

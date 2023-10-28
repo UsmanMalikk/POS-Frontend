@@ -16,8 +16,12 @@ const AddorEditWarranties = (props) => {
     const fetchWarrantyById = async () => {
 
         try {
-            // const token = localStorage.getItem('token');
-            const response = await axios.get(`http://localhost:8000/admin/warranties/${_id}`);
+            const token = localStorage.getItem('token');
+            const response = await axios.get(`http://localhost:8000/admin/warranties/${_id}`,{
+                headers: {
+                    'Authorization': token
+                }
+            });
             // console.log(response)
             setFormData(response.data);
 
@@ -37,9 +41,13 @@ const AddorEditWarranties = (props) => {
     const addWarranty = async () => {
 
         try {
-            // const token = localStorage.getItem('token');
+            const token = localStorage.getItem('token');
             // console.log(formData)
-            const response = await axios.post(`http://localhost:8000/admin/warranties`, formData);
+            const response = await axios.post(`http://localhost:8000/admin/warranties`, formData,{
+                headers: {
+                    'Authorization': token
+                }
+            });
             // console.log(response)
             if (response.status === 201) {
                 window.location.reload();
@@ -54,9 +62,13 @@ const AddorEditWarranties = (props) => {
     const addWarrantyById = async () => {
 
         try {
-            // const token = localStorage.getItem('token');
+            const token = localStorage.getItem('token');
             // console.log(formData)
-            const response = await axios.put(`http://localhost:8000/admin/warranties/${_id}`, formData);
+            const response = await axios.put(`http://localhost:8000/admin/warranties/${_id}`, formData,{
+                headers: {
+                    'Authorization': token
+                }
+            });
             console.log(response)
             if (response.status === 200) {
                 window.location.reload();

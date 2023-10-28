@@ -1,13 +1,17 @@
-import React, { useState } from 'react'
+import React, { useState, useEffect } from 'react'
 import { FaInfo, FaLock } from 'react-icons/fa'
+import axios from 'axios';
+import { useNavigate } from "react-router-dom"
 
 const UserProfile = () => {
+    const Navigate = useNavigate();
+
     const [open1, setOpen1] = useState(false)
     const [inputValue, setInputValue] = useState('')
     const [formData, setFormData] = useState({
-        cpassword: "",
-        npassword: "",
-        cnfrmPassword: "",
+        currPassword: "",
+        password: "",
+        cPassword: "",
 
     })
     const [formData1, setFormData1] = useState({
@@ -17,6 +21,32 @@ const UserProfile = () => {
         email: "",
         language: "",
         file:"",
+        dateOfBirth: "",
+        gender: "",
+        maritalStatus: "",
+        bloodGroup: "",
+        mobileNumber: "",
+        alternateContactNumber: "",
+        familyContactNumber: "",
+        facebookLink: "",
+        twitterLink: "",
+        socialMedia1: "",
+        socialMedia2: "",
+        customField1: "",
+        customField2: "",
+        customField3: "",
+        customField4: "",
+        guardianName: "",
+        idProofName: "",
+        idProofNumber: "",
+        permanentAddress: "",
+        currentAddress: "",
+        accountHolderName: "",
+        accountNumber: "",
+        bankName: "",
+        bankIdentifierCode: "",
+        branch: "",
+        taxPayerId: "",
     })
     const languages = [
         "English",
@@ -36,6 +66,63 @@ const UserProfile = () => {
         "Lao"
 
     ]
+    const fetchProfile = async () => {
+
+        try {
+            const token = localStorage.getItem('token');
+            const response = await axios.get(`http://localhost:8000/admin/users/profile`, {
+                headers: {
+                    'Authorization': token
+                }
+            });
+            console.log(response)
+            setFormData1(response.data);
+        } catch (error) {
+            console.error('Error fetching Profile:', error);
+        }
+    };
+    const addProfile = async () => {
+
+        try {
+            const token = localStorage.getItem('token');
+            // console.log(finalFormData)
+            const response = await axios.put(`http://localhost:8000/admin/users/profile`, formData1, {
+                headers: {
+                    'Authorization': token
+                }
+            });
+            console.log(response)
+            if (response.status === 200) {
+                Navigate("/home");
+            }
+        } catch (error) {
+            console.error('Error Adding User:', error);
+        }
+    };
+    const addProfileNewPassword = async () => {
+
+        try {
+            const token = localStorage.getItem('token');
+            const response = await axios.put(`http://localhost:8000/admin/users/profile/password`, formData, {
+                headers: {
+                    'Authorization': token
+                }
+            });
+            console.log(response)
+            if (response.status === 200) {
+                Navigate("/home");
+            }
+        } catch (error) {
+            console.error('Error Adding User:', error);
+        }
+    };
+    useEffect(() => {
+        // Make an API call to fetch user's roles records
+        
+        fetchProfile()
+
+        
+    }, []);
     return (
         <div className='bg-gray-100 px-4 py-2 pb-10 w-full min-h-screen'>
             <h1 className='text-3xl text-start'>My Profile</h1>
@@ -48,27 +135,27 @@ const UserProfile = () => {
                         <h1 className='font-bold text-start'>Current Password</h1>
                         <div className='flex w-3/4'>
                             <FaLock size={15} className='w-8 h-9 p-1 border-[1px]  border-gray-400' />
-                            <input type='text' value={formData.name} onChange={(e) => { setFormData({ ...formData, name: e.target.value }) }} placeholder='Current Password' className='border-[1px] w-full px-2 py-1 border-gray-400 focus:outline-none' />
+                            <input type='text' value={formData.currPassword} onChange={(e) => { setFormData({ ...formData, currPassword: e.target.value }) }} placeholder='Current Password' className='border-[1px] w-full px-2 py-1 border-gray-400 focus:outline-none' />
                         </div>
                     </div>
                     <div className='flex items-center justify-between  mt-4 w-full'>
                         <h1 className='font-bold text-start'>New Password</h1>
                         <div className='flex w-3/4'>
                             <FaLock size={15} className='w-8 h-9 p-1 border-[1px]  border-gray-400' />
-                            <input type='text' value={formData.name} onChange={(e) => { setFormData({ ...formData, name: e.target.value }) }} placeholder='New Password' className='border-[1px] w-full px-2 py-1 border-gray-400 focus:outline-none' />
+                            <input type='text' value={formData.password} onChange={(e) => { setFormData({ ...formData, password: e.target.value }) }} placeholder='New Password' className='border-[1px] w-full px-2 py-1 border-gray-400 focus:outline-none' />
                         </div>
                     </div>
                     <div className='flex items-center justify-between  mt-4 w-full'>
                         <h1 className='font-bold text-start'>Confirm Password</h1>
                         <div className='flex w-3/4'>
                             <FaLock size={15} className='w-8 h-9 p-1 border-[1px]  border-gray-400' />
-                            <input type='text' value={formData.name} onChange={(e) => { setFormData({ ...formData, name: e.target.value }) }} placeholder='Confirm Password' className='border-[1px] w-full px-2 py-1 border-gray-400 focus:outline-none' />
+                            <input type='text' value={formData.cPassword} onChange={(e) => { setFormData({ ...formData, cPassword: e.target.value }) }} placeholder='Confirm Password' className='border-[1px] w-full px-2 py-1 border-gray-400 focus:outline-none' />
                         </div>
                     </div>
                 </div>
 
                 <div className='flex justify-end items-end '>
-                    <button className='bg-blue-500 text-white px-2 py-1 rounded-md'>Update</button>
+                    <button onClick={addProfileNewPassword} className='bg-blue-500 text-white px-2 py-1 rounded-md'>Update</button>
                 </div>
             </div>
 
@@ -293,7 +380,7 @@ const UserProfile = () => {
                     <div className='grid grid-cols-1  md:grid-cols-4 mt-5 gap-5'>
                         <div className='flex flex-col col-span-2 items-start w-full '>
                             <h1 className='text-sm font-bold'>Permenent Address:</h1>
-                            <textarea value={formData1.permenentAddress} onChange={(e) => setFormData1({ ...formData1, permenentAddress: e.target.value })} rows={4} type='text' placeholder='Permenent Address' className='focus:outline-none w-full   border-[1px] border-gray-300 px-2  rounded-sm p-1' />
+                            <textarea value={formData1.permanentAddress} onChange={(e) => setFormData1({ ...formData1, permanentAddress: e.target.value })} rows={4} type='text' placeholder='Permenent Address' className='focus:outline-none w-full   border-[1px] border-gray-300 px-2  rounded-sm p-1' />
                         </div>
                         <div className='flex flex-col col-span-2 items-start w-full '>
                             <h1 className='text-sm font-bold'>Current Address:</h1>
@@ -340,7 +427,7 @@ const UserProfile = () => {
 
 
                 <div className='flex justify-center items-center mt-5'>
-                    <button className='bg-blue-500 text-white px-3 py-2 font-bold rounded-md'>Update</button>
+                    <button onClick={addProfile} className='bg-blue-500 text-white px-3 py-2 font-bold rounded-md'>Update</button>
                 </div>
         </div>
     )

@@ -179,8 +179,12 @@ const DraftTbl = () => {
     const fetchDrafts = async () => {
       
         try {
-            // const token = localStorage.getItem('token');
-            const response = await axios.get(`http://localhost:8000/admin/sales/draft`);
+            const token = localStorage.getItem('token');
+            const response = await axios.get(`http://localhost:8000/admin/sales/draft`, {
+                headers: {
+                    'Authorization': token
+                }
+            });
             // console.log(response)
             setSalesData(response.data);
         } catch (error) {

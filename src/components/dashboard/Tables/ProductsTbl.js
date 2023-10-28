@@ -205,8 +205,12 @@ const ProductsTbl = () => {
     const fetchProducts = async () => {
 
         try {
-            // const token = localStorage.getItem('token');
-            const response = await axios.get(`http://localhost:8000/admin/products`);
+            const token = localStorage.getItem('token');
+            const response = await axios.get(`http://localhost:8000/admin/products`, {
+                headers: {
+                    'Authorization': token
+                }
+            });
             console.log(response)
             setProductsData(response.data);
         } catch (error) {
@@ -215,8 +219,12 @@ const ProductsTbl = () => {
     };
     const handleDeleteProduct = async (productId) => {
         try {
-            // Make an API call to delete attendance for a specific record
-            const response = await axios.delete(`http://localhost:8000/admin/products/${productId}`);
+            const token = localStorage.getItem('token');
+            const response = await axios.delete(`http://localhost:8000/admin/products/${productId}`, {
+                headers: {
+                    'Authorization': token
+                }
+            });
             console.log('Product deleted:', response.data);
             fetchProducts()
         } catch (error) {
@@ -332,7 +340,7 @@ const ProductsTbl = () => {
                                     <td className="px-1 py-1 text-sm mx-1">
                                         <div className="flex items-center justify-center">
                                             <img
-                                                src={baseURL+value.productImage}
+                                                src={baseURL + value.productImage}
                                                 alt='imagee'
                                                 style={{ width: '100px' }}
                                             />

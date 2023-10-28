@@ -40,8 +40,12 @@ const AddorEditAccount = (props) => {
     const fetchAccountTypes = async () => {
 
         try {
-            // const token = localStorage.getItem('token');
-            const response = await axios.get(`http://localhost:8000/admin/accounttypes`);
+            const token = localStorage.getItem('token');
+            const response = await axios.get(`http://localhost:8000/admin/accounttypes`,{
+                headers: {
+                    'Authorization': token
+                }
+            });
 
             // console.log(response)
             setAccountTypesData(response.data);
@@ -52,8 +56,12 @@ const AddorEditAccount = (props) => {
     const fetchAccountById = async () => {
 
         try {
-            // const token = localStorage.getItem('token');
-            const response = await axios.get(`http://localhost:8000/admin/add-accounts/${props.id}`);
+            const token = localStorage.getItem('token');
+            const response = await axios.get(`http://localhost:8000/admin/add-accounts/${props.id}`,{
+                headers: {
+                    'Authorization': token
+                }
+            });
 
             console.log(response)
             setFormData(response.data);
@@ -64,9 +72,13 @@ const AddorEditAccount = (props) => {
     const addAccount = async () => {
 
         try {
-            // const token = localStorage.getItem('token');
+            const token = localStorage.getItem('token');
             // console.log(formData)
-            const response = await axios.post(`http://localhost:8000/admin/add-accounts`, formData);
+            const response = await axios.post(`http://localhost:8000/admin/add-accounts`, formData,{
+                headers: {
+                    'Authorization': token
+                }
+            });
             console.log(response)
             if (response.status === 201) {
                 window.location.reload();
@@ -81,9 +93,13 @@ const AddorEditAccount = (props) => {
     const addAccountById = async () => {
 
         try {
-            // const token = localStorage.getItem('token');
+            const token = localStorage.getItem('token');
             // console.log(formData)
-            const response = await axios.put(`http://localhost:8000/admin/add-accounts/${props.id}`, formData);
+            const response = await axios.put(`http://localhost:8000/admin/add-accounts/${props.id}`, formData,{
+                headers: {
+                    'Authorization': token
+                }
+            });
             console.log(response)
             if (response.status === 200) {
                 window.location.reload();

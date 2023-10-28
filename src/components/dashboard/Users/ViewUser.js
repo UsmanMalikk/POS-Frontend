@@ -19,8 +19,12 @@ const ViewUser = () => {
     const fetchUserById = async () => {
 
         try {
-            // const token = localStorage.getItem('token');
-            const response = await axios.get(`http://localhost:8000/admin/users/${_id}`);
+            const token = localStorage.getItem('token');
+            const response = await axios.get(`http://localhost:8000/admin/users/${_id}`,{
+                headers: {
+                    'Authorization': token
+                }
+            });
             console.log(response)
             setUserData(response.data);
         } catch (error) {

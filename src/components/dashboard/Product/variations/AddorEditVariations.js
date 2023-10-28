@@ -41,8 +41,12 @@ const AddorEditVariations = (props) => {
     const fetchVariationById = async () => {
 
         try {
-            // const token = localStorage.getItem('token');
-            const response = await axios.get(`http://localhost:8000/admin/variations/${_id}`);
+            const token = localStorage.getItem('token');
+            const response = await axios.get(`http://localhost:8000/admin/variations/${_id}`,{
+                headers: {
+                    'Authorization': token
+                }
+            });
             // console.log(response)
             setVariationName(response.data.variationName);
             setVariationValues(response.data.variationValues);
@@ -63,9 +67,13 @@ const AddorEditVariations = (props) => {
     const addVariation = async () => {
 
         try {
-            // const token = localStorage.getItem('token');
+            const token = localStorage.getItem('token');
             // console.log(formData)
-            const response = await axios.post(`http://localhost:8000/admin/variations`, formData);
+            const response = await axios.post(`http://localhost:8000/admin/variations`, formData,{
+                headers: {
+                    'Authorization': token
+                }
+            });
             console.log(response)
             if (response.status === 201) {
                 window.location.reload();
@@ -78,9 +86,13 @@ const AddorEditVariations = (props) => {
     const addVariationById = async () => {
 
         try {
-            // const token = localStorage.getItem('token');
+            const token = localStorage.getItem('token');
             console.log(formData)
-            const response = await axios.put(`http://localhost:8000/admin/variations/${_id}`, formData);
+            const response = await axios.put(`http://localhost:8000/admin/variations/${_id}`, formData,{
+                headers: {
+                    'Authorization': token
+                }
+            });
             console.log(response)
             if (response.status === 200) {
                 window.location.reload();

@@ -1,10 +1,10 @@
-import React, { useState,useEffect } from 'react'
+import React, { useState, useEffect } from 'react'
 import { useParams } from 'react-router-dom'
 import axios from 'axios';
 import { useNavigate } from "react-router-dom"
 
 const AddorEditUsers = () => {
-    const Navigate = useNavigate ();
+    const Navigate = useNavigate();
 
     const parms = useParams()
     // console.log(parms.id)
@@ -67,8 +67,12 @@ const AddorEditUsers = () => {
     const fetchRoles = async () => {
 
         try {
-            // const token = localStorage.getItem('token');
-            const response = await axios.get(`http://localhost:8000/admin/roles`);
+            const token = localStorage.getItem('token');
+            const response = await axios.get(`http://localhost:8000/admin/roles`, {
+                headers: {
+                    'Authorization': token
+                }
+            });
             // console.log(response)
             setRolesData(response.data);
         } catch (error) {
@@ -78,8 +82,12 @@ const AddorEditUsers = () => {
     const fetchUserById = async () => {
 
         try {
-            // const token = localStorage.getItem('token');
-            const response = await axios.get(`http://localhost:8000/admin/users/${_id}`);
+            const token = localStorage.getItem('token');
+            const response = await axios.get(`http://localhost:8000/admin/users/${_id}`, {
+                headers: {
+                    'Authorization': token
+                }
+            });
             // console.log(response)
             setUserData(response.data);
         } catch (error) {
@@ -88,11 +96,11 @@ const AddorEditUsers = () => {
     };
     useEffect(() => {
         // Make an API call to fetch user's roles records
-        if(_id){
+        if (_id) {
             fetchRoles();
             fetchUserById();
         }
-        else{
+        else {
             fetchRoles();
 
         }
@@ -101,9 +109,13 @@ const AddorEditUsers = () => {
     const addUser = async () => {
 
         try {
-            // const token = localStorage.getItem('token');
+            const token = localStorage.getItem('token');
             // console.log(finalFormData)
-            const response = await axios.post(`http://localhost:8000/admin/users`,userData);
+            const response = await axios.post(`http://localhost:8000/admin/users`, userData, {
+                headers: {
+                    'Authorization': token
+                }
+            });
             console.log(response)
             if (response.status === 201) {
                 Navigate("/home/users");
@@ -116,9 +128,13 @@ const AddorEditUsers = () => {
     const addUserById = async () => {
 
         try {
-            // const token = localStorage.getItem('token');
+            const token = localStorage.getItem('token');
             // console.log(finalFormData)
-            const response = await axios.put(`http://localhost:8000/admin/users/${_id}`,userData);
+            const response = await axios.put(`http://localhost:8000/admin/users/${_id}`, userData, {
+                headers: {
+                    'Authorization': token
+                }
+            });
             console.log(response)
             if (response.status === 200) {
                 Navigate("/home/users");
@@ -251,7 +267,7 @@ const AddorEditUsers = () => {
                     {/* <div className='flex  items-start mt-5'>
                         <input value={userData.isAllowSelectedContacts} onChange={(e) => setUserData({ ...userData, isAllowSelectedContacts: e.target.value })} type='checkbox' className='focus:outline-none rounded-md mt-1 w-5 h-5' />
                         <h1 className='text-lg mx-2'>Allow Selected Contacts</h1>
-                    </div> */} 
+                    </div> */}
 
 
                 {/* </div> */}

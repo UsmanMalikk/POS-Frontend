@@ -20,8 +20,12 @@ const AddorEditCategories = (props) => {
     const fetchCategory = async () => {
 
         try {
-            // const token = localStorage.getItem('token');
-            const response = await axios.get(`http://localhost:8000/admin/categories`);
+            const token = localStorage.getItem('token');
+            const response = await axios.get(`http://localhost:8000/admin/categories`,{
+                headers: {
+                    'Authorization': token
+                }
+            });
             // console.log(response)
             setCategorysData(response.data);
         } catch (error) {
@@ -32,8 +36,12 @@ const AddorEditCategories = (props) => {
     const fetchCategoryById = async () => {
 
         try {
-            // const token = localStorage.getItem('token');
-            const response = await axios.get(`http://localhost:8000/admin/categories/${_id}`);
+            const token = localStorage.getItem('token');
+            const response = await axios.get(`http://localhost:8000/admin/categories/${_id}`,{
+                headers: {
+                    'Authorization': token
+                }
+            });
             // console.log(response)
             setFormData(response.data);
 
@@ -57,9 +65,13 @@ const AddorEditCategories = (props) => {
     const addCategory = async () => {
 
         try {
-            // const token = localStorage.getItem('token');
+            const token = localStorage.getItem('token');
             // console.log(formData)
-            const response = await axios.post(`http://localhost:8000/admin/categories`, formData);
+            const response = await axios.post(`http://localhost:8000/admin/categories`, formData,{
+                headers: {
+                    'Authorization': token
+                }
+            });
             // console.log(response)
             if (response.status === 201) {
                 window.location.reload();
@@ -74,9 +86,13 @@ const AddorEditCategories = (props) => {
     const addCategoryById = async () => {
 
         try {
-            // const token = localStorage.getItem('token');
+            const token = localStorage.getItem('token');
             // console.log(formData)
-            const response = await axios.put(`http://localhost:8000/admin/categories/${_id}`, formData);
+            const response = await axios.put(`http://localhost:8000/admin/categories/${_id}`, formData,{
+                headers: {
+                    'Authorization': token
+                }
+            });
             console.log(response)
             if (response.status === 200) {
                 window.location.reload();

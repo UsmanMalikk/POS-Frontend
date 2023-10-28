@@ -157,14 +157,18 @@ const StockTransferTbl = () => {
   const displayData = () => {
     if (showId !== 0 && isshow === true) {
       return <ViewStockTransfer id={showId} />;
-    } 
+    }
   };
 
   const fetchSTK = async () => {
 
     try {
-      // const token = localStorage.getItem('token');
-      const response = await axios.get(`http://localhost:8000/admin/stock-transfers`);
+      const token = localStorage.getItem('token');
+      const response = await axios.get(`http://localhost:8000/admin/stock-transfers`, {
+        headers: {
+          'Authorization': token
+        }
+      });
       // console.log(response)
       setstkData(response.data);
     } catch (error) {
@@ -177,8 +181,12 @@ const StockTransferTbl = () => {
   }, []);
   const handleDeleteTransfer = async (stkId) => {
     try {
-      // Make an API call to delete attendance for a specific record
-      const response = await axios.delete(`http://localhost:8000/admin/stock-transfers/${stkId}`);
+      const token = localStorage.getItem('token');
+      const response = await axios.delete(`http://localhost:8000/admin/stock-transfers/${stkId}`, {
+        headers: {
+          'Authorization': token
+        }
+      });
       console.log('Stoct Tranfer deleted:', response.data); // Handle success response
       fetchSTK()
     } catch (error) {
@@ -474,7 +482,7 @@ const StockTransferTbl = () => {
                             <li className="w-full">
                               <div
                                 onClick={() => {
-                                
+
                                   handleDeleteTransfer(value._id)
                                 }}
                                 className="flex px-2 py-1 w-full cursor-pointer hover:bg-gray-400 items-center "
@@ -483,7 +491,7 @@ const StockTransferTbl = () => {
                                 <h1 className="text-sm">Delete</h1>
                               </div>
                             </li>
-                            
+
                           </ul>
                         )}
                       </div>

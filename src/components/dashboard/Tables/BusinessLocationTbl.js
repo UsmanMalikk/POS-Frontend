@@ -60,8 +60,12 @@ const BusinessLocationTbl = () => {
     const fetchLocations = async () => {
 
         try {
-            // const token = localStorage.getItem('token');
-            const response = await axios.get(`http://localhost:8000/admin/business-locations`);
+            const token = localStorage.getItem('token');
+            const response = await axios.get(`http://localhost:8000/admin/business-locations`, {
+                headers: {
+                    'Authorization': token
+                }
+            });
             console.log(response.data)
             setBusinessLocationData(response.data);
             // console.log(variationData)
@@ -73,10 +77,14 @@ const BusinessLocationTbl = () => {
     const addLocationById = async (spgbyid, bool) => {
         // console.log(bool)
         try {
-            // const token = localStorage.getItem('token');
+            const token = localStorage.getItem('token');
             // console.log(formData)
             const response = await axios.put(`http://localhost:8000/admin/selling-price-groups/${spgbyid}`, {
                 isDefault: bool
+            }, {
+                headers: {
+                    'Authorization': token
+                }
             });
             // console.log(response)
             if (response.status === 200) {

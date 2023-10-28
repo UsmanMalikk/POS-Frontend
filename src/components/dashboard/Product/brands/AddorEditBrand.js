@@ -15,8 +15,12 @@ const AddorEditBrand = (props) => {
     const fetchBrandById = async () => {
 
         try {
-            // const token = localStorage.getItem('token');
-            const response = await axios.get(`http://localhost:8000/admin/brands/${_id}`);
+            const token = localStorage.getItem('token');
+            const response = await axios.get(`http://localhost:8000/admin/brands/${_id}`,{
+                headers: {
+                    'Authorization': token
+                }
+            });
             // console.log(response)
             setFormData(response.data);
 
@@ -36,9 +40,13 @@ const AddorEditBrand = (props) => {
     const addBrand = async () => {
 
         try {
-            // const token = localStorage.getItem('token');
+            const token = localStorage.getItem('token');
             // console.log(formData)
-            const response = await axios.post(`http://localhost:8000/admin/brands`, formData);
+            const response = await axios.post(`http://localhost:8000/admin/brands`, formData,{
+                headers: {
+                    'Authorization': token
+                }
+            });
             // console.log(response)
             if (response.status === 201) {
                 window.location.reload();
@@ -53,9 +61,13 @@ const AddorEditBrand = (props) => {
     const addBrandById = async () => {
 
         try {
-            // const token = localStorage.getItem('token');
+            const token = localStorage.getItem('token');
             // console.log(formData)
-            const response = await axios.put(`http://localhost:8000/admin/brands/${_id}`, formData);
+            const response = await axios.put(`http://localhost:8000/admin/brands/${_id}`, formData,{
+                headers: {
+                    'Authorization': token
+                }
+            });
             console.log(response)
             if (response.status === 200) {
                 window.location.reload();

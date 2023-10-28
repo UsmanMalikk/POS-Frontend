@@ -29,8 +29,12 @@ const EditShipping = (props) => {
     const fetchUsers = async () => {
 
         try {
-            // const token = localStorage.getItem('token');
-            const response = await axios.get(`http://localhost:8000/admin/users`);
+            const token = localStorage.getItem('token');
+            const response = await axios.get(`http://localhost:8000/admin/users`,{
+                headers: {
+                    'Authorization': token
+                }
+            });
             // console.log(response)
             setUsersData(response.data);
         } catch (error) {

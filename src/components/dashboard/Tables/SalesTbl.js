@@ -29,57 +29,7 @@ import axios from 'axios';
 
 
 const SalesTbl = () => {
-    // const dummyData = [
-    //     {
-    //         id: 1,
-    //         Username: "username",
-    //         Name: "User",
-    //         Role: "Admin",
-    //         Email: "username@gmail.com"
-    //     },
-    //     {
-    //         id: 2,
-    //         Username: "username1",
-    //         Name: "User1",
-    //         Role: "Admin",
-    //         Email: "username@gmail.com"
-    //     },
-    //     {
-    //         id: 3,
-    //         Username: "username2",
-    //         Name: "User2",
-    //         Role: "Admin",
-    //         Email: "username2@gmail.com"
-    //     },
-    //     {
-    //         id: 4,
-    //         Username: "username3",
-    //         Name: "User3",
-    //         Role: "Admin",
-    //         Email: "username3@gmail.com"
-    //     },
-    //     {
-    //         id: 5,
-    //         Username: "username4",
-    //         Name: "User4",
-    //         Role: "Admin",
-    //         Email: "username4@gmail.com"
-    //     },
-    //     {
-    //         id: 6,
-    //         Username: "username5",
-    //         Name: "User5",
-    //         Role: "Admin",
-    //         Email: "username5@gmail.com"
-    //     },
-    //     {
-    //         id: 7,
-    //         Username: "username6",
-    //         Name: "User6",
-    //         Role: "Admin",
-    //         Email: "username6@gmail.com"
-    //     }
-    // ]
+
     const printRef = useRef()
     let xlDatas = []
     //Export to Excel
@@ -203,8 +153,12 @@ const SalesTbl = () => {
     const fetchSales = async () => {
         // let final = "final"
         try {
-            // const token = localStorage.getItem('token');
-            const response = await axios.get(`http://localhost:8000/admin/sales/final`);
+            const token = localStorage.getItem('token');
+            const response = await axios.get(`http://localhost:8000/admin/sales/final`, {
+                headers: {
+                    'Authorization': token
+                }
+            });
             console.log(response)
             // console.log(response.data)
             setSalesData(response.data);
@@ -225,8 +179,12 @@ const SalesTbl = () => {
 
     const handleDeleteSale = async (saleId) => {
         try {
-            // Make an API call to delete attendance for a specific record
-            const response = await axios.delete(`http://localhost:8000/admin/sales/final/${saleId}`);
+            const token = localStorage.getItem('token');
+            const response = await axios.delete(`http://localhost:8000/admin/sales/final/${saleId}`, {
+                headers: {
+                    'Authorization': token
+                }
+            });
             console.log('Sale deleted:', response.data);
             fetchSales()
         } catch (error) {
@@ -635,7 +593,7 @@ const SalesTbl = () => {
                                                         <li className="w-full">
                                                             <div
                                                                 onClick={() => {
-                                                                    
+
                                                                     handleDeleteSale(value._id)
                                                                 }}
                                                                 className="flex px-2 py-1 w-full cursor-pointer hover:bg-gray-400 items-center "
@@ -657,8 +615,8 @@ const SalesTbl = () => {
                                                                 <h1 className="text-sm">Edit Shipping</h1>
                                                             </div>
                                                         </li>
-                                                        
-                                                        
+
+
                                                     </ul>
                                                 )}
                                             </div>
@@ -693,11 +651,11 @@ const SalesTbl = () => {
                                     {/* {col13 && <td className="px-1 py-1"> {(value.totalSaleAmount - value.amount) < 0 ? value.totalSaleAmount - value.amount : ""}</td>}      */}
                                     {col14 && <td className="px-1 py-1">{value.shippingStatus}</td>}
                                     {col15 && <td className=" py-1 px-1">{value.inputData.length}</td>}
-                                    {col16 && <td className=" py-1 px-1">{value.deliveryPersonUser?.firstName||value.deliveryPersonAdmin?.firstName}</td>}
+                                    {col16 && <td className=" py-1 px-1">{value.deliveryPersonUser?.firstName || value.deliveryPersonAdmin?.firstName}</td>}
                                     {col17 && <td className="px-1 py-1 text-sm">{value.sellNote}</td>}
                                     {col18 && <td className="px-1 py-1"> {value.shippingDetails}</td>}
                                 </tr>
-                        );
+                            );
                         })}
 
 

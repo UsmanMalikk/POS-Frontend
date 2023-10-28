@@ -12,7 +12,7 @@ import axios from 'axios';
 
 
 const BrandsTbl = () => {
-//     
+    //     
     const printRef = useRef()
     let xlDatas = []
     //Export to Excel
@@ -54,7 +54,7 @@ const BrandsTbl = () => {
     const [col1, setCol1] = useState(true)
     const [col2, setCol2] = useState(true)
     const [col3, setCol3] = useState(true)
-    
+
 
 
     const csvData = [
@@ -100,8 +100,12 @@ const BrandsTbl = () => {
     const fetchBrands = async () => {
 
         try {
-            // const token = localStorage.getItem('token');
-            const response = await axios.get(`http://localhost:8000/admin/brands`);
+            const token = localStorage.getItem('token');
+            const response = await axios.get(`http://localhost:8000/admin/brands`, {
+                headers: {
+                    'Authorization': token
+                }
+            });
             // console.log(response.data)
             setBrandsData(response.data);
 
@@ -113,14 +117,18 @@ const BrandsTbl = () => {
 
     const handleDeleteBrand = async (brandId) => {
         try {
-          // Make an API call to delete attendance for a specific record
-          const response = await axios.delete(`http://localhost:8000/admin/brands/${brandId}`);
-          console.log('Brand deleted:', response.data); // Handle success response
-          fetchBrands()
+            const token = localStorage.getItem('token');
+            const response = await axios.delete(`http://localhost:8000/admin/brands/${brandId}`, {
+                headers: {
+                    'Authorization': token
+                }
+            });
+            console.log('Brand deleted:', response.data); // Handle success response
+            fetchBrands()
         } catch (error) {
-          console.error('Error deleting brand:', error);
+            console.error('Error deleting brand:', error);
         }
-      };
+    };
 
 
     useEffect(() => {
@@ -131,7 +139,7 @@ const BrandsTbl = () => {
         <div>
             <div className='flex justify-between mt-2 text-sm mx-5'>
                 <div className='flex flex-col'>
-                <h1 className='text-xl font-semibold text-start'>All your brands</h1>
+                    <h1 className='text-xl font-semibold text-start'>All your brands</h1>
                 </div>
                 <button onClick={() => { setIsAdd(true); setIsClicked(true) }} className='flex items-center justify-center mx-5 font-semibold w-20 h-10 rounded-md mt-3 text-white bg-blue-500'>
                     <AiOutlinePlus size={15} /> Add
@@ -205,7 +213,7 @@ const BrandsTbl = () => {
                             {col1 && <th className=" py-2 title-font  tracking-wider font-medium text-gray-900 text-sm bg-gray-200">Brand</th>}
                             {col2 && <th className=" py-2 title-font  tracking-wider font-medium text-gray-900 text-sm bg-gray-200">Note</th>}
                             {col3 && <th className=" py-2 title-font  tracking-wider font-medium text-gray-900 text-sm bg-gray-200">Actions</th>}
-                            
+
 
                         </tr>
                     </thead>
@@ -214,17 +222,17 @@ const BrandsTbl = () => {
                             return <tr key={index} className={`${(index + 1) % 2 === 0 ? "bg-gray-100" : ""}`}>
                                 {col1 && <td className="px-1 py-1 text-sm">{value.brandName}</td>}
                                 {col2 && <td className="px-1 py-1"> {value.shortDescription}</td>}
-                                
+
                                 {col3 && <td className='py-1 flex justify-center'>
                                     <button onClick={() => { setIsClicked(true); setIsEdit(true); setIseidtId(value._id) }} className='flex mx-1 p-1 items-center bg-blue-600 text-white justify-center'>
                                         <FaEdit size={15} />
                                         <h1 className='text-sm mx-1'>Edit</h1>
                                     </button>
-                                    <button  onClick={ ()=> handleDeleteBrand(value._id)} className='flex mx-3 p-1 items-center bg-red-600 text-white justify-center'>
+                                    <button onClick={() => handleDeleteBrand(value._id)} className='flex mx-3 p-1 items-center bg-red-600 text-white justify-center'>
                                         <FaEdit size={15} />
                                         <h1 className='text-sm mx-1'>Delete</h1>
                                     </button>
-                                    
+
                                 </td>}
                             </tr>
                         })}

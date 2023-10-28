@@ -19,8 +19,12 @@ const AddorEditUnits = (props) => {
     const fetchUnits = async () => {
 
         try {
-            // const token = localStorage.getItem('token');
-            const response = await axios.get(`http://localhost:8000/admin/units`);
+            const token = localStorage.getItem('token');
+            const response = await axios.get(`http://localhost:8000/admin/units`,{
+                headers: {
+                    'Authorization': token
+                }
+            });
             // console.log(response)
             setUnitsData(response.data);
         } catch (error) {
@@ -31,8 +35,12 @@ const AddorEditUnits = (props) => {
     const fetchUnitsById = async () => {
 
         try {
-            // const token = localStorage.getItem('token');
-            const response = await axios.get(`http://localhost:8000/admin/units/${_id}`);
+            const token = localStorage.getItem('token');
+            const response = await axios.get(`http://localhost:8000/admin/units/${_id}`,{
+                headers: {
+                    'Authorization': token
+                }
+            });
             // console.log(response)
             setFormData(response.data);
 
@@ -56,9 +64,13 @@ const AddorEditUnits = (props) => {
     const addUnit = async () => {
 
         try {
-            // const token = localStorage.getItem('token');
+            const token = localStorage.getItem('token');
             // console.log(formData)
-            const response = await axios.post(`http://localhost:8000/admin/units`, formData);
+            const response = await axios.post(`http://localhost:8000/admin/units`, formData,{
+                headers: {
+                    'Authorization': token
+                }
+            });
             // console.log(response)
             if (response.status === 201) {
                 window.location.reload();
@@ -73,9 +85,13 @@ const AddorEditUnits = (props) => {
     const addUnitById = async () => {
 
         try {
-            // const token = localStorage.getItem('token');
+            const token = localStorage.getItem('token');
             // console.log(formData)
-            const response = await axios.put(`http://localhost:8000/admin/units/${_id}`, formData);
+            const response = await axios.put(`http://localhost:8000/admin/units/${_id}`, formData,{
+                headers: {
+                    'Authorization': token
+                }
+            });
             console.log(response)
             if (response.status === 200) {
                 window.location.reload();

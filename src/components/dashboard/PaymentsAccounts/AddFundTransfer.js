@@ -33,9 +33,13 @@ const AddFundTransfer = (props) => {
     const addFundsTranfer = async () => {
 
         try {
-            // const token = localStorage.getItem('token');
+            const token = localStorage.getItem('token');
             // console.log(formData)
-            const response = await axios.post(`http://localhost:8000/admin/account/funds-transfer`, formData);
+            const response = await axios.post(`http://localhost:8000/admin/account/funds-transfer`, formData,{
+                headers: {
+                    'Authorization': token
+                }
+            });
             console.log(response)
             if (response.status === 201) {
                 console.log("Success")

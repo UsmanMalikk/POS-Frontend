@@ -64,7 +64,7 @@ const AddorEditProduct = () => {
     // servieStaffTime: "",
     // woocommerceSync: false,
     productType: "",
-    variationType: [{ variationTempleateID: null, variation: [{ subSKU: "", value: ""}] }],
+    variationType: [{ variationTempleateID: null, variation: [{ subSKU: "", value: "" }] }],
     combo: [],
     netTotal: 0,
     dfltSellingPrice: 0,
@@ -194,7 +194,7 @@ const AddorEditProduct = () => {
     ) {
       setIsserror(true)
       console.log(isserror)
-    } navigate("/home/products/add-selling-prices", { state: { formData, spgData  }});
+    } navigate("/home/products/add-selling-prices", { state: { formData, spgData } });
   };
 
   const handleAddOther = () => {
@@ -228,8 +228,12 @@ const AddorEditProduct = () => {
   const fetchLocations = async () => {
 
     try {
-      // const token = localStorage.getItem('token');
-      const response = await axios.get(`http://localhost:8000/admin/business-locations`);
+      const token = localStorage.getItem('token');
+      const response = await axios.get(`http://localhost:8000/admin/business-locations`, {
+        headers: {
+          'Authorization': token
+        }
+      });
       // console.log(response.data)
       setBusinessLocationData(response.data);
       // console.log(variationData)
@@ -242,8 +246,12 @@ const AddorEditProduct = () => {
   const fetchUnits = async () => {
 
     try {
-      // const token = localStorage.getItem('token');
-      const response = await axios.get(`http://localhost:8000/admin/units`);
+      const token = localStorage.getItem('token');
+      const response = await axios.get(`http://localhost:8000/admin/units`, {
+        headers: {
+          'Authorization': token
+        }
+      });
       // console.log(response)
       setUnitsData(response.data);
     } catch (error) {
@@ -254,8 +262,12 @@ const AddorEditProduct = () => {
   const fetchVariations = async () => {
 
     try {
-      // const token = localStorage.getItem('token');
-      const response = await axios.get(`http://localhost:8000/admin/variations/all-records`);
+      const token = localStorage.getItem('token');
+      const response = await axios.get(`http://localhost:8000/admin/variations/all-records`, {
+        headers: {
+          'Authorization': token
+        }
+      });
       // console.log(response.data)
       setVariationData(response.data);
       // console.log(variationData)
@@ -268,8 +280,12 @@ const AddorEditProduct = () => {
   const fetchProducts = async () => {
 
     try {
-      // const token = localStorage.getItem('token');
-      const response = await axios.get(`http://localhost:8000/admin/products`);
+      const token = localStorage.getItem('token');
+      const response = await axios.get(`http://localhost:8000/admin/products`, {
+        headers: {
+          'Authorization': token
+        }
+      });
       // console.log(response)
       setProductsData(response.data);
     } catch (error) {
@@ -279,8 +295,12 @@ const AddorEditProduct = () => {
   const fetchProductById = async () => {
 
     try {
-      // const token = localStorage.getItem('token');
-      const response = await axios.get(`http://localhost:8000/admin/products/${_id}`);
+      const token = localStorage.getItem('token');
+      const response = await axios.get(`http://localhost:8000/admin/products/${_id}`, {
+        headers: {
+          'Authorization': token
+        }
+      });
       console.log(response)
       setFormData(response.data);
 
@@ -291,16 +311,20 @@ const AddorEditProduct = () => {
   const fetchSPG = async () => {
 
     try {
-        // const token = localStorage.getItem('token');
-        const response = await axios.get(`http://localhost:8000/admin/selling-price-groups`);
-        // console.log(response.data)
-        setSpgData(response.data);
-        // console.log(variationData)
+      const token = localStorage.getItem('token');
+      const response = await axios.get(`http://localhost:8000/admin/selling-price-groups`, {
+        headers: {
+          'Authorization': token
+        }
+      });
+      // console.log(response.data)
+      setSpgData(response.data);
+      // console.log(variationData)
 
     } catch (error) {
-        console.error('Error fetching spg:', error);
+      console.error('Error fetching spg:', error);
     }
-};
+  };
   useEffect(() => {
     // Make an API call to fetch SPG's records
     if (_id) {
@@ -327,7 +351,7 @@ const AddorEditProduct = () => {
   const addProduct = async () => {
 
     try {
-      // const token = localStorage.getItem('token');
+      const token = localStorage.getItem('token');
       const formDataForSubmission = new FormData();
       formDataForSubmission.append('productName', formData.productName);
       formDataForSubmission.append('sku', formData.sku);
@@ -338,7 +362,7 @@ const AddorEditProduct = () => {
       formDataForSubmission.append('productImage', formData.productImage);
       formDataForSubmission.append('productDescription', formData.productDescription);
       formDataForSubmission.append('productType', formData.productType);
-      if(formData.variationType[0]?.variationTempleateID !== null){
+      if (formData.variationType[0]?.variationTempleateID !== null) {
         formDataForSubmission.append('variationType', formData.variationType);
       }
       formDataForSubmission.append('combo', formData.combo);
@@ -347,7 +371,11 @@ const AddorEditProduct = () => {
       formDataForSubmission.append('margin', formData.margin);
 
       // console.log(formDataForSubmission)
-      const response = await axios.post(`http://localhost:8000/admin/products`, formDataForSubmission);
+      const response = await axios.post(`http://localhost:8000/admin/products`, formDataForSubmission, {
+        headers: {
+          'Authorization': token
+        }
+      });
       // console.log(response)
       if (response.status === 201) {
         navigate("/home/products")
@@ -361,9 +389,13 @@ const AddorEditProduct = () => {
   const addProductById = async () => {
 
     try {
-      // const token = localStorage.getItem('token');
+      const token = localStorage.getItem('token');
       // console.log(formData)
-      const response = await axios.put(`http://localhost:8000/admin/products/${_id}`, formData);
+      const response = await axios.put(`http://localhost:8000/admin/products/${_id}`, formData, {
+        headers: {
+          'Authorization': token
+        }
+      });
       console.log(response)
       if (response.status === 200) {
         navigate("/home/products")
@@ -907,7 +939,7 @@ const AddorEditProduct = () => {
                                   <input type='text' name='value' value={data.value || ""} onChange={(e) => handleSubChange(e, index, i)} className='border-[1px] w-full border-black focus:outline-none' />
 
                                 </td>
-                                
+
                                 <td>
                                   <div onClick={() => { handleRemove(index, i) }} className='flex items-center justify-center bg-red-500 cursor-pointer rounded-sm px-1 py-1  '>
                                     <FaMinus size={15} style={{ color: "white" }} />

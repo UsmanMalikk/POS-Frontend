@@ -215,8 +215,12 @@ const AddorEditSell = () => {
     const fetchLocations = async () => {
 
         try {
-            // const token = localStorage.getItem('token');
-            const response = await axios.get(`http://localhost:8000/admin/business-locations`);
+            const token = localStorage.getItem('token');
+            const response = await axios.get(`http://localhost:8000/admin/business-locations`,{
+                headers: {
+                    'Authorization': token
+                }
+            });
             console.log(response.data)
             setBusinessLocationData(response.data);
             // console.log(variationData)
@@ -228,8 +232,12 @@ const AddorEditSell = () => {
     const fetchSaleById = async () => {
 
         try {
-            // const token = localStorage.getItem('token');
-            const response = await axios.get(`http://localhost:8000/admin/sales/${type}/${id}`);
+            const token = localStorage.getItem('token');
+            const response = await axios.get(`http://localhost:8000/admin/sales/${type}/${id}`,{
+                headers: {
+                    'Authorization': token
+                }
+            });
             console.log(response)
             response.data.salesDate = new Date(response.data.salesDate).toLocaleDateString("fr-CA")
             response.data.paymentDate = new Date(response.data.paymentDate).toLocaleDateString("fr-CA")
@@ -242,8 +250,12 @@ const AddorEditSell = () => {
     const fetchProducts = async () => {
 
         try {
-            // const token = localStorage.getItem('token');
-            const response = await axios.get(`http://localhost:8000/admin/products`);
+            const token = localStorage.getItem('token');
+            const response = await axios.get(`http://localhost:8000/admin/products`,{
+                headers: {
+                    'Authorization': token
+                }
+            });
             // console.log(response)
             setProductsData(response.data);
         } catch (error) {
@@ -264,8 +276,12 @@ const AddorEditSell = () => {
     const fetchSPGs = async () => {
 
         try {
-            // const token = localStorage.getItem('token');
-            const response = await axios.get(`http://localhost:8000/admin/selling-price-groups`);
+            const token = localStorage.getItem('token');
+            const response = await axios.get(`http://localhost:8000/admin/selling-price-groups`,{
+                headers: {
+                    'Authorization': token
+                }
+            });
             // console.log(response)
 
 
@@ -278,8 +294,12 @@ const AddorEditSell = () => {
     const fetchUsers = async () => {
 
         try {
-            // const token = localStorage.getItem('token');
-            const response = await axios.get(`http://localhost:8000/admin/users`);
+            const token = localStorage.getItem('token');
+            const response = await axios.get(`http://localhost:8000/admin/users`,{
+                headers: {
+                    'Authorization': token
+                }
+            });
             // console.log(response)
             setUsersData(response.data);
         } catch (error) {
@@ -289,8 +309,12 @@ const AddorEditSell = () => {
     const fetchAccounts = async () => {
 
         try {
-            // const token = localStorage.getItem('token');
-            const response = await axios.get(`http://localhost:8000/admin/add-accounts`);
+            const token = localStorage.getItem('token');
+            const response = await axios.get(`http://localhost:8000/admin/add-accounts`,{
+                headers: {
+                    'Authorization': token
+                }
+            });
 
             // console.log(response)
             setAccountsData(response.data);
@@ -313,9 +337,13 @@ const AddorEditSell = () => {
     const addSale = async () => {
 
         try {
-            // const token = localStorage.getItem('token');
+            const token = localStorage.getItem('token');
             // console.log(finalFormData)
-            const response = await axios.post(`http://localhost:8000/admin/sales/${type}`, formData);
+            const response = await axios.post(`http://localhost:8000/admin/sales/${type}`, formData,{
+                headers: {
+                    'Authorization': token
+                }
+            });
             console.log(response)
             if (response.status === 201 && type === "draft") {
                 Navigate("/home/draft");
@@ -337,9 +365,13 @@ const AddorEditSell = () => {
     const addSaleById = async () => {
 
         try {
-            // const token = localStorage.getItem('token');
+            const token = localStorage.getItem('token');
             // console.log(finalFormData)
-            const response = await axios.put(`http://localhost:8000/admin/sales/${type}/${id}`, formData);
+            const response = await axios.put(`http://localhost:8000/admin/sales/${type}/${id}`, formData,{
+                headers: {
+                    'Authorization': token
+                }
+            });
             console.log(response)
             if (response.status === 200 && type === "draft") {
                 Navigate("/home/draft");

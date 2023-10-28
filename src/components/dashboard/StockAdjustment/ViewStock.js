@@ -17,8 +17,12 @@ const ViewStock = (props) => {
   const fetchSTK = async () => {
 
     try {
-      // const token = localStorage.getItem('token');
-      const response = await axios.get(`http://localhost:8000/admin/stock-adjustment/${props.id}`);
+      const token = localStorage.getItem('token');
+      const response = await axios.get(`http://localhost:8000/admin/stock-adjustment/${props.id}`,{
+        headers: {
+            'Authorization': token
+        }
+    });
       console.log(response.data)
       response.data.date = new Date(response.data.date).toLocaleDateString()
 

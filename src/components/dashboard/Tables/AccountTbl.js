@@ -133,8 +133,12 @@ const AccountTbl = () => {
 const fetchAccounts = async () => {
 
         try {
-            // const token = localStorage.getItem('token');
-            const response = await axios.get(`http://localhost:8000/admin/add-accounts`);
+            const token = localStorage.getItem('token');
+            const response = await axios.get(`http://localhost:8000/admin/add-accounts`,{
+                headers: {
+                    'Authorization': token
+                }
+            });
 
             // console.log(response)
             setAccountsData(response.data);
@@ -151,10 +155,14 @@ useEffect(() => {
     }, [])
     const handleClose = async (accId) => {
         try {
-          // Make an API call to delete attendance for a specific record
+            const token = localStorage.getItem('token');
           const response = await axios.put(`http://localhost:8000/admin/add-accounts/${accId}`,{
             isClosed : true
-          });
+          },{
+            headers: {
+                'Authorization': token
+            }
+        });
           console.log(response.data); 
           fetchAccounts()
         } catch (error) {

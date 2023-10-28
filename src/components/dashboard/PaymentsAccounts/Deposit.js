@@ -32,9 +32,13 @@ const Deposit = (props) => {
 const addFundsDeposit = async () => {
 
         try {
-            // const token = localStorage.getItem('token');
+            const token = localStorage.getItem('token');
             // console.log(formData)
-            const response = await axios.post(`http://localhost:8000/admin/account/funds-deposit`, formData);
+            const response = await axios.post(`http://localhost:8000/admin/account/funds-deposit`, formData,{
+                headers: {
+                    'Authorization': token
+                }
+            });
             console.log(response)
             if (response.status === 201) {
                 console.log("Success")

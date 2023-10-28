@@ -19,8 +19,12 @@ const AddorEditSellingPriceGrp = (props) => {
     const fetchSPGById = async () => {
 
         try {
-            // const token = localStorage.getItem('token');
-            const response = await axios.get(`http://localhost:8000/admin/selling-price-groups/${_id}`);
+            const token = localStorage.getItem('token');
+            const response = await axios.get(`http://localhost:8000/admin/selling-price-groups/${_id}`,{
+                headers: {
+                    'Authorization': token
+                }
+            });
             // console.log(response)
             setFormData(response.data);
 
@@ -40,9 +44,13 @@ const AddorEditSellingPriceGrp = (props) => {
     const addSPG = async () => {
 
         try {
-            // const token = localStorage.getItem('token');
+            const token = localStorage.getItem('token');
             // console.log(formData)
-            const response = await axios.post(`http://localhost:8000/admin/selling-price-groups`, formData);
+            const response = await axios.post(`http://localhost:8000/admin/selling-price-groups`, formData,{
+                headers: {
+                    'Authorization': token
+                }
+            });
             // console.log(response)
             if (response.status === 201) {
             console.log("Success")
@@ -55,9 +63,13 @@ const AddorEditSellingPriceGrp = (props) => {
     const addSPGById = async () => {
 
         try {
-            // const token = localStorage.getItem('token');
+            const token = localStorage.getItem('token');
             // console.log(formData)
-            const response = await axios.put(`http://localhost:8000/admin/selling-price-groups/${_id}`, formData);
+            const response = await axios.put(`http://localhost:8000/admin/selling-price-groups/${_id}`, formData,{
+                headers: {
+                    'Authorization': token
+                }
+            });
             console.log(response)
 
         } catch (error) {

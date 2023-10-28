@@ -38,8 +38,12 @@ const AddorEditDiscount = (props) => {
     const fetchSPG = async () => {
 
         try {
-            // const token = localStorage.getItem('token');
-            const response = await axios.get(`http://localhost:8000/admin/selling-price-groups`);
+            const token = localStorage.getItem('token');
+            const response = await axios.get(`http://localhost:8000/admin/selling-price-groups`,{
+                headers: {
+                    'Authorization': token
+                }
+            });
             // console.log(response.data)
             setSpgData(response.data);
             // console.log(variationData)
@@ -51,8 +55,12 @@ const AddorEditDiscount = (props) => {
     const fetchProducts = async () => {
 
         try {
-            // const token = localStorage.getItem('token');
-            const response = await axios.get(`http://localhost:8000/admin/products`);
+            const token = localStorage.getItem('token');
+            const response = await axios.get(`http://localhost:8000/admin/products`,{
+                headers: {
+                    'Authorization': token
+                }
+            });
             console.log(response)
             setProductsData(response.data);
         } catch (error) {
@@ -63,8 +71,12 @@ const AddorEditDiscount = (props) => {
     const fetchCategory = async () => {
 
         try {
-            // const token = localStorage.getItem('token');
-            const response = await axios.get(`http://localhost:8000/admin/categories`);
+            const token = localStorage.getItem('token');
+            const response = await axios.get(`http://localhost:8000/admin/categories`,{
+                headers: {
+                    'Authorization': token
+                }
+            });
             // console.log(response)
             setCategorysData(response.data);
         } catch (error) {
@@ -77,8 +89,12 @@ const AddorEditDiscount = (props) => {
     const fetchBrands = async () => {
 
         try {
-            // const token = localStorage.getItem('token');
-            const response = await axios.get(`http://localhost:8000/admin/brands`);
+            const token = localStorage.getItem('token');
+            const response = await axios.get(`http://localhost:8000/admin/brands`,{
+                headers: {
+                    'Authorization': token
+                }
+            });
             // console.log(response.data)
             setBrandsData(response.data);
 
@@ -89,8 +105,12 @@ const AddorEditDiscount = (props) => {
     const fetchDiscountById = async () => {
 
         try {
-            // const token = localStorage.getItem('token');
-            const response = await axios.get(`http://localhost:8000/admin/discounts/${props.id}`);
+            const token = localStorage.getItem('token');
+            const response = await axios.get(`http://localhost:8000/admin/discounts/${props.id}`,{
+                headers: {
+                    'Authorization': token
+                }
+            });
             // console.log(response)
             setFormData(response.data);
         } catch (error) {
@@ -117,9 +137,13 @@ const AddorEditDiscount = (props) => {
     const addDiscount = async () => {
 
         try {
-            // const token = localStorage.getItem('token');
+            const token = localStorage.getItem('token');
             // console.log(formData)
-            const response = await axios.post(`http://localhost:8000/admin/discounts`, formData);
+            const response = await axios.post(`http://localhost:8000/admin/discounts`, formData,{
+                headers: {
+                    'Authorization': token
+                }
+            });
             // console.log(response)
             if (response.status === 201) {
                 window.location.reload();
@@ -134,9 +158,13 @@ const AddorEditDiscount = (props) => {
     const addDiscountById = async () => {
 
         try {
-            // const token = localStorage.getItem('token');
+            const token = localStorage.getItem('token');
             // console.log(formData)
-            const response = await axios.put(`http://localhost:8000/admin/discounts/${props.id}`, formData);
+            const response = await axios.put(`http://localhost:8000/admin/discounts/${props.id}`, formData,{
+                headers: {
+                    'Authorization': token
+                }
+            });
             console.log(response)
             if (response.status === 200) {
                 window.location.reload();

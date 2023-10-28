@@ -3,7 +3,7 @@ import { AiFillCaretDown } from "react-icons/ai";
 import {
   FaColumns,
   FaEdit,
-  
+
   FaFileCsv,
   FaFileExcel,
   FaFilePdf,
@@ -11,7 +11,7 @@ import {
   FaPrint,
   FaSearch,
   FaTrash,
-  
+
 } from "react-icons/fa";
 import { useReactToPrint } from "react-to-print";
 import { CSVLink } from "react-csv";
@@ -53,7 +53,7 @@ const Expensestbl = () => {
         pdf.save("download.pdf");
       });
   };
-    const [expansesData, setExpansesData] = useState([]);
+  const [expansesData, setExpansesData] = useState([]);
 
   const [crpage, setCrpage] = useState(1);
   const rcrdprpg = 5;
@@ -83,7 +83,7 @@ const Expensestbl = () => {
   const [isedit, setIsedit] = useState(false);
   const [isShowPayment, setIsShowPayment] = useState(false);
   const [paymentId, setPaymentId] = useState(0);
-  
+
   const [isCliked, setIsCliked] = useState(false);
   const [actionList, setActionList] = useState(
     Array(record.length).fill(false)
@@ -139,26 +139,26 @@ const Expensestbl = () => {
         ExpenseNote,
         Addedby,
       }) => [
-        id,
-        Username,
-        Name,
-        Role,
-        Email,
-        Date,
-        RefNo,
-        RecurringDetails,
-        ExpensesCategory,
-        SubCategory,
-        Location,
-        PaymentStatus,
-        Tax,
-        TotalAmount,
-        PaymentDue,
-        Expensesfor,
-        Contact,
-        ExpenseNote,
-        Addedby,
-      ]
+          id,
+          Username,
+          Name,
+          Role,
+          Email,
+          Date,
+          RefNo,
+          RecurringDetails,
+          ExpensesCategory,
+          SubCategory,
+          Location,
+          PaymentStatus,
+          Tax,
+          TotalAmount,
+          PaymentDue,
+          Expensesfor,
+          Contact,
+          ExpenseNote,
+          Addedby,
+        ]
     ),
   ];
 
@@ -186,37 +186,45 @@ const Expensestbl = () => {
   const displayData = () => {
     if (showId !== 0 && isshow === true) {
       return <ViewSell id={showId} />;
-    }  if (isShowPayment === true) {
+    } if (isShowPayment === true) {
       return <ViewPayment id={paymentId} />;
     }
   };
-const fetchExpanses = async () => {
-        // let final = "final"
-        try {
-            // const token = localStorage.getItem('token');
-            const response = await axios.get(`http://localhost:8000/admin/add-expenses`);
-            console.log(response)
-            setExpansesData(response.data);
-        } catch (error) {
-            console.error('Error fetching Expenses:', error);
+  const fetchExpanses = async () => {
+    // let final = "final"
+    try {
+      const token = localStorage.getItem('token');
+      const response = await axios.get(`http://localhost:8000/admin/add-expenses`, {
+        headers: {
+          'Authorization': token
         }
-    };
-    useEffect(() => {
+      });
+      console.log(response)
+      setExpansesData(response.data);
+    } catch (error) {
+      console.error('Error fetching Expenses:', error);
+    }
+  };
+  useEffect(() => {
 
-      fetchExpanses();
+    fetchExpanses();
 
 
-    }, []);
-    const handleDeleteExpense = async (expId) => {
-      try {
-        // Make an API call to delete attendance for a specific record
-        const response = await axios.delete(`http://localhost:8000/admin/add-expenses/${expId}`);
-        console.log('Expense deleted:', response.data); // Handle success response
-        fetchExpanses()
-      } catch (error) {
-        console.error('Error deleting Expense:', error);
-      }
-    };
+  }, []);
+  const handleDeleteExpense = async (expId) => {
+    try {
+      const token = localStorage.getItem('token');
+      const response = await axios.delete(`http://localhost:8000/admin/add-expenses/${expId}`, {
+        headers: {
+          'Authorization': token
+        }
+      });
+      console.log('Expense deleted:', response.data); // Handle success response
+      fetchExpanses()
+    } catch (error) {
+      console.error('Error deleting Expense:', error);
+    }
+  };
   return (
     <div>
       <div className="flex  flex-col md:flex-row  items-center justify-center mt-3 md:justify-between mx-5">
@@ -268,9 +276,8 @@ const fetchExpanses = async () => {
               <div className="absolute top-7 shadow-md shadow-gray-400 bg-white w-[150px]">
                 <ul className="flex flex-col items-center justify-center">
                   <li
-                    className={` w-full py-1 ${
-                      col1 ? "" : "bg-blue-600"
-                    } hover:bg-blue-400 `}
+                    className={` w-full py-1 ${col1 ? "" : "bg-blue-600"
+                      } hover:bg-blue-400 `}
                     onClick={() => {
                       setCol1(!col1);
                     }}
@@ -278,9 +285,8 @@ const fetchExpanses = async () => {
                     Action
                   </li>
                   <li
-                    className={` w-full py-1 ${
-                      col2 ? "" : "bg-blue-600"
-                    } hover:bg-blue-400 `}
+                    className={` w-full py-1 ${col2 ? "" : "bg-blue-600"
+                      } hover:bg-blue-400 `}
                     onClick={() => {
                       setCol2(!col2);
                     }}
@@ -288,9 +294,8 @@ const fetchExpanses = async () => {
                     Date
                   </li>
                   <li
-                    className={` w-full py-1 ${
-                      col3 ? "" : "bg-blue-600"
-                    } hover:bg-blue-400 `}
+                    className={` w-full py-1 ${col3 ? "" : "bg-blue-600"
+                      } hover:bg-blue-400 `}
                     onClick={() => {
                       setCol3(!col3);
                     }}
@@ -308,9 +313,8 @@ const fetchExpanses = async () => {
                     Recurring Details
                   </li> */}
                   <li
-                    className={` w-full py-1 ${
-                      col5 ? "" : "bg-blue-600"
-                    } hover:bg-blue-400 `}
+                    className={` w-full py-1 ${col5 ? "" : "bg-blue-600"
+                      } hover:bg-blue-400 `}
                     onClick={() => {
                       setCol5(!col5);
                     }}
@@ -318,9 +322,8 @@ const fetchExpanses = async () => {
                     Expense Category
                   </li>
                   <li
-                    className={` w-full py-1 ${
-                      col6 ? "" : "bg-blue-600"
-                    } hover:bg-blue-400 `}
+                    className={` w-full py-1 ${col6 ? "" : "bg-blue-600"
+                      } hover:bg-blue-400 `}
                     onClick={() => {
                       setCol6(!col6);
                     }}
@@ -328,9 +331,8 @@ const fetchExpanses = async () => {
                     Sub Category
                   </li>
                   <li
-                    className={` w-full py-1 ${
-                      col7 ? "" : "bg-blue-600"
-                    } hover:bg-blue-400 `}
+                    className={` w-full py-1 ${col7 ? "" : "bg-blue-600"
+                      } hover:bg-blue-400 `}
                     onClick={() => {
                       setCol7(!col7);
                     }}
@@ -338,9 +340,8 @@ const fetchExpanses = async () => {
                     Location
                   </li>
                   <li
-                    className={` w-full py-1 ${
-                      col8 ? "" : "bg-blue-600"
-                    } hover:bg-blue-400 `}
+                    className={` w-full py-1 ${col8 ? "" : "bg-blue-600"
+                      } hover:bg-blue-400 `}
                     onClick={() => {
                       setCol8(!col8);
                     }}
@@ -358,9 +359,8 @@ const fetchExpanses = async () => {
                     Tax
                   </li> */}
                   <li
-                    className={` w-full py-1 ${
-                      col10 ? "" : "bg-blue-600"
-                    } hover:bg-blue-400 `}
+                    className={` w-full py-1 ${col10 ? "" : "bg-blue-600"
+                      } hover:bg-blue-400 `}
                     onClick={() => {
                       setCol10(!col10);
                     }}
@@ -368,9 +368,8 @@ const fetchExpanses = async () => {
                     Total Amount
                   </li>
                   <li
-                    className={` w-full py-1 ${
-                      col11 ? "" : "bg-blue-600"
-                    } hover:bg-blue-400 `}
+                    className={` w-full py-1 ${col11 ? "" : "bg-blue-600"
+                      } hover:bg-blue-400 `}
                     onClick={() => {
                       setCol11(!col11);
                     }}
@@ -378,9 +377,8 @@ const fetchExpanses = async () => {
                     Payment Due
                   </li>
                   <li
-                    className={` w-full py-1 ${
-                      col12 ? "" : "bg-blue-600"
-                    } hover:bg-blue-400 `}
+                    className={` w-full py-1 ${col12 ? "" : "bg-blue-600"
+                      } hover:bg-blue-400 `}
                     onClick={() => {
                       setCol12(!col12);
                     }}
@@ -388,9 +386,8 @@ const fetchExpanses = async () => {
                     Expense For
                   </li>
                   <li
-                    className={` w-full py-1 ${
-                      col13 ? "" : "bg-blue-600"
-                    } hover:bg-blue-400 `}
+                    className={` w-full py-1 ${col13 ? "" : "bg-blue-600"
+                      } hover:bg-blue-400 `}
                     onClick={() => {
                       setCol13(!col13);
                     }}
@@ -399,9 +396,8 @@ const fetchExpanses = async () => {
                     Contact
                   </li>
                   <li
-                    className={` w-full py-1 ${
-                      col14 ? "" : "bg-blue-600"
-                    } hover:bg-blue-400 `}
+                    className={` w-full py-1 ${col14 ? "" : "bg-blue-600"
+                      } hover:bg-blue-400 `}
                     onClick={() => {
                       setCol14(!col14);
                     }}
@@ -409,9 +405,8 @@ const fetchExpanses = async () => {
                     Expense Note
                   </li>
                   <li
-                    className={` w-full py-1 ${
-                      col15 ? "" : "bg-blue-600"
-                    } hover:bg-blue-400 `}
+                    className={` w-full py-1 ${col15 ? "" : "bg-blue-600"
+                      } hover:bg-blue-400 `}
                     onClick={() => {
                       setCol15(!col15);
                     }}
@@ -528,7 +523,7 @@ const fetchExpanses = async () => {
           <tbody>
             {record.map((value, index) => {
               let date = new Date(value.date).toLocaleDateString()
-              let expensesFor = value.expenseFor.firstName +" "+value.expenseFor.lastName
+              let expensesFor = value.expenseFor.firstName + " " + value.expenseFor.lastName
               return (
                 <tr key={index} className="">
                   {col1 && (
@@ -543,7 +538,7 @@ const fetchExpanses = async () => {
                         <AiFillCaretDown size={10} />
                         {actionList[index] && (
                           <ul className="absolute top-5 left-10 z-20 flex flex-col items-start w-[200px] bg-white text-gray-600 shadow-xl shadow-gray-400 ">
-                            
+
                             <li className="w-full">
                               <Link
                                 to={`/home/expenses/edit/${value._id}`}
@@ -570,14 +565,14 @@ const fetchExpanses = async () => {
                                 <h1 className="text-sm">Delete</h1>
                               </div>
                             </li>
-                            
+
                             <li className="w-full">
                               <Link className="flex px-2 py-1 w-full cursor-pointer hover:bg-gray-400 items-center ">
                                 <FaMoneyBillAlt size={15} />
                                 <h1 className="text-sm">View Payment</h1>
                               </Link>
                             </li>
-                            
+
                           </ul>
                         )}
                       </div>
@@ -613,7 +608,7 @@ const fetchExpanses = async () => {
                   )}
                   {col13 && <td className="px-1 py-1"> {value.expenseForContact}</td>}
                   {col14 && <td className="px-1 py-1">{value.expenseNote}</td>}
-                  {/* {col15 && <td className=" py-1 px-1">{value.Email}</td>} from prop user profile*/      } 
+                  {/* {col15 && <td className=" py-1 px-1">{value.Email}</td>} from prop user profile*/}
                 </tr>
               );
             })}
@@ -639,9 +634,8 @@ const fetchExpanses = async () => {
             return (
               <li
                 key={i}
-                className={`${
-                  crpage === n ? "bg-blue-500" : ""
-                } py-3 px-4 mx-1 border-[1px] border-gray-400`}
+                className={`${crpage === n ? "bg-blue-500" : ""
+                  } py-3 px-4 mx-1 border-[1px] border-gray-400`}
               >
                 <button
                   onClick={() => {

@@ -1,6 +1,6 @@
-import React, { useRef, useState ,useEffect} from 'react'
+import React, { useRef, useState, useEffect } from 'react'
 import { AiFillCaretDown } from 'react-icons/ai'
-import { FaColumns,  FaEdit, FaFileCsv, FaFileExcel, FaFilePdf, FaPrint, FaSearch, FaTrash } from 'react-icons/fa'
+import { FaColumns, FaEdit, FaFileCsv, FaFileExcel, FaFilePdf, FaPrint, FaSearch, FaTrash } from 'react-icons/fa'
 import { useReactToPrint } from 'react-to-print';
 import { CSVLink } from 'react-csv';
 import * as XLSX from 'xlsx'
@@ -11,7 +11,7 @@ import AddorEditDiscount from '../discount/AddorEditDiscount';
 import axios from 'axios';
 
 const DiscountTbl = () => {
-    const [dummyData,setDummyData] = useState([
+    const [dummyData, setDummyData] = useState([
         {
             id: 1,
             Username: "username",
@@ -63,11 +63,11 @@ const DiscountTbl = () => {
         }
     ])
 
-    const handleChange = (e)=>{
-        const {name, checked} = e.target
-        if(name === "allSelect"){
-            const checkedValue = dummyData.map((val)=>{
-                return{
+    const handleChange = (e) => {
+        const { name, checked } = e.target
+        if (name === "allSelect") {
+            const checkedValue = dummyData.map((val) => {
+                return {
                     ...val, isChecked: checked
                 }
             })
@@ -75,19 +75,19 @@ const DiscountTbl = () => {
         }
     }
 
-    const handleSingle = (e,index)=>{
-        const { checked} = e.target
-        
-            const checkedValue = dummyData.map((val,ind)=>{
-                if(ind === index){
-                    return{
-                        ...val, isChecked: checked
-                    }
+    const handleSingle = (e, index) => {
+        const { checked } = e.target
+
+        const checkedValue = dummyData.map((val, ind) => {
+            if (ind === index) {
+                return {
+                    ...val, isChecked: checked
                 }
-               return val
-            })
-            setDummyData(checkedValue)
-        
+            }
+            return val
+        })
+        setDummyData(checkedValue)
+
     }
     const printRef = useRef()
     let xlDatas = []
@@ -137,7 +137,7 @@ const DiscountTbl = () => {
     const [col8, setCol8] = useState(true)
     const [col9, setCol9] = useState(true)
     const [col10, setCol10] = useState(true)
-    
+
     const [isCliked, setIsCliked] = useState(false)
     const [upid, setUpid] = useState(0)
     const [isEdit, setIsEdit] = useState(false)
@@ -178,17 +178,21 @@ const DiscountTbl = () => {
         }
     }
     const displayData = () => {
-         if (isEdit) {
+        if (isEdit) {
             return <AddorEditDiscount id={upid} />
         }
     }
 
 
-const fetchDiscounts = async () => {
+    const fetchDiscounts = async () => {
 
         try {
-            // const token = localStorage.getItem('token');
-            const response = await axios.get(`http://localhost:8000/admin/discounts`);
+            const token = localStorage.getItem('token');
+            const response = await axios.get(`http://localhost:8000/admin/discounts`, {
+                headers: {
+                    'Authorization': token
+                }
+            });
             console.log(response.data)
             setDiscountsData(response.data);
 
@@ -198,20 +202,24 @@ const fetchDiscounts = async () => {
     };
     const handleDeleteDiscount = async (discountId) => {
         try {
-          // Make an API call to delete attendance for a specific record
-          const response = await axios.delete(`http://localhost:8000/admin/discounts/${discountId}`);
-          console.log('SPG deleted:', response.data); // Handle success response
-          fetchDiscounts()
+            const token = localStorage.getItem('token');
+            const response = await axios.delete(`http://localhost:8000/admin/discounts/${discountId}`, {
+                headers: {
+                    'Authorization': token
+                }
+            });
+            console.log('SPG deleted:', response.data); // Handle success response
+            fetchDiscounts()
         } catch (error) {
-          console.error('Error deleting spg:', error);
+            console.error('Error deleting spg:', error);
         }
-      };
+    };
     useEffect(() => {
-        
+
         fetchDiscounts();
 
-  
-}, []);
+
+    }, []);
     return (
         <div>
 
@@ -263,7 +271,7 @@ const fetchDiscounts = async () => {
                                 <li className={` w-full py-1 ${col8 ? "" : "bg-blue-600"} hover:bg-blue-400 `} onClick={() => { setCol8(!col8) }}>Products</li>
                                 <li className={` w-full py-1 ${col9 ? "" : "bg-blue-600"} hover:bg-blue-400 `} onClick={() => { setCol9(!col9) }}>Location</li>
                                 <li className={` w-full py-1 ${col10 ? "" : "bg-blue-600"} hover:bg-blue-400 `} onClick={() => { setCol10(!col10) }}>Action</li>
-                                
+
                             </ul>
                         </div>}
                     </button>
@@ -279,12 +287,12 @@ const fetchDiscounts = async () => {
 
 
             </div>
-            
+
             <div className='flex flex-col items-center justify-center  overflow-x-scroll  mt-5 mx-5' ref={printRef} >
                 <table id='usertbl' className="table-fixed w-full mb-10   px-5 ">
                     <thead>
                         <tr className='h-[50px] bg-gray-100'>
-                            <th className='text-center'><input type='checkbox' name='allSelect' onChange={(e)=>{handleChange(e)}} /> </th>
+                            <th className='text-center'><input type='checkbox' name='allSelect' onChange={(e) => { handleChange(e) }} /> </th>
                             {col1 && <th className=" py-2 title-font   tracking-wider font-medium text-gray-900 text-sm">Name</th>}
                             {col2 && <th className=" py-2 title-font   tracking-wider font-medium text-gray-900 text-sm">Starts At</th>}
                             {col3 && <th className=" py-2 title-font   tracking-wider font-medium text-gray-900 text-sm">Ends At</th>}
@@ -303,16 +311,16 @@ const fetchDiscounts = async () => {
                             let startDate = new Date(value.startsAt).toLocaleDateString()
                             let endDate = new Date(value.endsAt).toLocaleDateString()
 
-                            return <tr key={index} className={`${value.isChecked ? "bg-blue-800/60":""}`}>
-                                <td className='text-center'><input type='checkbox' name={index} checked={value?.isChecked || false} onChange={(e)=>{handleSingle(e,index)}} /> </td>
+                            return <tr key={index} className={`${value.isChecked ? "bg-blue-800/60" : ""}`}>
+                                <td className='text-center'><input type='checkbox' name={index} checked={value?.isChecked || false} onChange={(e) => { handleSingle(e, index) }} /> </td>
                                 {col1 && <td className="px-1 py-1 text-sm">{value.name}</td>}
                                 {col2 && <td className="px-1 py-1"> {startDate}</td>}
                                 {col3 && <td className=" py-1 px-1">{endDate}</td>}
                                 {col4 && <td className=" py-1 px-1">{value.discountAmount}</td>}
                                 {col5 && <td className="px-1 py-1 text-sm">{value.priority}</td>}
-                                {col6 && <td className=" py-1 px-1">{(value.brand !== null) ? value.brand.brandName: ""}</td>}
-                                {col7 && <td className=" py-1 px-1">{(value.category !== null)?value.category.categoryName: ""}</td>}
-                                {col8 && <td className="px-1 py-1 text-sm">{(value.product)?value.product.productName: ""}</td>}
+                                {col6 && <td className=" py-1 px-1">{(value.brand !== null) ? value.brand.brandName : ""}</td>}
+                                {col7 && <td className=" py-1 px-1">{(value.category !== null) ? value.category.categoryName : ""}</td>}
+                                {col8 && <td className="px-1 py-1 text-sm">{(value.product) ? value.product.productName : ""}</td>}
                                 {col9 && <td className=" py-1 px-1">{value.location}</td>}
                                 {col10 && <td className='py-1 flex '>
                                     <div onClick={() => { toggleDropdown(index) }} className='flex px-2 py-1 relative cursor-pointer items-center bg-green-600 rounded-xl text-white justify-center'>
@@ -322,7 +330,7 @@ const fetchDiscounts = async () => {
                                             <ul className='absolute top-5 right-10  z-20 flex flex-col items-start w-[100px] bg-white text-gray-600 shadow-xl shadow-gray-400 '>
 
                                                 <li className='w-full'>
-                                                    <div onClick={()=>{setIsCliked(true); setUpid(value._id); setIsEdit(true); }} className='flex px-2 py-1 w-full cursor-pointer hover:bg-gray-400 items-center '>
+                                                    <div onClick={() => { setIsCliked(true); setUpid(value._id); setIsEdit(true); }} className='flex px-2 py-1 w-full cursor-pointer hover:bg-gray-400 items-center '>
                                                         <FaEdit size={15} />
                                                         <h1 className='text-sm'>Edit</h1>
                                                     </div>
@@ -330,7 +338,7 @@ const fetchDiscounts = async () => {
                                                 <li className='w-full'>
                                                     <div onClick={() => { }} className='flex px-2 py-1 w-full cursor-pointer hover:bg-gray-400 items-center '>
                                                         <FaTrash size={15} />
-                                                        <h1 className='text-sm' onClick={ ()=> handleDeleteDiscount(value._id)}>Delete</h1>
+                                                        <h1 className='text-sm' onClick={() => handleDeleteDiscount(value._id)}>Delete</h1>
                                                     </div>
                                                 </li>
                                             </ul>
@@ -347,7 +355,7 @@ const fetchDiscounts = async () => {
             </div>
             <div className='flex w-1/2 ml-10'>
                 <button className='bg-yellow-500 px-1 text-xs mx-2 rounded-md py-1'>Deactivate Selected</button>
-            
+
             </div>
             {isCliked &&
                 <div className='absolute top-0 flex flex-col items-center  justify-center right-0 bg-black/70 w-full min-h-screen'>
@@ -378,11 +386,11 @@ const fetchDiscounts = async () => {
             </nav>
 
 
-            
+
             {isCliked === true &&
                 <div className='absolute top-0 flex flex-col items-center   right-0 bg-black/70 w-full min-h-screen'>
                     <div className="flex flex-col w-full md:w-[50%]">
-                        <div onClick={() => { setIsCliked(false); setIsEdit(false)  }} className=' flex items-end justify-end   mt-10 bg-white px-5 pt-2'>
+                        <div onClick={() => { setIsCliked(false); setIsEdit(false) }} className=' flex items-end justify-end   mt-10 bg-white px-5 pt-2'>
                             <MdCancel size={20} />
 
                         </div>

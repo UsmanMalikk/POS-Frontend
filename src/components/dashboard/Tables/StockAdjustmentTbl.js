@@ -28,78 +28,7 @@ import ViewPayment from "../payments/ViewPayment";
 import axios from 'axios';
 
 const StockAdjustmentTbl = () => {
-  // const dummyData = [
-  //   {
-  //     date: "11/12/23",
-  //     id: 1,
-  //     Location: "Islamabad",
-  //     AdjustmentType: "added",
-  //     TotalAmount: "5000",
-  //     TotalAmountRecieved: "2500",
-  //     Reason: "business",
-  //     Email: "username@gmail.com",
-  //   },
-  //   {
-  //     date: "11/12/23",
-  //     id: 2,
-  //     Location: "Islamabad",
-  //     AdjustmentType: "added",
-  //     TotalAmount: "5000",
-  //     TotalAmountRecieved: "2500",
-  //     Reason: "business",
-  //     Email: "username@gmail.com",
-  //   },
-  //   {
-  //     date: "11/12/23",
-  //     id: 3,
-  //     Location: "Islamabad",
-  //     AdjustmentType: "added",
-  //     TotalAmount: "5000",
-  //     TotalAmountRecieved: "2500",
-  //     Reason: "business",
-  //     Email: "username@gmail.com",
-  //   },
-  //   {
-  //     date: "11/12/23",
-  //     id: 4,
-  //     Location: "Islamabad",
-  //     AdjustmentType: "added",
-  //     TotalAmount: "5000",
-  //     TotalAmountRecieved: "2500",
-  //     Reason: "business",
-  //     Email: "username@gmail.com",
-  //   },
-  //   {
-  //     date: "11/12/23",
-  //     id: 5,
-  //     Location: "Islamabad",
-  //     AdjustmentType: "added",
-  //     TotalAmount: "5000",
-  //     TotalAmountRecieved: "2500",
-  //     Reason: "business",
-  //     Email: "username@gmail.com",
-  //   },
-  //   {
-  //     date: "11/12/23",
-  //     id: 6,
-  //     Location: "Islamabad",
-  //     AdjustmentType: "added",
-  //     TotalAmount: "5000",
-  //     TotalAmountRecieved: "2500",
-  //     Reason: "business",
-  //     Email: "username@gmail.com",
-  //   },
-  //   {
-  //     date: "11/12/23",
-  //     id: 7,
-  //     Location: "Islamabad",
-  //     AdjustmentType: "added",
-  //     TotalAmount: "5000",
-  //     TotalAmountRecieved: "2500",
-  //     Reason: "business",
-  //     Email: "username@gmail.com",
-  //   },
-  // ];
+
   const printRef = useRef();
   let xlDatas = [];
   //Export to Excel
@@ -229,7 +158,7 @@ const StockAdjustmentTbl = () => {
       return <ViewStock id={showId} />;
     } else if (iseditship === true && editShipId !== 0) {
       return <EditShipping id={editShipId} />;
-    } 
+    }
   };
 
 
@@ -238,8 +167,12 @@ const StockAdjustmentTbl = () => {
   const fetchSTK = async () => {
 
     try {
-      // const token = localStorage.getItem('token');
-      const response = await axios.get(`http://localhost:8000/admin/stock-adjustment`);
+      const token = localStorage.getItem('token');
+      const response = await axios.get(`http://localhost:8000/admin/stock-adjustment`, {
+        headers: {
+          'Authorization': token
+        }
+      });
       console.log(response)
       setstkData(response.data);
     } catch (error) {
@@ -252,8 +185,12 @@ const StockAdjustmentTbl = () => {
   }, []);
   const handleDeleteAdjustment = async (stkId) => {
     try {
-      // Make an API call to delete attendance for a specific record
-      const response = await axios.delete(`http://localhost:8000/admin/stock-adjustment/${stkId}`);
+      const token = localStorage.getItem('token');
+      const response = await axios.delete(`http://localhost:8000/admin/stock-adjustment/${stkId}`, {
+        headers: {
+          'Authorization': token
+        }
+      });
       console.log('Stoct Adjustment deleted:', response.data); // Handle success response
       fetchSTK()
     } catch (error) {
@@ -528,7 +465,7 @@ const StockAdjustmentTbl = () => {
                             <li className="w-full">
                               <div
                                 onClick={() => {
-                                 
+
                                   handleDeleteAdjustment(value._id)
 
                                 }}
@@ -551,7 +488,7 @@ const StockAdjustmentTbl = () => {
                                 <h1 className="text-sm">Edit Shipping</h1>
                               </div>
                             </li>
-                            
+
                           </ul>
                         )}
                       </div>

@@ -1,8 +1,8 @@
 import React, { useEffect, useState } from 'react'
 import { useTranslation } from "react-i18next";
 import i18next from 'i18next';
-import {BiSolidUser} from "react-icons/bi"
-import {BsFillLockFill} from "react-icons/bs"
+import { BiSolidUser } from "react-icons/bi"
+import { BsFillLockFill } from "react-icons/bs"
 import axios from 'axios';
 import { useNavigate } from "react-router-dom"
 import { Link } from 'react-router-dom'
@@ -10,7 +10,7 @@ import { Link } from 'react-router-dom'
 
 
 const Login = () => {
-    const Navigate = useNavigate ();
+    const Navigate = useNavigate();
 
     const languages = [
         {
@@ -32,7 +32,7 @@ const Login = () => {
             code: "ar",
             name: "العربية",
             country_code: "ar",
-            dir:"rtl"
+            dir: "rtl"
         },
         {
             code: "cn",
@@ -84,7 +84,7 @@ const Login = () => {
             name: "Turkeye",
             country_code: "gb"
         },
-        
+
         {
             code: "vi",
             name: "Vietnam",
@@ -102,11 +102,13 @@ const Login = () => {
                 userName,
                 password,
             });
-            // const token=response.data.token;
-            // localStorage.setItem('token', token);
+
             console.log(response);
-                
+
             if (response.status === 200) {
+                const token = response.data.token;
+                console.log(token)
+                localStorage.setItem('token', token);
                 Navigate("/home");
             }
 
@@ -116,34 +118,34 @@ const Login = () => {
         }
     };
 
-    const handleChange =(e)=>{
-        if(e.target.name ==="username"){
+    const handleChange = (e) => {
+        if (e.target.name === "username") {
             setUserName(e.target.value)
-        }else if(e.target.name ==="password"){
+        } else if (e.target.name === "password") {
             setPassword(e.target.value)
-        }else if(e.target.name ==="remember_me"){
-            if(e.target.value === true){
+        } else if (e.target.name === "remember_me") {
+            if (e.target.value === true) {
                 setRemember(true)
-            }else{
+            } else {
                 setRemember(false)
             }
         }
     }
-    const langChange = (e) =>{
-        if(e.target.name ==="lang"){
+    const langChange = (e) => {
+        if (e.target.name === "lang") {
             setLang(e.target.value)
         }
     }
     useEffect(() => {
         i18next.changeLanguage(lang)
-        if(lang === "ar"){
-            document.body.dir = 'rtl' 
-        }else{
-          document.body.dir ='ltr'
+        if (lang === "ar") {
+            document.body.dir = 'rtl'
+        } else {
+            document.body.dir = 'ltr'
         }
     }, [lang,])
 
-   
+
     const { t } = useTranslation();
     return (
         <div className='grid md:grid-cols-8 sm:grid-cols-1 w-full'>
@@ -180,8 +182,8 @@ const Login = () => {
                         <BsFillLockFill size={20} className="absolute top-2 right-1" />
                     </div>
                     <div className='flex mt-5'>
-                    <input type='checkbox' className='' id='remember-me' name='remember-me' value={remember} /> 
-                    <h1 className='text-white mx-3 text-xl'>{t('remember_me')}</h1>
+                        <input type='checkbox' className='' id='remember-me' name='remember-me' value={remember} />
+                        <h1 className='text-white mx-3 text-xl'>{t('remember_me')}</h1>
                     </div>
                     <div className='flex justify-between mt-10'>
                         <button type='submit' className='bg-blue-400 text-white text-xl px-2 py-1 mx-2' onClick={handleLogin}> {t('Login')}</button>

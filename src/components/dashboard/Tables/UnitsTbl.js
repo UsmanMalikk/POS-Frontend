@@ -12,57 +12,7 @@ import axios from 'axios';
 
 
 const UnitsTbl = () => {
-    // const dummyData = [
-    //     {
-    //         id: 1,
-    //         Username: "username",
-    //         Name: "User",
-    //         Role: "Admin",
-    //         Email: "username@gmail.com"
-    //     },
-    //     {
-    //         id: 2,
-    //         Username: "username1",
-    //         Name: "User1",
-    //         Role: "Admin",
-    //         Email: "username@gmail.com"
-    //     },
-    //     {
-    //         id: 3,
-    //         Username: "username2",
-    //         Name: "User2",
-    //         Role: "Admin",
-    //         Email: "username2@gmail.com"
-    //     },
-    //     {
-    //         id: 4,
-    //         Username: "username3",
-    //         Name: "User3",
-    //         Role: "Admin",
-    //         Email: "username3@gmail.com"
-    //     },
-    //     {
-    //         id: 5,
-    //         Username: "username4",
-    //         Name: "User4",
-    //         Role: "Admin",
-    //         Email: "username4@gmail.com"
-    //     },
-    //     {
-    //         id: 6,
-    //         Username: "username5",
-    //         Name: "User5",
-    //         Role: "Admin",
-    //         Email: "username5@gmail.com"
-    //     },
-    //     {
-    //         id: 7,
-    //         Username: "username6",
-    //         Name: "User6",
-    //         Role: "Admin",
-    //         Email: "username6@gmail.com"
-    //     }
-    // ]
+
     const printRef = useRef()
     let xlDatas = []
     //Export to Excel
@@ -150,8 +100,12 @@ const UnitsTbl = () => {
     const fetchUnits = async () => {
 
         try {
-            // const token = localStorage.getItem('token');
-            const response = await axios.get(`http://localhost:8000/admin/units`);
+            const token = localStorage.getItem('token');
+            const response = await axios.get(`http://localhost:8000/admin/units`, {
+                headers: {
+                    'Authorization': token
+                }
+            });
             // console.log(response)
             setUnitsData(response.data);
         } catch (error) {
@@ -165,14 +119,18 @@ const UnitsTbl = () => {
 
     const handleDeleteUnit = async (unitId) => {
         try {
-          // Make an API call to delete attendance for a specific record
-          const response = await axios.delete(`http://localhost:8000/admin/units/${unitId}`);
-          console.log('Unit deleted:', response.data); // Handle success response
-          fetchUnits()
+            const token = localStorage.getItem('token');
+            const response = await axios.delete(`http://localhost:8000/admin/units/${unitId}`, {
+                headers: {
+                    'Authorization': token
+                }
+            });
+            console.log('Unit deleted:', response.data); // Handle success response
+            fetchUnits()
         } catch (error) {
-          console.error('Error deleting unit:', error);
+            console.error('Error deleting unit:', error);
         }
-      };
+    };
     return (
         <div>
             <div className='flex justify-between mt-2 text-sm mx-5'>
@@ -271,13 +229,13 @@ const UnitsTbl = () => {
                                 {col1 && <td className="px-1 py-1 text-sm">{value.name}</td>}
                                 {col2 && <td className="px-1 py-1"> {value.shortName}</td>}
                                 {col3 && <td className="px-1 py-1"> {value.allowDecimal}</td>}
-                                
+
                                 {col4 && <td className='py-1 flex justify-center'>
                                     <button onClick={() => { setIsClicked(true); setIsEdit(true); setIseidtId(value._id) }} className='flex mx-1 p-1 items-center bg-blue-600 text-white justify-center'>
                                         <FaEdit size={15} />
                                         <h1 className='text-sm'>Edit</h1>
                                     </button>
-                                    <button  onClick={ ()=> handleDeleteUnit(value._id)} className='flex mx-3 p-1 items-center bg-red-600 text-white justify-center'>
+                                    <button onClick={() => handleDeleteUnit(value._id)} className='flex mx-3 p-1 items-center bg-red-600 text-white justify-center'>
                                         <FaEdit size={15} />
                                         <h1 className='text-sm'>Delete</h1>
                                     </button>

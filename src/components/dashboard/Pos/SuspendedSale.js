@@ -4,35 +4,7 @@ import { Link } from 'react-router-dom'
 import axios from 'axios';
 
 const SuspendedSale = () => {
-    const dummyData = [
-        {
-            id: "1",
-            name: "checking",
-            reference: "2023-9992",
-            date: "10/05/2023",
-            customer: "Walkin Customer",
-            totalItems: "2",
-            total: "500.00"
-        },
-        {
-            id: "2",
-            name: "checking1",
-            reference: "2023-9992",
-            date: "10/05/2023",
-            customer: "Walkin Customer",
-            totalItems: "2",
-            total: "500.00"
-        }, {
-            id: "3",
-            name: "checking2",
-            reference: "2023-9992",
-            date: "10/05/2023",
-            customer: "Walkin Customer",
-            totalItems: "2",
-            total: "500.00"
-        }
-
-    ]
+    
 //Fetch for customer
 
     const [suspendedData, setSuspendedData] = useState([]);
@@ -40,8 +12,12 @@ const SuspendedSale = () => {
     const fetchSuspendedSales = async () => {
 
         try {
-            // const token = localStorage.getItem('token');
-            const response = await axios.get(`http://localhost:8000/admin/pos/suspended`);
+            const token = localStorage.getItem('token');
+            const response = await axios.get(`http://localhost:8000/admin/pos/suspended`,{
+                headers: {
+                    'Authorization': token
+                }
+            });
             console.log(response)
             setSuspendedData(response.data);
         } catch (error) {

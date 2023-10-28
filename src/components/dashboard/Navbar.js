@@ -11,6 +11,7 @@ import { setTrue, setFalse } from '../../app/clickedSlice'
 import { useNavigate } from "react-router-dom"
 import TodaysProfit from './TodaysProfit'
 import { Link } from 'react-router-dom'
+
 const Navbra = () => {
     const Navigate = useNavigate();
 
@@ -43,6 +44,16 @@ const Navbra = () => {
     };
 
 
+
+const handleLogout = async () => {
+        try {
+
+            localStorage.removeItem('token'); // Clear token from local storage
+            Navigate("/");
+        } catch (error) {
+            console.error('Error logging out:', error);
+        }
+    };
     const data = new Date()
     let fullyear = data.getFullYear()
     let fullmonth = data.getMonth() + 1
@@ -97,7 +108,7 @@ const Navbra = () => {
                                         <AiOutlineUser size={20} />
                                         <h1 className='text-xl font-semibold'>Profile</h1>
                                     </Link>
-                                    <div className='flex items-center py-1 border-[1px] border-gray-400'>
+                                    <div onClick={handleLogout} className='flex items-center py-1 border-[1px] border-gray-400'>
                                         <BiLogOut size={20} />
                                         <h1 className='text-xl font-semibold'>Logout</h1>
                                     </div>

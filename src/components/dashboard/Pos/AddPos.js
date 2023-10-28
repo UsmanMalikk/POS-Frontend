@@ -87,116 +87,7 @@ const AddPos = () => {
     }
   ]
 
-  // const productData = [
-  //   {
-  //     id: 1,
-  //     Name: "Product1",
-  //     image: "data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAIEAAACBCAMAAADQfiliAAAAJFBMVEX19fXMzMzT09PPz8/5+fnw8PDJycnq6urn5+ft7e3c3NzX19crZrtmAAABV0lEQVR4nO3YwRKCMAxF0aZNU0L//3+tFAEFsZvEzTtLxhmuJQolBAAAAAAAAAAAAAAAsMNj7M6vNY2oatUwidAIoWITwEOnXySjRRBKeUQisQloBXHku3EkCjaLsBXk/KPAeA1KTCnezJp1AU/LD0Kmr+tsXdDmrI/7149ZFxRZE97+dvQwGcYF60VoyqEgU3QrCPoq0P2UOcnhqphPYu2TWLcl4D4aW4J5QajS1P3wOpsSs1MBh2mep/0WnLcbUsouBcs5+PMSvBLYqWB3DFhmgd0KSl/x9wCi5yz4FGifu0wfUjvsMgfPP4XYLsH50USKRwGXvuKaTgUkhe0L1oBrLgXntfctYL0L8Ci4D3Ao2O/OKPhnAd3uGcnh1/hjw+TxhPKLaUHSgW2jmu0b+eI2cDmMdnvnQqPvD6xeYbDOccSsZm9y/v0aCQAAAAAAAAAAAAAAmgd0EQ1cxW38UQAAAABJRU5ErkJggg==",
-  //     price: 200
-  //   },
-  //   {
-  //     id: 2,
-  //     Name: "Product2",
-  //     image: "data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAIEAAACBCAMAAADQfiliAAAAJFBMVEX19fXMzMzT09PPz8/5+fnw8PDJycnq6urn5+ft7e3c3NzX19crZrtmAAABV0lEQVR4nO3YwRKCMAxF0aZNU0L//3+tFAEFsZvEzTtLxhmuJQolBAAAAAAAAAAAAAAAsMNj7M6vNY2oatUwidAIoWITwEOnXySjRRBKeUQisQloBXHku3EkCjaLsBXk/KPAeA1KTCnezJp1AU/LD0Kmr+tsXdDmrI/7149ZFxRZE97+dvQwGcYF60VoyqEgU3QrCPoq0P2UOcnhqphPYu2TWLcl4D4aW4J5QajS1P3wOpsSs1MBh2mep/0WnLcbUsouBcs5+PMSvBLYqWB3DFhmgd0KSl/x9wCi5yz4FGifu0wfUjvsMgfPP4XYLsH50USKRwGXvuKaTgUkhe0L1oBrLgXntfctYL0L8Ci4D3Ao2O/OKPhnAd3uGcnh1/hjw+TxhPKLaUHSgW2jmu0b+eI2cDmMdnvnQqPvD6xeYbDOccSsZm9y/v0aCQAAAAAAAAAAAAAAmgd0EQ1cxW38UQAAAABJRU5ErkJggg==",
-  //     price: 200
-  //   },
-  //   {
-  //     id: 3,
-  //     Name: "Product3",
-  //     image: "data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAIEAAACBCAMAAADQfiliAAAAJFBMVEX19fXMzMzT09PPz8/5+fnw8PDJycnq6urn5+ft7e3c3NzX19crZrtmAAABV0lEQVR4nO3YwRKCMAxF0aZNU0L//3+tFAEFsZvEzTtLxhmuJQolBAAAAAAAAAAAAAAAsMNj7M6vNY2oatUwidAIoWITwEOnXySjRRBKeUQisQloBXHku3EkCjaLsBXk/KPAeA1KTCnezJp1AU/LD0Kmr+tsXdDmrI/7149ZFxRZE97+dvQwGcYF60VoyqEgU3QrCPoq0P2UOcnhqphPYu2TWLcl4D4aW4J5QajS1P3wOpsSs1MBh2mep/0WnLcbUsouBcs5+PMSvBLYqWB3DFhmgd0KSl/x9wCi5yz4FGifu0wfUjvsMgfPP4XYLsH50USKRwGXvuKaTgUkhe0L1oBrLgXntfctYL0L8Ci4D3Ao2O/OKPhnAd3uGcnh1/hjw+TxhPKLaUHSgW2jmu0b+eI2cDmMdnvnQqPvD6xeYbDOccSsZm9y/v0aCQAAAAAAAAAAAAAAmgd0EQ1cxW38UQAAAABJRU5ErkJggg==",
-  //     price: 200
-  //   },
-  //   {
-  //     id: 4,
-  //     Name: "Product4",
-  //     image: "data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAIEAAACBCAMAAADQfiliAAAAJFBMVEX19fXMzMzT09PPz8/5+fnw8PDJycnq6urn5+ft7e3c3NzX19crZrtmAAABV0lEQVR4nO3YwRKCMAxF0aZNU0L//3+tFAEFsZvEzTtLxhmuJQolBAAAAAAAAAAAAAAAsMNj7M6vNY2oatUwidAIoWITwEOnXySjRRBKeUQisQloBXHku3EkCjaLsBXk/KPAeA1KTCnezJp1AU/LD0Kmr+tsXdDmrI/7149ZFxRZE97+dvQwGcYF60VoyqEgU3QrCPoq0P2UOcnhqphPYu2TWLcl4D4aW4J5QajS1P3wOpsSs1MBh2mep/0WnLcbUsouBcs5+PMSvBLYqWB3DFhmgd0KSl/x9wCi5yz4FGifu0wfUjvsMgfPP4XYLsH50USKRwGXvuKaTgUkhe0L1oBrLgXntfctYL0L8Ci4D3Ao2O/OKPhnAd3uGcnh1/hjw+TxhPKLaUHSgW2jmu0b+eI2cDmMdnvnQqPvD6xeYbDOccSsZm9y/v0aCQAAAAAAAAAAAAAAmgd0EQ1cxW38UQAAAABJRU5ErkJggg==",
-  //     price: 200
-  //   },
-  //   {
-  //     id: 5,
-  //     Name: "Product5",
-  //     image: "data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAIEAAACBCAMAAADQfiliAAAAJFBMVEX19fXMzMzT09PPz8/5+fnw8PDJycnq6urn5+ft7e3c3NzX19crZrtmAAABV0lEQVR4nO3YwRKCMAxF0aZNU0L//3+tFAEFsZvEzTtLxhmuJQolBAAAAAAAAAAAAAAAsMNj7M6vNY2oatUwidAIoWITwEOnXySjRRBKeUQisQloBXHku3EkCjaLsBXk/KPAeA1KTCnezJp1AU/LD0Kmr+tsXdDmrI/7149ZFxRZE97+dvQwGcYF60VoyqEgU3QrCPoq0P2UOcnhqphPYu2TWLcl4D4aW4J5QajS1P3wOpsSs1MBh2mep/0WnLcbUsouBcs5+PMSvBLYqWB3DFhmgd0KSl/x9wCi5yz4FGifu0wfUjvsMgfPP4XYLsH50USKRwGXvuKaTgUkhe0L1oBrLgXntfctYL0L8Ci4D3Ao2O/OKPhnAd3uGcnh1/hjw+TxhPKLaUHSgW2jmu0b+eI2cDmMdnvnQqPvD6xeYbDOccSsZm9y/v0aCQAAAAAAAAAAAAAAmgd0EQ1cxW38UQAAAABJRU5ErkJggg==",
-  //     price: 200
-  //   },
-  //   {
-  //     id: 6,
-  //     Name: "Product6",
-  //     image: "data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAIEAAACBCAMAAADQfiliAAAAJFBMVEX19fXMzMzT09PPz8/5+fnw8PDJycnq6urn5+ft7e3c3NzX19crZrtmAAABV0lEQVR4nO3YwRKCMAxF0aZNU0L//3+tFAEFsZvEzTtLxhmuJQolBAAAAAAAAAAAAAAAsMNj7M6vNY2oatUwidAIoWITwEOnXySjRRBKeUQisQloBXHku3EkCjaLsBXk/KPAeA1KTCnezJp1AU/LD0Kmr+tsXdDmrI/7149ZFxRZE97+dvQwGcYF60VoyqEgU3QrCPoq0P2UOcnhqphPYu2TWLcl4D4aW4J5QajS1P3wOpsSs1MBh2mep/0WnLcbUsouBcs5+PMSvBLYqWB3DFhmgd0KSl/x9wCi5yz4FGifu0wfUjvsMgfPP4XYLsH50USKRwGXvuKaTgUkhe0L1oBrLgXntfctYL0L8Ci4D3Ao2O/OKPhnAd3uGcnh1/hjw+TxhPKLaUHSgW2jmu0b+eI2cDmMdnvnQqPvD6xeYbDOccSsZm9y/v0aCQAAAAAAAAAAAAAAmgd0EQ1cxW38UQAAAABJRU5ErkJggg==",
-  //     price: 200
-  //   },
-  //   {
-  //     id: 7,
-  //     Name: "Product7",
-  //     image: "data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAIEAAACBCAMAAADQfiliAAAAJFBMVEX19fXMzMzT09PPz8/5+fnw8PDJycnq6urn5+ft7e3c3NzX19crZrtmAAABV0lEQVR4nO3YwRKCMAxF0aZNU0L//3+tFAEFsZvEzTtLxhmuJQolBAAAAAAAAAAAAAAAsMNj7M6vNY2oatUwidAIoWITwEOnXySjRRBKeUQisQloBXHku3EkCjaLsBXk/KPAeA1KTCnezJp1AU/LD0Kmr+tsXdDmrI/7149ZFxRZE97+dvQwGcYF60VoyqEgU3QrCPoq0P2UOcnhqphPYu2TWLcl4D4aW4J5QajS1P3wOpsSs1MBh2mep/0WnLcbUsouBcs5+PMSvBLYqWB3DFhmgd0KSl/x9wCi5yz4FGifu0wfUjvsMgfPP4XYLsH50USKRwGXvuKaTgUkhe0L1oBrLgXntfctYL0L8Ci4D3Ao2O/OKPhnAd3uGcnh1/hjw+TxhPKLaUHSgW2jmu0b+eI2cDmMdnvnQqPvD6xeYbDOccSsZm9y/v0aCQAAAAAAAAAAAAAAmgd0EQ1cxW38UQAAAABJRU5ErkJggg==",
-  //     price: 200
-  //   },
-  //   {
-  //     id: 8,
-  //     Name: "Product8",
-  //     image: "data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAIEAAACBCAMAAADQfiliAAAAJFBMVEX19fXMzMzT09PPz8/5+fnw8PDJycnq6urn5+ft7e3c3NzX19crZrtmAAABV0lEQVR4nO3YwRKCMAxF0aZNU0L//3+tFAEFsZvEzTtLxhmuJQolBAAAAAAAAAAAAAAAsMNj7M6vNY2oatUwidAIoWITwEOnXySjRRBKeUQisQloBXHku3EkCjaLsBXk/KPAeA1KTCnezJp1AU/LD0Kmr+tsXdDmrI/7149ZFxRZE97+dvQwGcYF60VoyqEgU3QrCPoq0P2UOcnhqphPYu2TWLcl4D4aW4J5QajS1P3wOpsSs1MBh2mep/0WnLcbUsouBcs5+PMSvBLYqWB3DFhmgd0KSl/x9wCi5yz4FGifu0wfUjvsMgfPP4XYLsH50USKRwGXvuKaTgUkhe0L1oBrLgXntfctYL0L8Ci4D3Ao2O/OKPhnAd3uGcnh1/hjw+TxhPKLaUHSgW2jmu0b+eI2cDmMdnvnQqPvD6xeYbDOccSsZm9y/v0aCQAAAAAAAAAAAAAAmgd0EQ1cxW38UQAAAABJRU5ErkJggg==",
-  //     price: 200
-  //   },
-  //   {
-  //     id: 9,
-  //     Name: "Product9",
-  //     image: "data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAIEAAACBCAMAAADQfiliAAAAJFBMVEX19fXMzMzT09PPz8/5+fnw8PDJycnq6urn5+ft7e3c3NzX19crZrtmAAABV0lEQVR4nO3YwRKCMAxF0aZNU0L//3+tFAEFsZvEzTtLxhmuJQolBAAAAAAAAAAAAAAAsMNj7M6vNY2oatUwidAIoWITwEOnXySjRRBKeUQisQloBXHku3EkCjaLsBXk/KPAeA1KTCnezJp1AU/LD0Kmr+tsXdDmrI/7149ZFxRZE97+dvQwGcYF60VoyqEgU3QrCPoq0P2UOcnhqphPYu2TWLcl4D4aW4J5QajS1P3wOpsSs1MBh2mep/0WnLcbUsouBcs5+PMSvBLYqWB3DFhmgd0KSl/x9wCi5yz4FGifu0wfUjvsMgfPP4XYLsH50USKRwGXvuKaTgUkhe0L1oBrLgXntfctYL0L8Ci4D3Ao2O/OKPhnAd3uGcnh1/hjw+TxhPKLaUHSgW2jmu0b+eI2cDmMdnvnQqPvD6xeYbDOccSsZm9y/v0aCQAAAAAAAAAAAAAAmgd0EQ1cxW38UQAAAABJRU5ErkJggg==",
-  //     price: 200
-  //   },
-  //   {
-  //     id: 10,
-  //     Name: "Product10",
-  //     image: "data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAIEAAACBCAMAAADQfiliAAAAJFBMVEX19fXMzMzT09PPz8/5+fnw8PDJycnq6urn5+ft7e3c3NzX19crZrtmAAABV0lEQVR4nO3YwRKCMAxF0aZNU0L//3+tFAEFsZvEzTtLxhmuJQolBAAAAAAAAAAAAAAAsMNj7M6vNY2oatUwidAIoWITwEOnXySjRRBKeUQisQloBXHku3EkCjaLsBXk/KPAeA1KTCnezJp1AU/LD0Kmr+tsXdDmrI/7149ZFxRZE97+dvQwGcYF60VoyqEgU3QrCPoq0P2UOcnhqphPYu2TWLcl4D4aW4J5QajS1P3wOpsSs1MBh2mep/0WnLcbUsouBcs5+PMSvBLYqWB3DFhmgd0KSl/x9wCi5yz4FGifu0wfUjvsMgfPP4XYLsH50USKRwGXvuKaTgUkhe0L1oBrLgXntfctYL0L8Ci4D3Ao2O/OKPhnAd3uGcnh1/hjw+TxhPKLaUHSgW2jmu0b+eI2cDmMdnvnQqPvD6xeYbDOccSsZm9y/v0aCQAAAAAAAAAAAAAAmgd0EQ1cxW38UQAAAABJRU5ErkJggg==",
-  //     price: 200
-  //   },
-  //   {
-  //     id: 11,
-  //     Name: "Product11",
-  //     image: "data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAIEAAACBCAMAAADQfiliAAAAJFBMVEX19fXMzMzT09PPz8/5+fnw8PDJycnq6urn5+ft7e3c3NzX19crZrtmAAABV0lEQVR4nO3YwRKCMAxF0aZNU0L//3+tFAEFsZvEzTtLxhmuJQolBAAAAAAAAAAAAAAAsMNj7M6vNY2oatUwidAIoWITwEOnXySjRRBKeUQisQloBXHku3EkCjaLsBXk/KPAeA1KTCnezJp1AU/LD0Kmr+tsXdDmrI/7149ZFxRZE97+dvQwGcYF60VoyqEgU3QrCPoq0P2UOcnhqphPYu2TWLcl4D4aW4J5QajS1P3wOpsSs1MBh2mep/0WnLcbUsouBcs5+PMSvBLYqWB3DFhmgd0KSl/x9wCi5yz4FGifu0wfUjvsMgfPP4XYLsH50USKRwGXvuKaTgUkhe0L1oBrLgXntfctYL0L8Ci4D3Ao2O/OKPhnAd3uGcnh1/hjw+TxhPKLaUHSgW2jmu0b+eI2cDmMdnvnQqPvD6xeYbDOccSsZm9y/v0aCQAAAAAAAAAAAAAAmgd0EQ1cxW38UQAAAABJRU5ErkJggg==",
-  //     price: 200
-  //   },
-  //   {
-  //     id: 12,
-  //     Name: "Product12",
-  //     image: "data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAIEAAACBCAMAAADQfiliAAAAJFBMVEX19fXMzMzT09PPz8/5+fnw8PDJycnq6urn5+ft7e3c3NzX19crZrtmAAABV0lEQVR4nO3YwRKCMAxF0aZNU0L//3+tFAEFsZvEzTtLxhmuJQolBAAAAAAAAAAAAAAAsMNj7M6vNY2oatUwidAIoWITwEOnXySjRRBKeUQisQloBXHku3EkCjaLsBXk/KPAeA1KTCnezJp1AU/LD0Kmr+tsXdDmrI/7149ZFxRZE97+dvQwGcYF60VoyqEgU3QrCPoq0P2UOcnhqphPYu2TWLcl4D4aW4J5QajS1P3wOpsSs1MBh2mep/0WnLcbUsouBcs5+PMSvBLYqWB3DFhmgd0KSl/x9wCi5yz4FGifu0wfUjvsMgfPP4XYLsH50USKRwGXvuKaTgUkhe0L1oBrLgXntfctYL0L8Ci4D3Ao2O/OKPhnAd3uGcnh1/hjw+TxhPKLaUHSgW2jmu0b+eI2cDmMdnvnQqPvD6xeYbDOccSsZm9y/v0aCQAAAAAAAAAAAAAAmgd0EQ1cxW38UQAAAABJRU5ErkJggg==",
-  //     price: 200
-  //   },
-  //   {
-  //     id: 13,
-  //     Name: "Product13",
-  //     image: "data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAIEAAACBCAMAAADQfiliAAAAJFBMVEX19fXMzMzT09PPz8/5+fnw8PDJycnq6urn5+ft7e3c3NzX19crZrtmAAABV0lEQVR4nO3YwRKCMAxF0aZNU0L//3+tFAEFsZvEzTtLxhmuJQolBAAAAAAAAAAAAAAAsMNj7M6vNY2oatUwidAIoWITwEOnXySjRRBKeUQisQloBXHku3EkCjaLsBXk/KPAeA1KTCnezJp1AU/LD0Kmr+tsXdDmrI/7149ZFxRZE97+dvQwGcYF60VoyqEgU3QrCPoq0P2UOcnhqphPYu2TWLcl4D4aW4J5QajS1P3wOpsSs1MBh2mep/0WnLcbUsouBcs5+PMSvBLYqWB3DFhmgd0KSl/x9wCi5yz4FGifu0wfUjvsMgfPP4XYLsH50USKRwGXvuKaTgUkhe0L1oBrLgXntfctYL0L8Ci4D3Ao2O/OKPhnAd3uGcnh1/hjw+TxhPKLaUHSgW2jmu0b+eI2cDmMdnvnQqPvD6xeYbDOccSsZm9y/v0aCQAAAAAAAAAAAAAAmgd0EQ1cxW38UQAAAABJRU5ErkJggg==",
-  //     price: 200
-  //   },
-  //   {
-  //     id: 14,
-  //     Name: "Product14",
-  //     image: "data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAIEAAACBCAMAAADQfiliAAAAJFBMVEX19fXMzMzT09PPz8/5+fnw8PDJycnq6urn5+ft7e3c3NzX19crZrtmAAABV0lEQVR4nO3YwRKCMAxF0aZNU0L//3+tFAEFsZvEzTtLxhmuJQolBAAAAAAAAAAAAAAAsMNj7M6vNY2oatUwidAIoWITwEOnXySjRRBKeUQisQloBXHku3EkCjaLsBXk/KPAeA1KTCnezJp1AU/LD0Kmr+tsXdDmrI/7149ZFxRZE97+dvQwGcYF60VoyqEgU3QrCPoq0P2UOcnhqphPYu2TWLcl4D4aW4J5QajS1P3wOpsSs1MBh2mep/0WnLcbUsouBcs5+PMSvBLYqWB3DFhmgd0KSl/x9wCi5yz4FGifu0wfUjvsMgfPP4XYLsH50USKRwGXvuKaTgUkhe0L1oBrLgXntfctYL0L8Ci4D3Ao2O/OKPhnAd3uGcnh1/hjw+TxhPKLaUHSgW2jmu0b+eI2cDmMdnvnQqPvD6xeYbDOccSsZm9y/v0aCQAAAAAAAAAAAAAAmgd0EQ1cxW38UQAAAABJRU5ErkJggg==",
-  //     price: 200
-  //   },
-  //   {
-  //     id: 14,
-  //     Name: "Product14",
-  //     image: "data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAIEAAACBCAMAAADQfiliAAAAJFBMVEX19fXMzMzT09PPz8/5+fnw8PDJycnq6urn5+ft7e3c3NzX19crZrtmAAABV0lEQVR4nO3YwRKCMAxF0aZNU0L//3+tFAEFsZvEzTtLxhmuJQolBAAAAAAAAAAAAAAAsMNj7M6vNY2oatUwidAIoWITwEOnXySjRRBKeUQisQloBXHku3EkCjaLsBXk/KPAeA1KTCnezJp1AU/LD0Kmr+tsXdDmrI/7149ZFxRZE97+dvQwGcYF60VoyqEgU3QrCPoq0P2UOcnhqphPYu2TWLcl4D4aW4J5QajS1P3wOpsSs1MBh2mep/0WnLcbUsouBcs5+PMSvBLYqWB3DFhmgd0KSl/x9wCi5yz4FGifu0wfUjvsMgfPP4XYLsH50USKRwGXvuKaTgUkhe0L1oBrLgXntfctYL0L8Ci4D3Ao2O/OKPhnAd3uGcnh1/hjw+TxhPKLaUHSgW2jmu0b+eI2cDmMdnvnQqPvD6xeYbDOccSsZm9y/v0aCQAAAAAAAAAAAAAAmgd0EQ1cxW38UQAAAABJRU5ErkJggg==",
-  //     price: 200
-  //   },
-  //   {
-  //     id: 16,
-  //     Name: "Product16",
-  //     image: "data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAIEAAACBCAMAAADQfiliAAAAJFBMVEX19fXMzMzT09PPz8/5+fnw8PDJycnq6urn5+ft7e3c3NzX19crZrtmAAABV0lEQVR4nO3YwRKCMAxF0aZNU0L//3+tFAEFsZvEzTtLxhmuJQolBAAAAAAAAAAAAAAAsMNj7M6vNY2oatUwidAIoWITwEOnXySjRRBKeUQisQloBXHku3EkCjaLsBXk/KPAeA1KTCnezJp1AU/LD0Kmr+tsXdDmrI/7149ZFxRZE97+dvQwGcYF60VoyqEgU3QrCPoq0P2UOcnhqphPYu2TWLcl4D4aW4J5QajS1P3wOpsSs1MBh2mep/0WnLcbUsouBcs5+PMSvBLYqWB3DFhmgd0KSl/x9wCi5yz4FGifu0wfUjvsMgfPP4XYLsH50USKRwGXvuKaTgUkhe0L1oBrLgXntfctYL0L8Ci4D3Ao2O/OKPhnAd3uGcnh1/hjw+TxhPKLaUHSgW2jmu0b+eI2cDmMdnvnQqPvD6xeYbDOccSsZm9y/v0aCQAAAAAAAAAAAAAAmgd0EQ1cxW38UQAAAABJRU5ErkJggg==",
-  //     price: 200
-  //   },
-  //   {
-  //     id: 17,
-  //     Name: "Product17",
-  //     image: "data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAIEAAACBCAMAAADQfiliAAAAJFBMVEX19fXMzMzT09PPz8/5+fnw8PDJycnq6urn5+ft7e3c3NzX19crZrtmAAABV0lEQVR4nO3YwRKCMAxF0aZNU0L//3+tFAEFsZvEzTtLxhmuJQolBAAAAAAAAAAAAAAAsMNj7M6vNY2oatUwidAIoWITwEOnXySjRRBKeUQisQloBXHku3EkCjaLsBXk/KPAeA1KTCnezJp1AU/LD0Kmr+tsXdDmrI/7149ZFxRZE97+dvQwGcYF60VoyqEgU3QrCPoq0P2UOcnhqphPYu2TWLcl4D4aW4J5QajS1P3wOpsSs1MBh2mep/0WnLcbUsouBcs5+PMSvBLYqWB3DFhmgd0KSl/x9wCi5yz4FGifu0wfUjvsMgfPP4XYLsH50USKRwGXvuKaTgUkhe0L1oBrLgXntfctYL0L8Ci4D3Ao2O/OKPhnAd3uGcnh1/hjw+TxhPKLaUHSgW2jmu0b+eI2cDmMdnvnQqPvD6xeYbDOccSsZm9y/v0aCQAAAAAAAAAAAAAAmgd0EQ1cxW38UQAAAABJRU5ErkJggg==",
-  //     price: 200
-  //   },
-  //   {
-  //     id: 18,
-  //     Name: "Product18",
-  //     image: "data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAIEAAACBCAMAAADQfiliAAAAJFBMVEX19fXMzMzT09PPz8/5+fnw8PDJycnq6urn5+ft7e3c3NzX19crZrtmAAABV0lEQVR4nO3YwRKCMAxF0aZNU0L//3+tFAEFsZvEzTtLxhmuJQolBAAAAAAAAAAAAAAAsMNj7M6vNY2oatUwidAIoWITwEOnXySjRRBKeUQisQloBXHku3EkCjaLsBXk/KPAeA1KTCnezJp1AU/LD0Kmr+tsXdDmrI/7149ZFxRZE97+dvQwGcYF60VoyqEgU3QrCPoq0P2UOcnhqphPYu2TWLcl4D4aW4J5QajS1P3wOpsSs1MBh2mep/0WnLcbUsouBcs5+PMSvBLYqWB3DFhmgd0KSl/x9wCi5yz4FGifu0wfUjvsMgfPP4XYLsH50USKRwGXvuKaTgUkhe0L1oBrLgXntfctYL0L8Ci4D3Ao2O/OKPhnAd3uGcnh1/hjw+TxhPKLaUHSgW2jmu0b+eI2cDmMdnvnQqPvD6xeYbDOccSsZm9y/v0aCQAAAAAAAAAAAAAAmgd0EQ1cxW38UQAAAABJRU5ErkJggg==",
-  //     price: 200
-  //   }
-  // ]
+  
   const [productsData, setProductsData] = useState([]);
   // const [customersData, setCustomersData] = useState([]);
   const [spgsData, setSPGsData] = useState([]);
@@ -454,8 +345,12 @@ const AddPos = () => {
   const fetchSaleById = async () => {
 
     try {
-      // const token = localStorage.getItem('token');
-      const response = await axios.get(`http://localhost:8000/admin/sales/${type}/${id}`);
+      const token = localStorage.getItem('token');
+      const response = await axios.get(`http://localhost:8000/admin/sales/${type}/${id}`,{
+        headers: {
+            'Authorization': token
+        }
+    });
       // console.log(response)
       setFormData(response.data);
     } catch (error) {
@@ -465,8 +360,12 @@ const AddPos = () => {
   const fetchProducts = async () => {
 
     try {
-      // const token = localStorage.getItem('token');
-      const response = await axios.get(`http://localhost:8000/admin/products`);
+      const token = localStorage.getItem('token');
+      const response = await axios.get(`http://localhost:8000/admin/products`,{
+        headers: {
+            'Authorization': token
+        }
+    });
       // console.log(response)
       setProductsData(response.data);
     } catch (error) {
@@ -487,8 +386,12 @@ const AddPos = () => {
   const fetchSPGs = async () => {
 
     try {
-      // const token = localStorage.getItem('token');
-      const response = await axios.get(`http://localhost:8000/admin/selling-price-groups`);
+      const token = localStorage.getItem('token');
+      const response = await axios.get(`http://localhost:8000/admin/selling-price-groups`,{
+        headers: {
+            'Authorization': token
+        }
+    });
       // console.log(response)
 
 
@@ -502,9 +405,13 @@ const AddPos = () => {
   const addSale = async () => {
 
     try {
-      // const token = localStorage.getItem('token');
+      const token = localStorage.getItem('token');
       // console.log(finalFormData)
-      const response = await axios.post(`http://localhost:8000/admin/pos`, formData);
+      const response = await axios.post(`http://localhost:8000/admin/pos`, formData,{
+        headers: {
+            'Authorization': token
+        }
+    });
       console.log(response)
       if (response.status === 201) {
         window.location.reload();
@@ -519,9 +426,13 @@ const AddPos = () => {
   const addSaleById = async () => {
 
     try {
-      // const token = localStorage.getItem('token');
+      const token = localStorage.getItem('token');
       // console.log(finalFormData)
-      const response = await axios.put(`http://localhost:8000/admin/sales/${id}`, formData);
+      const response = await axios.put(`http://localhost:8000/admin/sales/${id}`, formData,{
+        headers: {
+            'Authorization': token
+        }
+    });
       console.log(response)
       if (response.status === 201 && type === "draft") {
         // Navigate("/home/draft");

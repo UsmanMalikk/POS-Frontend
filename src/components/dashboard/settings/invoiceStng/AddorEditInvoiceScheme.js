@@ -1,16 +1,14 @@
 import React, { useState, useEffect } from 'react'
 import { FaCheckCircle, FaInfo, FaInfoCircle } from 'react-icons/fa';
 import axios from 'axios';
-import { useNavigate } from "react-router-dom"
 
 const AddorEditInvoiceScheme = (props) => {
-    const Navigate = useNavigate();
     const [formData, setFormData] = useState({
         invoiceNumberFormat: "",
         name: '',
         numberingTypes: '',
         isDefault: false,
-        numberofDigits:"",
+        numberofDigits: "",
         namePrefix: ""
 
     })
@@ -35,8 +33,12 @@ const AddorEditInvoiceScheme = (props) => {
     const fetchInvoiceById = async () => {
 
         try {
-            // const token = localStorage.getItem('token');
-            const response = await axios.get(`http://localhost:8000/admin/invoices/${props.id}`);
+            const token = localStorage.getItem('token');
+            const response = await axios.get(`http://localhost:8000/admin/invoices/${props.id}`, {
+                headers: {
+                    'Authorization': token
+                }
+            });
             // console.log(response)
 
             setFormData(response.data);
@@ -54,14 +56,18 @@ const AddorEditInvoiceScheme = (props) => {
     const addInvoice = async () => {
 
         try {
-            // const token = localStorage.getItem('token');
+            const token = localStorage.getItem('token');
             // console.log(formData)
-            const response = await axios.post("http://localhost:8000/admin/invoices", formData);
+            const response = await axios.post("http://localhost:8000/admin/invoices", formData, {
+                headers: {
+                    'Authorization': token
+                }
+            });
             console.log(response)
             if (response.status === 201) {
                 window.location.reload();
             }
-            
+
         } catch (error) {
             console.error('Error Adding Invoice:', error);
         }
@@ -69,9 +75,13 @@ const AddorEditInvoiceScheme = (props) => {
     const addInvoiceById = async () => {
 
         try {
-            // const token = localStorage.getItem('token');
+            const token = localStorage.getItem('token');
             // console.log(formData)
-            const response = await axios.put(`http://localhost:8000/admin/invoices/${props.id}`, formData);
+            const response = await axios.put(`http://localhost:8000/admin/invoices/${props.id}`, formData, {
+                headers: {
+                    'Authorization': token
+                }
+            });
             // console.log(response)
             if (response.status === 200) {
                 window.location.reload();
@@ -87,7 +97,7 @@ const AddorEditInvoiceScheme = (props) => {
             <h1 className="text-xl text-start font-bold ">{props.id ? "Edit" : "Add"} Invoice Scheme</h1>
 
             <div className='grid mt-5 grid-cols-1 md:grid-cols-3 gap-5'>
-            <div onClick={() => { setFormat1(true); setFormt2(false); setFormData({ ...formData, invoiceNumberFormat: "XXXX" }) }} className='flex h-[100px] bg-gray-300 items-center justify-between'>                    <h1 className='text-xl font-bold'>FORMAT: XXXX</h1>
+                <div onClick={() => { setFormat1(true); setFormt2(false); setFormData({ ...formData, invoiceNumberFormat: "XXXX" }) }} className='flex h-[100px] bg-gray-300 items-center justify-between'>                    <h1 className='text-xl font-bold'>FORMAT: XXXX</h1>
                     {format1 &&
                         <FaCheckCircle style={{ color: "red" }} />
                     }

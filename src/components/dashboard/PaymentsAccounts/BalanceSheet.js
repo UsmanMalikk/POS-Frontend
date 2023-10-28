@@ -27,8 +27,12 @@ const BalanceSheet = () => {
     const fetchBalanceSheet = async () => {
         // let final = "final"
         try {
-            // const token = localStorage.getItem('token');
-            const response = await axios.get(`http://localhost:8000/admin/account/balance-sheet`);
+            const token = localStorage.getItem('token');
+            const response = await axios.get(`http://localhost:8000/admin/account/balance-sheet`,{
+                headers: {
+                    'Authorization': token
+                }
+            });
             // console.log(response)
             setBalanceSheetData(response.data);
         } catch (error) {

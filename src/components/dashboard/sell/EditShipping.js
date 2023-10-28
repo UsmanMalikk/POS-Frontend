@@ -23,8 +23,12 @@ const EditShipping = (props) => {
     const fetchSaleById = async () => {
 
         try {
-            // const token = localStorage.getItem('token');
-            const response = await axios.get(`http://localhost:8000/admin/sales/final/${id}`);
+            const token = localStorage.getItem('token');
+            const response = await axios.get(`http://localhost:8000/admin/sales/final/${id}`,{
+                headers: {
+                    'Authorization': token
+                }
+            });
             console.log(response)
 
             setFormData(response.data);
@@ -35,9 +39,13 @@ const EditShipping = (props) => {
     const addSaleById = async () => {
 
         try {
-            // const token = localStorage.getItem('token');
+            const token = localStorage.getItem('token');
             // console.log(finalFormData)
-            const response = await axios.put(`http://localhost:8000/admin/sales/final/${id}`, formData);
+            const response = await axios.put(`http://localhost:8000/admin/sales/final/${id}`, formData,{
+                headers: {
+                    'Authorization': token
+                }
+            });
             console.log(response)
             if (response.status === 200) {
                 Navigate("/home/sells");

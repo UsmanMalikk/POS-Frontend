@@ -96,8 +96,12 @@ const AccountTypeTbl = () => {
 const fetchAccountTypes = async () => {
 
         try {
-            // const token = localStorage.getItem('token');
-            const response = await axios.get(`http://localhost:8000/admin/accounttypes`);
+            const token = localStorage.getItem('token');
+            const response = await axios.get(`http://localhost:8000/admin/accounttypes`,{
+                headers: {
+                    'Authorization': token
+                }
+            });
 
             // console.log(response)
             setAccountTypesData(response.data);

@@ -12,7 +12,7 @@ import axios from 'axios';
 
 
 const ExpenseCategoriesTbl = () => {
-    
+
     const printRef = useRef()
     let xlDatas = []
     //Export to Excel
@@ -54,7 +54,7 @@ const ExpenseCategoriesTbl = () => {
     const [col1, setCol1] = useState(true)
     const [col2, setCol2] = useState(true)
     const [col3, setCol3] = useState(true)
-    
+
 
 
     const csvData = [
@@ -96,11 +96,15 @@ const ExpenseCategoriesTbl = () => {
             return <AddorEditExpenseCategory id={iseidtId} />
         }
     }
-const fetchExpanseCategories = async () => {
+    const fetchExpanseCategories = async () => {
         // let final = "final"
         try {
-            // const token = localStorage.getItem('token');
-            const response = await axios.get(`http://localhost:8000/admin/expense-categories/all`);
+            const token = localStorage.getItem('token');
+            const response = await axios.get(`http://localhost:8000/admin/expense-categories/all`, {
+                headers: {
+                    'Authorization': token
+                }
+            });
             console.log(response)
             setExpanseCategoryData(response.data);
         } catch (error) {
@@ -109,25 +113,29 @@ const fetchExpanseCategories = async () => {
     };
     useEffect(() => {
 
-      fetchExpanseCategories();
+        fetchExpanseCategories();
 
 
     }, []);
     const handleDeleteExpenseCategory = async (expId) => {
         try {
-          // Make an API call to delete attendance for a specific record
-          const response = await axios.delete(`http://localhost:8000/admin/expense-categories/${expId}`);
-          console.log('Expense Category deleted:', response.data); // Handle success response
-          fetchExpanseCategories()
+            const token = localStorage.getItem('token');
+            const response = await axios.delete(`http://localhost:8000/admin/expense-categories/${expId}`, {
+                headers: {
+                    'Authorization': token
+                }
+            });
+            console.log('Expense Category deleted:', response.data); // Handle success response
+            fetchExpanseCategories()
         } catch (error) {
-          console.error('Error deleting Expense Category:', error);
+            console.error('Error deleting Expense Category:', error);
         }
-      };
+    };
     return (
         <div className='bg-white '>
             <div className='flex justify-between mt-2 text-sm mx-5'>
                 <div className='flex flex-col'>
-                <h1 className='text-xl font-semibold text-start'>All your expense categories</h1>
+                    <h1 className='text-xl font-semibold text-start'>All your expense categories</h1>
                 </div>
                 <button onClick={() => { setIsAdd(true); setIsClicked(true) }} className='flex items-center justify-center mx-5 font-semibold w-20 h-10 rounded-md mt-3 text-white bg-blue-500'>
                     <AiOutlinePlus size={15} /> Add
@@ -177,7 +185,7 @@ const fetchExpanseCategories = async () => {
                                 <li className={` w-full py-1 ${col1 ? "" : "bg-blue-600"} hover:bg-blue-400 `} onClick={() => { setCol1(!col1) }}>Category Name</li>
                                 <li className={` w-full py-1 ${col2 ? "" : "bg-blue-600"} hover:bg-blue-400 `} onClick={() => { setCol2(!col2) }}>Category Code</li>
                                 <li className={` w-full py-1 ${col3 ? "" : "bg-blue-600"} hover:bg-blue-400 `} onClick={() => { setCol3(!col3) }}>Actions</li>
-                                
+
                             </ul>
                         </div>}
                     </button>
@@ -202,7 +210,7 @@ const fetchExpanseCategories = async () => {
                             {col1 && <th className=" py-2 title-font  tracking-wider font-medium text-gray-900 text-sm bg-gray-200">Category Name</th>}
                             {col2 && <th className=" py-2 title-font  tracking-wider font-medium text-gray-900 text-sm bg-gray-200">Category Code</th>}
                             {col3 && <th className=" py-2 title-font  tracking-wider font-medium text-gray-900 text-sm bg-gray-200">Actions</th>}
-                            
+
 
                         </tr>
                     </thead>
@@ -211,17 +219,17 @@ const fetchExpanseCategories = async () => {
                             return <tr key={index} className={`${(index + 1) % 2 === 0 ? "bg-gray-100" : ""}`}>
                                 {col1 && <td className="px-1 py-1 text-sm">{value.categoryName}</td>}
                                 {col2 && <td className="px-1 py-1"> {value.categoryCode}</td>}
-                                
+
                                 {col3 && <td className='py-1 flex justify-center'>
                                     <button onClick={() => { setIsClicked(true); setIsEdit(true); setIseidtId(value._id) }} className='flex mx-1 p-1 items-center bg-blue-600 text-white justify-center'>
                                         <FaEdit size={15} />
                                         <h1 className='text-sm mx-1'>Edit</h1>
                                     </button>
-                                    <button  className='flex mx-3 p-1 items-center bg-red-600 text-white justify-center'>
+                                    <button className='flex mx-3 p-1 items-center bg-red-600 text-white justify-center'>
                                         <FaEdit size={15} />
-                                        <h1 onClick={ ()=> handleDeleteExpenseCategory(value._id)} className='text-sm mx-1'>Delete</h1>
+                                        <h1 onClick={() => handleDeleteExpenseCategory(value._id)} className='text-sm mx-1'>Delete</h1>
                                     </button>
-                                    
+
                                 </td>}
                             </tr>
                         })}

@@ -21,7 +21,7 @@ import { useNavigate } from "react-router-dom"
 
 const AddStockTransfer = () => {
   const Navigate = useNavigate();
- 
+
   const [productsData, setProductsData] = useState([]);
 
   const [businessLocationData, setBusinessLocationData] = useState([]);
@@ -39,12 +39,12 @@ const AddStockTransfer = () => {
     referenceNumber: "",
     date: "",
     status: "",
-    
+
     fromLocation: null,
     toLocation: null,
 
     inputData: [],
-    
+
     shippingDetails: "",
     // shippingAddress: "",
     shippingCharges: 0,
@@ -103,8 +103,12 @@ const AddStockTransfer = () => {
   const fetchLocations = async () => {
 
     try {
-      // const token = localStorage.getItem('token');
-      const response = await axios.get(`http://localhost:8000/admin/business-locations`);
+      const token = localStorage.getItem('token');
+      const response = await axios.get(`http://localhost:8000/admin/business-locations`, {
+        headers: {
+          'Authorization': token
+        }
+      });
       // console.log(response.data)
       setBusinessLocationData(response.data);
       // console.log(variationData)
@@ -116,8 +120,12 @@ const AddStockTransfer = () => {
   const fetchProducts = async () => {
 
     try {
-      // const token = localStorage.getItem('token');
-      const response = await axios.get(`http://localhost:8000/admin/products`);
+      const token = localStorage.getItem('token');
+      const response = await axios.get(`http://localhost:8000/admin/products`, {
+        headers: {
+          'Authorization': token
+        }
+      });
       console.log(response)
       setProductsData(response.data);
     } catch (error) {
@@ -127,8 +135,12 @@ const AddStockTransfer = () => {
   const fetchSTKById = async () => {
 
     try {
-      // const token = localStorage.getItem('token');
-      const response = await axios.get(`http://localhost:8000/admin/stock-transfers/${id}`);
+      const token = localStorage.getItem('token');
+      const response = await axios.get(`http://localhost:8000/admin/stock-transfers/${id}`, {
+        headers: {
+          'Authorization': token
+        }
+      });
       // console.log(response)
       response.data.date = new Date(response.data.date).toLocaleDateString("fr-CA")
       setFormData(response.data);
@@ -153,9 +165,13 @@ const AddStockTransfer = () => {
   const addSTK = async () => {
 
     try {
-      // const token = localStorage.getItem('token');
+      const token = localStorage.getItem('token');
       // console.log(formData)
-      const response = await axios.post(`http://localhost:8000/admin/stock-transfers`, formData);
+      const response = await axios.post(`http://localhost:8000/admin/stock-transfers`, formData, {
+        headers: {
+          'Authorization': token
+        }
+      });
       // console.log(response)
       if (response.status === 201) {
         Navigate("/home/stock-transfer");
@@ -168,9 +184,13 @@ const AddStockTransfer = () => {
   const addSTKById = async () => {
 
     try {
-      // const token = localStorage.getItem('token');
+      const token = localStorage.getItem('token');
       // console.log(formData)
-      const response = await axios.put(`http://localhost:8000/admin/stock-transfers/${id}`, formData);
+      const response = await axios.put(`http://localhost:8000/admin/stock-transfers/${id}`, formData, {
+        headers: {
+          'Authorization': token
+        }
+      });
       // console.log(response)
       if (response.status === 200) {
         Navigate("/home/stock-transfer");

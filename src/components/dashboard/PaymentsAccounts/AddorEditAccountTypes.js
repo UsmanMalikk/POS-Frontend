@@ -26,8 +26,12 @@ const AddorEditAccountTypes = (props) => {
     const fetchAccountTypes = async () => {
 
         try {
-            // const token = localStorage.getItem('token');
-            const response = await axios.get(`http://localhost:8000/admin/accounttypes`);
+            const token = localStorage.getItem('token');
+            const response = await axios.get(`http://localhost:8000/admin/accounttypes`,{
+                headers: {
+                    'Authorization': token
+                }
+            });
 
             // console.log(response)
             setAccountTypesData(response.data);
@@ -38,8 +42,12 @@ const AddorEditAccountTypes = (props) => {
     const fetchAccountTypeById = async () => {
 
         try {
-            // const token = localStorage.getItem('token');
-            const response = await axios.get(`http://localhost:8000/admin/accounttypes/${props.id}`);
+            const token = localStorage.getItem('token');
+            const response = await axios.get(`http://localhost:8000/admin/accounttypes/${props.id}`,{
+                headers: {
+                    'Authorization': token
+                }
+            });
 
             console.log(response)
             setFormData(response.data);
@@ -50,9 +58,13 @@ const AddorEditAccountTypes = (props) => {
     const addAccountType = async () => {
 
         try {
-          // const token = localStorage.getItem('token');
+          const token = localStorage.getItem('token');
           // console.log(formData)
-          const response = await axios.post(`http://localhost:8000/admin/accounttypes`, formData);
+          const response = await axios.post(`http://localhost:8000/admin/accounttypes`, formData,{
+                headers: {
+                    'Authorization': token
+                }
+            });
           console.log(response)
           if (response.status === 201) {
             console.log("Success")
@@ -65,9 +77,13 @@ const AddorEditAccountTypes = (props) => {
       const addAccountTypeById = async () => {
     
         try {
-          // const token = localStorage.getItem('token');
+          const token = localStorage.getItem('token');
           // console.log(formData)
-          const response = await axios.put(`http://localhost:8000/admin/accounttypes/${props.id}`, formData);
+          const response = await axios.put(`http://localhost:8000/admin/accounttypes/${props.id}`, formData,{
+                headers: {
+                    'Authorization': token
+                }
+            });
           console.log(response)
     
         } catch (error) {

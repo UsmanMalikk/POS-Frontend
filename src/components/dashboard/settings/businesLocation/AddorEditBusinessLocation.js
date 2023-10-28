@@ -94,8 +94,12 @@ const AddorEditBusinessLocation = ({ id }) => {
     const fetchAccounts = async () => {
 
         try {
-            // const token = localStorage.getItem('token');
-            const response = await axios.get(`http://localhost:8000/admin/add-accounts`);
+            const token = localStorage.getItem('token');
+            const response = await axios.get(`http://localhost:8000/admin/add-accounts`,{
+                headers: {
+                    'Authorization': token
+                }
+            });
 
             // console.log(response)
             setAccountsData(response.data);
@@ -106,8 +110,12 @@ const AddorEditBusinessLocation = ({ id }) => {
     const fetchLocationById = async () => {
 
         try {
-            // const token = localStorage.getItem('token');
-            const response = await axios.get("http://localhost:8000/admin/business-locations");
+            const token = localStorage.getItem('token');
+            const response = await axios.get("http://localhost:8000/admin/business-locations",{
+                headers: {
+                    'Authorization': token
+                }
+            });
             // console.log(response)
             setFormData(response.data);
         } catch (error) {
@@ -117,8 +125,12 @@ const AddorEditBusinessLocation = ({ id }) => {
     const fetchSPG = async () => {
 
         try {
-            // const token = localStorage.getItem('token');
-            const response = await axios.get(`http://localhost:8000/admin/selling-price-groups`);
+            const token = localStorage.getItem('token');
+            const response = await axios.get(`http://localhost:8000/admin/selling-price-groups`,{
+                headers: {
+                    'Authorization': token
+                }
+            });
             // console.log(response.data)
             setSpgData(response.data);
             // console.log(variationData)
@@ -130,9 +142,13 @@ const AddorEditBusinessLocation = ({ id }) => {
     const addLocation = async () => {
 
         try {
-            // const token = localStorage.getItem('token');
+            const token = localStorage.getItem('token');
             // console.log(formData)
-            const response = await axios.post(`http://localhost:8000/admin/business-locations`, formData);
+            const response = await axios.post(`http://localhost:8000/admin/business-locations`, formData,{
+                headers: {
+                    'Authorization': token
+                }
+            });
             console.log(response)
             if (response.status === 201) {
                 navigate("/home/business-location")
@@ -146,9 +162,13 @@ const AddorEditBusinessLocation = ({ id }) => {
     const addLocationById = async () => {
 
         try {
-            // const token = localStorage.getItem('token');
+            const token = localStorage.getItem('token');
             // console.log(formData)
-            const response = await axios.put(`http://localhost:8000/admin/business-locations/${id}`, formData);
+            const response = await axios.put(`http://localhost:8000/admin/business-locations/${id}`, formData,{
+                headers: {
+                    'Authorization': token
+                }
+            });
             console.log(response)
             if (response.status === 200) {
                 navigate("/home/business-location")

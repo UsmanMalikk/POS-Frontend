@@ -76,8 +76,12 @@ const AddorEditSellingPriceGrps = () => {
     const fetchProductById = async () => {
 
         try {
-            // const token = localStorage.getItem('token');
-            const response = await axios.get(`http://localhost:8000/admin/products/${formDataFromPreviousPage._id}`);
+            const token = localStorage.getItem('token');
+            const response = await axios.get(`http://localhost:8000/admin/products/${formDataFromPreviousPage._id}`,{
+                headers: {
+                    'Authorization': token
+                }
+            });
             console.log(response)
 
             setFormData(response.data);
@@ -89,7 +93,7 @@ const AddorEditSellingPriceGrps = () => {
     const addProduct = async () => {
 
         try {
-            // const token = localStorage.getItem('token');
+            const token = localStorage.getItem('token');
             // console.log(formData)
             const formDataForSubmission = new FormData();
             formDataForSubmission.append('productName', formDataFromPreviousPage.productName);
@@ -115,7 +119,11 @@ const AddorEditSellingPriceGrps = () => {
                 formDataForSubmission.append(`grpPrices[${index}][amount]`, grpPrice.amount);
                 formDataForSubmission.append(`grpPrices[${index}][type]`, grpPrice.type);
             });
-            const response = await axios.post(`http://localhost:8000/admin/products`, formDataForSubmission);
+            const response = await axios.post(`http://localhost:8000/admin/products`, formDataForSubmission,{
+                headers: {
+                    'Authorization': token
+                }
+            });
             console.log(response)
             if (response.status === 201) {
                 navigate("/home/products");
@@ -127,9 +135,13 @@ const AddorEditSellingPriceGrps = () => {
     const addProductById = async () => {
 
         try {
-            // const token = localStorage.getItem('token');
+            const token = localStorage.getItem('token');
             // console.log(formData)
-            const response = await axios.put(`http://localhost:8000/admin/products/${formDataFromPreviousPage._id}`, formData);
+            const response = await axios.put(`http://localhost:8000/admin/products/${formDataFromPreviousPage._id}`, formData,{
+                headers: {
+                    'Authorization': token
+                }
+            });
             //   console.log(response)
 
             if (response.status === 200) {

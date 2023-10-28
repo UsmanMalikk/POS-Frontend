@@ -105,8 +105,12 @@ const AddStockAdjustment = () => {
   const fetchLocations = async () => {
 
     try {
-      // const token = localStorage.getItem('token');
-      const response = await axios.get(`http://localhost:8000/admin/business-locations`);
+      const token = localStorage.getItem('token');
+      const response = await axios.get(`http://localhost:8000/admin/business-locations`,{
+        headers: {
+            'Authorization': token
+        }
+    });
       console.log(response.data)
       setBusinessLocationData(response.data);
       // console.log(variationData)
@@ -118,8 +122,12 @@ const AddStockAdjustment = () => {
   const fetchProducts = async () => {
 
     try {
-      // const token = localStorage.getItem('token');
-      const response = await axios.get(`http://localhost:8000/admin/products`);
+      const token = localStorage.getItem('token');
+      const response = await axios.get(`http://localhost:8000/admin/products`,{
+        headers: {
+            'Authorization': token
+        }
+    });
       // console.log(response)
       setProductsData(response.data);
     } catch (error) {
@@ -129,8 +137,12 @@ const AddStockAdjustment = () => {
   const fetchSAJById = async () => {
 
     try {
-      // const token = localStorage.getItem('token');
-      const response = await axios.get(`http://localhost:8000/admin/stock-adjustment/${id}`);
+      const token = localStorage.getItem('token');
+      const response = await axios.get(`http://localhost:8000/admin/stock-adjustment/${id}`,{
+        headers: {
+            'Authorization': token
+        }
+    });
       // console.log(response)
       response.data.date = new Date(response.data.date).toLocaleDateString("fr-CA")
 
@@ -154,9 +166,13 @@ const AddStockAdjustment = () => {
   const addSAJ = async () => {
 
     try {
-      // const token = localStorage.getItem('token');
+      const token = localStorage.getItem('token');
       // console.log(formData)
-      const response = await axios.post(`http://localhost:8000/admin/stock-adjustment`, formData);
+      const response = await axios.post(`http://localhost:8000/admin/stock-adjustment`, formData,{
+        headers: {
+            'Authorization': token
+        }
+    });
       // console.log(response)
       if (response.status === 201) {
         Navigate("/home/stock-transfer");
@@ -168,9 +184,13 @@ const AddStockAdjustment = () => {
   const addSAJById = async () => {
 
     try {
-      // const token = localStorage.getItem('token');
+      const token = localStorage.getItem('token');
       // console.log(formData)
-      const response = await axios.put(`http://localhost:8000/admin/stock-adjustment/${id}`, formData);
+      const response = await axios.put(`http://localhost:8000/admin/stock-adjustment/${id}`, formData,{
+        headers: {
+            'Authorization': token
+        }
+    });
       // console.log(response)
       if (response.status === 200) {
         Navigate("/home/stock-transfer");

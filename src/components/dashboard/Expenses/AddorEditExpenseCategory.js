@@ -28,8 +28,12 @@ const AddorEditExpenseCategory = (props) => {
 const fetchExpenseCategories = async () => {
 
         try {
-            // const token = localStorage.getItem('token');
-            const response = await axios.get(`http://localhost:8000/admin/expense-categories`);
+            const token = localStorage.getItem('token');
+            const response = await axios.get(`http://localhost:8000/admin/expense-categories`,{
+                headers: {
+                    'Authorization': token
+                }
+            });
 
             // console.log(response)
             setExpenseCategoryData(response.data);
@@ -40,8 +44,12 @@ const fetchExpenseCategories = async () => {
     const fetchExpenseCategoryById = async () => {
 
         try {
-            // const token = localStorage.getItem('token');
-            const response = await axios.get(`http://localhost:8000/admin/expense-categories/${props.id}`);
+            const token = localStorage.getItem('token');
+            const response = await axios.get(`http://localhost:8000/admin/expense-categories/${props.id}`,{
+                headers: {
+                    'Authorization': token
+                }
+            });
 
             console.log(response)
             setFormData(response.data);
@@ -52,9 +60,13 @@ const fetchExpenseCategories = async () => {
     const addExpenseCategory = async () => {
 
         try {
-            // const token = localStorage.getItem('token');
+            const token = localStorage.getItem('token');
             // console.log(formData)
-            const response = await axios.post(`http://localhost:8000/admin/expense-categories`, formData);
+            const response = await axios.post(`http://localhost:8000/admin/expense-categories`, formData,{
+                headers: {
+                    'Authorization': token
+                }
+            });
             console.log(response)
             if (response.status === 201) {
                 window.location.reload();
@@ -69,9 +81,13 @@ const fetchExpenseCategories = async () => {
     const addExpenseCategoryById = async () => {
 
         try {
-            // const token = localStorage.getItem('token');
+            const token = localStorage.getItem('token');
             // console.log(formData)
-            const response = await axios.put(`http://localhost:8000/admin/expense-categories/${props.id}`, formData);
+            const response = await axios.put(`http://localhost:8000/admin/expense-categories/${props.id}`, formData,{
+                headers: {
+                    'Authorization': token
+                }
+            });
             console.log(response)
 
         } catch (error) {

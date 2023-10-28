@@ -31,8 +31,12 @@ const ViewStockTransfer = (props) => {
     const fetchStockTransfer = async () => {
 
         try {
-            // const token = localStorage.getItem('token');
-            const response = await axios.get(`http://localhost:8000/admin/stock-transfers/${props.id}`);
+            const token = localStorage.getItem('token');
+            const response = await axios.get(`http://localhost:8000/admin/stock-transfers/${props.id}`,{
+                headers: {
+                    'Authorization': token
+                }
+            });
             // console.log(response.data)
             response.data.date = new Date(response.data.date).toLocaleDateString()
 
