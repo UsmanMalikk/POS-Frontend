@@ -248,8 +248,75 @@ const AddorEditRoles = () => {
     // ])
     // const [roleName, setRoleName] = useState('')
     const [formData, setFormData] = useState({
-        roleName: ""
-    })
+        firstName: "",
+        aaleman: false,
+        adEdtInvoiceNumber: false,
+        adEdtVw: false,
+        addPayComponent: false,
+        addPayroll: false,
+        addProjects: false,
+        addRecipe: false,
+        addTodos: false,
+        asgnTodosToOthers: false,
+        attendenceFromApi: false,
+        attendenceFromWeb: false,
+        axsAccounts: false,
+        axsPkgSubscriptions: false,
+        axsPrinters: false,
+        axsProduction: false,
+        axsSalesTargets: false,
+        axsTables: false,
+        axsWocmrcApiStng: false,
+        closeCashRegister: false,
+        createMsg: false,
+        crudAttendence: false,
+        crudDepartment: false,
+        crudDesignation: false,
+        crudLeave: false,
+        crudLeaveType: false,
+        deleteAccountTrx: false,
+        deleteBrand: false,
+        deleteCategory: false,
+        deleteCustomer: false,
+        deleteDraft: false,
+        deleteExpense: false,
+        deletePayroll: false,
+        deleteProjects: false,
+        deletePurcOrder: false,
+        deleteQuotation: false,
+        deleteRole: false,
+        deleteShipmet: false,
+        deleteSupplier: false,
+        deleteTaxRate: false,
+        deleteTodos: false,
+        deleteUnit: false,
+        deleteUser: false,
+        dfltSellingPrice: false,
+        editAccountTrx: false,
+        editDraft: false,
+        editPayroll: false,
+        editProjects: false,
+        editRecipe: false,
+        editTodos: false,
+        localSale: false,
+        mapTaxrate: false,
+        minimumPrice: false,
+        prntInvoice: false,
+        retail: false,
+        salePoint: false,
+        syncOrders: false,
+        syncPrdct: false,
+        syncPrdctCatg: false,
+        updateStatus: false,
+        viewAllPayroll: false,
+        viewDraft: false,
+        viewExportToButtons: false,
+        viewHomeData: false,
+        viewMsg: false,
+        viewPayComponent: false,
+        viewPrdctStkValue: false,
+        viewPurchasePrice: false,
+        viewRecipe: false,    })
     const [iserror, setIserror] = useState(false)
     // const addRole = async () => {
 
@@ -269,13 +336,14 @@ const AddorEditRoles = () => {
         e.preventDefault()
         if (formData.roleName.length === 0) {
             setIserror(true)
+            console.log(iserror)
         }
         else if (id) {
-            console.log("Handle Update")
+            console.log("Handle Update", formData)
         } else {
             // console.log(manufacturingPerm)
 
-            console.log("Handle Create")
+            console.log("Handle Create", formData)
         }
 
     }
@@ -284,7 +352,7 @@ const AddorEditRoles = () => {
         let tempData = array.map(val => val.name === name ? { ...val, isChecked: checked } : val)
         setArray(tempData)
         setFormData({ ...formData, [name.replace(/_./g, (m) => m[1].toUpperCase())]: checked || false })
-        // console.log(tempData)
+
     }
 
     const handleAllSelect = (e, array, setArray, id) => {
@@ -295,7 +363,6 @@ const AddorEditRoles = () => {
                 return { ...val, isChecked: checked }
             });
             setArray(tempData)
-
         }
 
     }
@@ -310,8 +377,8 @@ const AddorEditRoles = () => {
             <h1 className='text-2xl items-start flex mx-6 justify-start  font-semibold'>{id ? "Edit Role" : "Add Role"}</h1>
             <div className='flex flex-col rounded-md border-t-[3px] p-5 border-blue-600 bg-white w-[96%] mx-[2%] min-h-screen'>
                 <div className='flex flex-col items-start w-full'>
-                    <h1 className='text-lg flex'>First Name: *  <span className='text-red-500 mx-2 mt-1 text-sm'>{iserror && formData.firstName.length === 0 ? "Required Field" : ""} </span></h1>
-                    <input type='text' value={formData.firstName} onChange={(e) => { setFormData({ ...formData, firstName: e.target.value }) }} placeholder='First Name' className='focus:outline-none w-full md:w-1/3 border-[1px] border-gray-300 px-2  rounded-sm p-1' />
+                    <h1 className='text-lg flex'>Role Name:  <span className='text-red-500 mx-2 mt-1 text-sm'>{iserror && formData.roleName.length === 0 ? "Required Field" : ""} </span></h1>
+                    <input type='text' value={formData.roleName} onChange={(e) => { setFormData({ ...formData, roleName: e.target.value }) }} placeholder='First Name' className='focus:outline-none w-full md:w-1/3 border-[1px] border-gray-300 px-2  rounded-sm p-1' />
                 </div>
                 <h1 className='flex text-lg font-semibold'>Permissions:</h1>
                 {/* Others */}
@@ -1162,11 +1229,11 @@ const AddorEditRoles = () => {
                 {/* </div> */}
                 <div className=' w-[94%] mx-[3%] mt-5 h-[2px] bg-black'></div>
 
-                `` <button button onClick={handleClick} className='flex items-center  text-white w-20 bg-green-400 rounded-sm px-3 py-1 justify-start m-5' > {id ? "Update" : "Save"}</button >
+                `` <button button onClick={handleClick} className='flex items-center  text-white w-20 bg-green-400 rounded-sm px-3 py-1 justify-start m-5' > {id ? "Update" : "Save"}</button>
 
-            </div >
+            </div>
 
-        </div >
+        </div>
 
     )
 }

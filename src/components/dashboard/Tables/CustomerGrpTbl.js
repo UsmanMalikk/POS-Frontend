@@ -14,18 +14,18 @@ import axios from'axios';
 const CustomerGrpTbl = () => {
    const [data,setData]=useState([]);
    const [loading, setLoading] = useState(true);
-
+   const getDataFromApi = async () => {
+    try {
+      const response = await axios.get('http://localhost:8000/admin/contact/customergroup');
+      setData(response.data);
+      console.log(response);
+      setLoading(false);
+    } catch (e) {
+      console.log('Error fetching data: ', e);
+    }
+  };
    useEffect(() => {
-    const getDataFromApi = async () => {
-      try {
-        const response = await axios.get('http://localhost:8000/contact/customergroup');
-        setData(response.data);
-        console.log(response);
-        setLoading(false);
-      } catch (e) {
-        console.log('Error fetching data: ', e);
-      }
-    };
+    
     getDataFromApi();
   }, []);
    
@@ -108,13 +108,24 @@ const CustomerGrpTbl = () => {
     }
 
     const displayData = () => {
-        if (editId === 0 && isedit === false) {
-            return <AddorEditCustomerGrp id={0} />
-        } else if (editId !== 0 && isedit === true) {
+        if (editId !== 0 && isedit === true) {
             return <AddorEditCustomerGrp id={editId} />
         }
     }
-
+    const handleDeleteCustomerGrp = async (custId) => {
+        try {
+            const token = localStorage.getItem('token');
+            const response = await axios.delete(`http://localhost:8000/admin/contact/customergroup/${custId}`, {
+                headers: {
+                    'Authorization': token
+                }
+            });
+            // console.log('Contact deleted:', response.data);
+            getDataFromApi()
+        } catch (error) {
+            console.error('Error deleting Contact:', error);
+        }
+    };
 
     return (
         <div className='w-full'>
@@ -205,19 +216,19 @@ const CustomerGrpTbl = () => {
                         {record.map((value, index) => {
                             return <tr key={index} className={`${(index + 1) % 2 === 0 ? "bg-gray-200" : ""}`}>
 
-                                {col1 && <td className="px-1 py-1 text-sm">{value.groupName}</td>}
-                                {col2 && <td className="px-1 py-1"> {value.priceCalculation}</td>}
-                                {col3 && <td className="px-1 py-1">{value.Role}</td>}
+                                {col1 && <td className="px-1 py-1 text-sm">{value.customerGroupName}</td>}
+                                {col2 && <td className="px-1 py-1"> {value.calculationPercentage}</td>}
+                                {col3 && <td className="px-1 py-1">{value.sellingPriceGroup?.name}</td>}
                                 {col4 && <td className='py-1 flex '>
-                                    <div onClick={() => { setEditId(value.id); setIsedit(true); setIsClike(!isClike) }} className='flex mx-1 p-1 items-center bg-blue-600 text-white justify-center'>
+                                    <button onClick={() => { setEditId(value._id); setIsedit(true); setIsClike(!isClike) }} className='flex mx-1 p-1 items-center bg-blue-600 text-white justify-center'>
                                         <FaEdit size={15} />
                                         <h1 className='text-sm'>Edit</h1>
-                                    </div>
+                                    </button>
 
-                                    <div className='flex mx-1 p-1 items-center bg-red-500 text-white justify-center'>
+                                    <button onClick={() => { handleDeleteCustomerGrp(value._id) }} className='flex mx-1 p-1 items-center bg-red-500 text-white justify-center'>
                                         <AiOutlineDelete size={15} />
                                         <h1 className='text-sm'>Delete</h1>
-                                    </div>
+                                    </button>
                                 </td>}
                             </tr>
                         })}

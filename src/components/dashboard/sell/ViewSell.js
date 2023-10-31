@@ -1,11 +1,11 @@
-import React, { useRef ,useState , useEffect} from 'react'
+import React, { useRef, useState, useEffect } from 'react'
 import { FaPrint } from "react-icons/fa"
 import { useReactToPrint } from 'react-to-print';
 import axios from 'axios';
 
 const ViewSell = (props) => {
-   
-  const [saleData, setSaleData] = useState([]);
+    console.log(props)
+    const [saleData, setSaleData] = useState([]);
 
     const printRef = useRef()
     const handlePrint = useReactToPrint({
@@ -13,29 +13,56 @@ const ViewSell = (props) => {
         documentTitle: "SellReport",
         copyStyles: true,
     });
-const fetchSaleById = async () => {
-
-    try {
-      const token = localStorage.getItem('token');
-      const response = await axios.get(`http://localhost:8000/admin/sales/final/${props.id}`,{
-        headers: {
-            'Authorization': token
-        }
-    });
-    //   console.log(response.data)
-      let date = new Date(response.data.salesDate).toLocaleDateString()
-      let paymentDate = new Date(response.data.paymentDate).toLocaleDateString()
-
-      setSaleData({...response.data, salesDate : date, paymentDate:paymentDate});
-    } catch (error) {
-      console.error('Error fetching Sale:', error);
+    const findTotal = () => {
+        let total = 0
+        saleData.inputData?.map(val => {
+            return total += val.subtotal
+        })
+        return total
     }
-  };
-  useEffect(() => {
-    // Make an API call to fetch user's user records
-    fetchSaleById();
+    const fetchSaleById = async () => {
 
-  }, []);
+        try {
+            const token = localStorage.getItem('token');
+            if(props.name === 'Sale'){
+                const response = await axios.get(`http://localhost:8000/admin/sales/final/${props.id}`, {
+                    headers: {
+                        'Authorization': token
+                    }
+                });
+                //   console.log(response.data)
+                let date = new Date(response.data.salesDate).toLocaleDateString()
+                let paymentDate = new Date(response.data.paymentDate).toLocaleDateString()
+
+                setSaleData({ ...response.data, salesDate: date, paymentDate: paymentDate });
+            }else if(props.name === 'Pos'){
+                const response = await axios.get(`http://localhost:8000/admin/pos/${props.id}`, {
+                    headers: {
+                        'Authorization': token
+                    }
+                });
+                //   console.log(response.data)
+                let date = new Date(response.data.salesDate).toLocaleDateString()
+                let paymentDate = new Date(response.data.paymentDate).toLocaleDateString()
+
+                setSaleData({ ...response.data, salesDate: date, paymentDate: paymentDate });
+            }
+            
+            
+                
+
+                
+            
+        }
+        catch (error) {
+            console.error('Error fetching Sale:', error);
+        }
+    };
+    useEffect(() => {
+        // Make an API call to fetch user's user records
+        fetchSaleById();
+
+    }, []);
 
     return (
         <div className='w-full  flex  flex-col  bg-white'>
@@ -69,24 +96,24 @@ const fetchSaleById = async () => {
                         </div>
                     </div>
                     <div className='flex  items-start flex-col '>
-                    <div className='flex'>
+                        <div className='flex'>
                             <h1 className='font-bold'>Customer Name: </h1>
-                            <h1 className='mx-1'>{saleData.customer}</h1>
+                            <h1 className='mx-1'>{saleData.customer?.prefix+" "+saleData.customer?.firstName}</h1>
 
                         </div>
                         <div className='flex'>
                             <h1 className='font-bold'>Address: </h1>
-                            {/* <h1 className='mx-1'>{(saleData.customer) ? saleData.customer.address : ""}</h1> */}
+                            <h1 className='mx-1'>{saleData.customer?.addressLine1}</h1>
 
                         </div>
                         <div className='flex'>
                             <h1 className='font-bold'>Mobile: </h1>
-                            {/* <h1 className='mx-1'>{(saleData.customer) ? saleData.customer.mobile : ""}</h1> */}
+                            <h1 className='mx-1'>{saleData.customer?.mobile}</h1>
 
                         </div>
                     </div>
                     <div className='flex  items-start flex-col '>
-                        
+
                         <div className='flex'>
                             <p className='font-bold'>Shipping:</p>
                             <p className='mx-1'>{saleData.shippingAddress} </p>
@@ -114,15 +141,15 @@ const fetchSaleById = async () => {
                             </tr>
                         </thead>
                         <tbody >
-                        {(saleData.inputData) && saleData.inputData.map((value, index) => {
+                            {(saleData.inputData) && saleData.inputData.map((value, index) => {
                                 return <tr key={index} className={`${(index + 1) % 2 === 0 ? "bg-gray-200" : ""}`}>
                                     <td className=" py-1 px-1">{index + 1}</td>
-                                    <td className=" py-1 px-1">{(value.product) ? value.product.productName : ""}</td>
+                                    <td className=" py-1 px-1">{value.product?.productName}</td>
                                     <td className="px-1 py-1"> {value.quantity}</td>
                                     <td className="px-1 py-1">{value.unitPrice}</td>
                                     <td className=" py-1 px-1">{value.discount}</td>
                                     <td className="px-1 py-1"> {value.subtotal}</td>
-                                    
+
                                 </tr>
                             })}
 
@@ -151,14 +178,14 @@ const fetchSaleById = async () => {
                             </thead>
                             <tbody >
                                 {/* {dummyData.map((value, index) => { */}
-                                    <tr>
-                                        <td className=" py-1 px-1">{1}</td>
-                                        <td className=" py-1 px-1">{saleData.paymentDate}</td>
-                                        <td className="px-1 py-1 text-sm">{saleData.inoiceNumber}</td>
-                                        <td className="px-1 py-1"> {saleData.amount}</td>
-                                        <td className="px-1 py-1">{saleData.paymentMethod}</td>
-                                        <td className="px-1 py-1">{saleData.paymentNote}</td>
-                                    </tr>
+                                <tr>
+                                    <td className=" py-1 px-1">{1}</td>
+                                    <td className=" py-1 px-1">{saleData.paymentDate}</td>
+                                    <td className="px-1 py-1 text-sm">{saleData.inoiceNumber}</td>
+                                    <td className="px-1 py-1"> {saleData.amount}</td>
+                                    <td className="px-1 py-1">{saleData.paymentMethod}</td>
+                                    <td className="px-1 py-1">{saleData.paymentNote}</td>
+                                </tr>
 
                                 {/* })} */}
 
@@ -169,24 +196,24 @@ const fetchSaleById = async () => {
                             </tfoot>
                         </table>
                     </div>
-                    <br/>
+                    <br />
                     <div className='flex flex-col mt-11'>
                         <div className='flex justify-between border-t-[1px] border-b-[1px] border-gray-200 py-1 bg-gray-400'>
                             <h1 className='font-bold'>Total:</h1>
-                            <h1 className=''>Rs {saleData.totalSaleAmount - saleData.shippingCharges}</h1>
+                            <h1 className=''>Rs {findTotal()}</h1>
                         </div>
                         <div className='flex justify-between border-t-[1px] border-b-[1px] border-gray-200 py-1 bg-gray-400'>
                             <h1 className='font-bold'>Discount:</h1>
                             <h1 className='font-bold '>(-)</h1>
-                            <h1 className=''>Rs {saleData.discountAmount}</h1>
+                            <h1 className=''>{saleData.discountAmount}</h1>
                         </div>
-                        
+
                         <div className='flex justify-between border-t-[1px] border-b-[1px] border-gray-200 py-1 bg-gray-400'>
                             <h1 className='font-bold'>Shipping:</h1>
                             <h1 className='font-bold '>(+)</h1>
                             <h1 className=''>Rs {saleData.shippingCharges}</h1>
                         </div>
-                        
+
                         <div className='flex justify-between border-t-[1px] border-b-[1px] border-gray-200 py-1 bg-gray-400'>
                             <h1 className='font-bold'>Total Payable:</h1>
                             <h1 className=''>Rs {saleData.totalSaleAmount}</h1>
@@ -204,7 +231,7 @@ const fetchSaleById = async () => {
 
 
                 </div>
-                
+
             </div>
             <div className='flex items-end justify-end mx-4'>
                 <div className='flex bg-green-400 text-white cursor-pointer px-2 py-1' onClick={handlePrint}>

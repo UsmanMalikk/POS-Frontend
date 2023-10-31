@@ -1,17 +1,17 @@
 import { useState, React } from "react"
 import { FaGift, FaInfo } from "react-icons/fa"
 
-const EditDiscount = () => {
+const EditDiscount = (props) => {
     const [discountData, setDiscountData] = useState({
         discountType: "",
         discountAmount: "",
-        redeemed: '',
-        redeemedAmount: ""
+        
 
     })
     const handleUpdate = () => {
-        console.log("Update", discountData)
-    }
+        if (props.onSubmit) {
+            props.onSubmit(discountData); // Call the callback function and pass the data.
+          }    }
     return (
         <div className='flex flex-col w-full bg-white  '>
             <div className=" bg-white px-2 pb-3 w-full">
@@ -43,23 +43,8 @@ const EditDiscount = () => {
 
                 </div>
 
-                <div className='flex flex-col w-full'>
-                    <h1 className='text-sm text-start font-bold'>Redeemed</h1>
-                    <div className='flex  mt-1'>
-                        <FaGift size={15} className=' border-[1px] w-8 h-8 p-1 border-gray-500' />
-                        <input value={discountData.redeemed} onChange={(e) => { setDiscountData({ ...discountData, redeemed: e.target.value }) }} className='px-2 border-[1px] w-full border-gray-500' />
-                    </div>
+                
 
-                </div>
-                <div className='flex flex-col w-full'>
-                    <h1 className='text-sm text-start font-bold'>Available:</h1>
-                    <div className='flex  mt-1'>
-                        <h1 className='text-sm font-bold'>Redeemed Amount:</h1>
-                        <h1 className='text-sm mx-2'>Rs. 0.00</h1>
-
-                    </div>
-
-                </div>
             </div>
             <div className="flex items-end py-1 justify-end w-full">
                 <button onClick={handleUpdate} className='bg-blue-600 w-[100px] text-white'>Update</button>

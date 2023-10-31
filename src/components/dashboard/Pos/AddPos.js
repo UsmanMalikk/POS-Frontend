@@ -35,63 +35,14 @@ import { useNavigate } from "react-router-dom"
 const AddPos = () => {
   const Navigate = useNavigate();
 
-  const dummyData = [
-    {
-      id: 1,
-      Username: "username",
-      Name: "User",
-      Role: "Admin",
-      Email: "username@gmail.com"
-    },
-    {
-      id: 2,
-      Username: "username1",
-      Name: "User1",
-      Role: "Admin",
-      Email: "username@gmail.com"
-    },
-    {
-      id: 3,
-      Username: "username2",
-      Name: "User2",
-      Role: "Admin",
-      Email: "username2@gmail.com"
-    },
-    {
-      id: 4,
-      Username: "username3",
-      Name: "User3",
-      Role: "Admin",
-      Email: "username3@gmail.com"
-    },
-    {
-      id: 5,
-      Username: "username4",
-      Name: "User4",
-      Role: "Admin",
-      Email: "username4@gmail.com"
-    },
-    {
-      id: 6,
-      Username: "username5",
-      Name: "User5",
-      Role: "Admin",
-      Email: "username5@gmail.com"
-    },
-    {
-      id: 7,
-      Username: "username6",
-      Name: "User6",
-      Role: "Admin",
-      Email: "username6@gmail.com"
-    }
-  ]
-
   
+
   const [productsData, setProductsData] = useState([]);
-  // const [customersData, setCustomersData] = useState([]);
+  const [customersData, setCustomersData] = useState([]);
+
   const [spgsData, setSPGsData] = useState([]);
   // const [unitsData, setUnitsData] = useState([]);
+  const [businessLocationData, setBusinessLocationData] = useState([]);
 
 
 
@@ -117,12 +68,13 @@ const AddPos = () => {
 
   const [formData, setFormData] = useState({
     customer: "",
-    sellingPrice: "",
+    customerName: "",
+    sellingPrice: null,
     status: "",
     invoiceNumber: "",
     // tables: "",
     // serviceStaff: "",
-    businesLocation: "",
+    businesLocation: null,
     inputData: [],
     payTerm: "",
     // payTerm1: "",
@@ -132,7 +84,6 @@ const AddPos = () => {
     // available: "",
     // redeemedAmount: "",
     discount: 0,
-    orderTaxType: "",
     orderTax: 0,
     sellNotes: "",
     shippingDetails: "",
@@ -161,10 +112,9 @@ const AddPos = () => {
     amount: "",
     paymentDate: "",
     paymentMethod: "",
-    paymentAccount: "",
     paymentNote: "",
-    suspendNote: ""
-
+    suspendNote: "",
+    totalSaleAmount: "",
   })
   const params = useParams()
   const id = params.id
@@ -194,7 +144,7 @@ const AddPos = () => {
     // You can also update the state in the parent component.
     setFormData({
       ...formData, suspendNote: editProductFormData.suspendNote
-      
+
     });
     // setCardData(editProductFormData);
     // console.log("1st or 2nd?")
@@ -206,13 +156,24 @@ const AddPos = () => {
     // You can also update the state in the parent component.
     setFormData({
       ...formData, suspendNote: editProductFormData.suspendNote,
-        shippingDetails: editProductFormData.shippingDetails,
-        shippingAddress: editProductFormData.shippingAddress,
-        shippingStatus: editProductFormData.shippingStatus,
-        shippingCharges:editProductFormData.shippingCharges,
-        deliveredTo: editProductFormData.deliveredTo,
-        deliveryPerson: editProductFormData.deliveryPerson,
-      
+      shippingDetails: editProductFormData.shippingDetails,
+      shippingAddress: editProductFormData.shippingAddress,
+      shippingStatus: editProductFormData.shippingStatus,
+      shippingCharges: editProductFormData.shippingCharges,
+      deliveredTo: editProductFormData.deliveredTo,
+      deliveryPerson: editProductFormData.deliveryPerson,
+
+    });
+    // setCardData(editProductFormData);
+  }
+  const handleDiscountData = (editProductFormData) => {
+    // Process the formData here, e.g., make an API request
+    // to save the data to the server.
+    // You can also update the state in the parent component.
+    setFormData({
+      ...formData, discountAmount: editProductFormData.discountAmount,
+      discountType: editProductFormData.discountType,
+
     });
     // setCardData(editProductFormData);
   }
@@ -220,26 +181,27 @@ const AddPos = () => {
     // Process the formData here, e.g., make an API request
     // to save the data to the server.
     // You can also update the state in the parent component.
-    console.log(proId)
+    // console.log(proId)
 
-      setFormData({
-        ...formData, 
-        inputData: formData.inputData.map((item) =>
+    setFormData({
+      ...formData,
+      inputData: formData.inputData.map((item) =>
         item.product === proId
-          ? { ...item, 
+          ? {
+            ...item,
             description: editProductFormData.description,
             unitPrice: editProductFormData.unitPrice,
             discountType: editProductFormData.discountType,
             discountAmount: editProductFormData.discountAmount,
           }
-          : item 
+          : item
       ),
-        
-      });
-    }
-    
-    // setCardData(editProductFormData);
-  
+
+    });
+  }
+
+  // setCardData(editProductFormData);
+
   const handleChange = (e, index) => {
     const updatedData = formData.inputData.map((item, ind) => {
       if (ind === index) {
@@ -268,7 +230,32 @@ const AddPos = () => {
     newArray.splice(index, 1)
     setFormData({ ...formData, inputData: newArray })
   }
+  const subtotal = (q, p, d, dt) => {
+    let total = 0
+    if (dt === "Percentage") {
+        total = (q * p) - (d / 100) * (q * p)
+        return total
+    } else if (dt === "Fixed") {
+        total = (q * p) - d
+        return total
+    } else {
+        total = q * p
+        return total
+    }
+}
+const finalDiscount = (p, d, dt) => {
+    let total = 0
+    if (dt === "Percentage") {
+        total = (d / 100) * (p)
+        return total
+    } else if (dt === "Fixed") {
+        total = d
+        return total
+    }else{
+        return total
 
+    }
+}
   const findTotal = () => {
     let total = 0
     formData.inputData.map(val => {
@@ -276,7 +263,18 @@ const AddPos = () => {
     })
     return total
   }
-  const total = findTotal()
+  let total = findTotal()
+  const totalPayable = (ttl) => {
+    ttl = parseFloat(ttl) - parseFloat(finalDiscount(total,formData.discountAmount, formData.discountType));
+    ttl = parseFloat(ttl) + parseFloat(formData.shippingCharges);
+    ttl = parseFloat(ttl) + parseFloat(formData.additionalExpenseAmount)
+    ttl = parseFloat(ttl) + parseFloat(formData.additionalExpenseAmount1)
+    ttl = parseFloat(ttl) + parseFloat(formData.additionalExpenseAmount2)
+    ttl = parseFloat(ttl) + parseFloat(formData.additionalExpenseAmount3)
+    return ttl
+  }
+  const totalSaleAmount = totalPayable(total)
+  formData.totalSaleAmount = totalSaleAmount
 
   const [isserror, setIsserror] = useState(false)
 
@@ -295,7 +293,6 @@ const AddPos = () => {
   const [registerDetail, setRegisterDetail] = useState(false)
   const [closeRegister, setCloseRegister] = useState(false)
   const [updateDiscount, setUpdateDiscount] = useState(false)
-  const [updateOrderTax, setUpdateOrderTax] = useState(false)
   const [updateShipping, setUpdateShipping] = useState(false)
   const [recentTrx, setRecentTrx] = useState(false)
 
@@ -303,14 +300,17 @@ const AddPos = () => {
   const displayData = () => {
     if (newProduct === true) {
       return <AddProduct />
-    }else if (isAddSupplier === true) {
+    } else if (isAddSupplier === true) {
       return <AddorEditContact id={0} />
     } else if (isCard === true) {
+      // if(id){
+      //   return <CardTransaction onSubmit={handleCardFormData} formData={formData}/>
+      // }
       return <CardTransaction onSubmit={handleCardFormData} />
     } else if (isSuspend === true) {
-      return <SuspendSale onSubmit={handleSuspendFormData}/>
+      return <SuspendSale onSubmit={handleSuspendFormData} />
     } else if (editProduct === true) {
-      return <EditProduct name={prdName} id={proId} onSubmit={handleProductFormData}/> //
+      return <EditProduct name={prdName} id={proId} onSubmit={handleProductFormData} /> //
     } else if (suspendedSale === true) {
       return <SuspendedSale />
     } else if (registerDetail === true) {
@@ -318,11 +318,9 @@ const AddPos = () => {
     } else if (closeRegister === true) {
       return <CloseRegister />
     } else if (updateDiscount === true) {
-      return <EditDiscount />
-    } else if (updateOrderTax === true) {
-      return <EditOrderTax />
+      return <EditDiscount onSubmit={handleDiscountData}/>
     } else if (updateShipping === true) {
-      return <EditShipping onSubmit={handleShippingFormData}/>
+      return <EditShipping onSubmit={handleShippingFormData} />
     } else if (recentTrx === true) {
       return <RecentTransaction />
     }
@@ -341,17 +339,38 @@ const AddPos = () => {
       elem.msRequestFullscreen();
     }
   }
+  const data = new Date()
+  let fullyear = data.getFullYear()
+  let fullmonth = data.getMonth() + 1
+  let fuldate = data.getDate()
+  const date = fuldate + "/" + fullmonth + "/" + fullyear;
+  const fetchLocations = async () => {
 
+    try {
+      const token = localStorage.getItem('token');
+      const response = await axios.get(`http://localhost:8000/admin/business-locations`, {
+        headers: {
+          'Authorization': token
+        }
+      });
+      // console.log(response.data)
+      setBusinessLocationData(response.data);
+      // console.log(variationData)
+
+    } catch (error) {
+      console.error('Error fetching spg:', error);
+    }
+  };
   const fetchSaleById = async () => {
 
     try {
       const token = localStorage.getItem('token');
-      const response = await axios.get(`http://localhost:8000/admin/sales/${type}/${id}`,{
+      const response = await axios.get(`http://localhost:8000/admin/pos/${id}`, {
         headers: {
-            'Authorization': token
+          'Authorization': token
         }
-    });
-      // console.log(response)
+      });
+      console.log(response)
       setFormData(response.data);
     } catch (error) {
       console.error('Error fetching sale:', error);
@@ -361,11 +380,11 @@ const AddPos = () => {
 
     try {
       const token = localStorage.getItem('token');
-      const response = await axios.get(`http://localhost:8000/admin/products`,{
+      const response = await axios.get(`http://localhost:8000/admin/products`, {
         headers: {
-            'Authorization': token
+          'Authorization': token
         }
-    });
+      });
       // console.log(response)
       setProductsData(response.data);
     } catch (error) {
@@ -387,11 +406,11 @@ const AddPos = () => {
 
     try {
       const token = localStorage.getItem('token');
-      const response = await axios.get(`http://localhost:8000/admin/selling-price-groups`,{
+      const response = await axios.get(`http://localhost:8000/admin/selling-price-groups`, {
         headers: {
-            'Authorization': token
+          'Authorization': token
         }
-    });
+      });
       // console.log(response)
 
 
@@ -401,23 +420,39 @@ const AddPos = () => {
     }
   };
 
-  
+  const fetchCustomers = async () => {
+    try {
+      const token = localStorage.getItem('token');
+
+      const response = await axios.get(`http://localhost:8000/admin/contacts/customer`, {
+        headers: {
+          'Authorization': token
+        }
+      });
+      // console.log(response);
+      setCustomersData(response.data);
+
+    } catch (e) {
+      console.error(e)
+    }
+
+  }
   const addSale = async () => {
 
     try {
       const token = localStorage.getItem('token');
       // console.log(finalFormData)
-      const response = await axios.post(`http://localhost:8000/admin/pos`, formData,{
+      const response = await axios.post(`http://localhost:8000/admin/pos`, formData, {
         headers: {
-            'Authorization': token
+          'Authorization': token
         }
-    });
+      });
       console.log(response)
       if (response.status === 201) {
         window.location.reload();
 
       }
-      
+
     } catch (error) {
       console.error('Error Adding Sale:', error);
     }
@@ -428,11 +463,11 @@ const AddPos = () => {
     try {
       const token = localStorage.getItem('token');
       // console.log(finalFormData)
-      const response = await axios.put(`http://localhost:8000/admin/sales/${id}`, formData,{
+      const response = await axios.put(`http://localhost:8000/admin/pos/${id}`, formData, {
         headers: {
-            'Authorization': token
+          'Authorization': token
         }
-    });
+      });
       console.log(response)
       if (response.status === 201 && type === "draft") {
         // Navigate("/home/draft");
@@ -457,11 +492,15 @@ const AddPos = () => {
     // Make an API call to fetch SPG's records
     if (id) {
       fetchSPGs()
+      fetchLocations()
+      fetchCustomers()
       fetchProducts()
       fetchSaleById();
     }
     else {
       fetchSPGs()
+      fetchLocations()
+      fetchCustomers()
       fetchProducts()
     }
   }, [])
@@ -478,7 +517,7 @@ const AddPos = () => {
       if (e === 'cash') {
         formData.paymentMethod = "Cash"
         // console.log(formData.shippingCharges)
-        formData.amount = parseInt(total) + parseFloat(formData.shippingCharges)
+        formData.amount = totalSaleAmount
         formData.byPos = true
 
         addSale()
@@ -503,15 +542,14 @@ const AddPos = () => {
       } else if (e === 'card') {
         formData.paymentMethod = "Card"
 
-        formData.amount = parseInt(total) + parseFloat(formData.shippingCharges)
+        formData.amount = totalSaleAmount
 
         formData.byPos = true
 
         // addSale()
-        console.log("Handle Save Suspended", formData)
-      } 
-        
-      else{
+      }
+
+      else {
         window.location.reload();
 
         console.log("Cancel")
@@ -527,8 +565,19 @@ const AddPos = () => {
         <div className='flex justify-between '>
           <div className='flex items-center'>
             <h1 className='font-bold text-xl'>Location:</h1>
-            <h2 className='font-semibold text-gray-600 mx-2 '>Eziline Software House (Pvt.) Ltd   {dateTime} </h2>
-            <div className='flex relative'>
+            <div className='flex font-semibold text-gray-600 mx-2 '>
+              <select value={formData.businesLocation} onChange={(e) => { setFormData({ ...formData, businesLocation: e.target.value }) }} type="text" className='px-2 py-1 w-full border-[1px]  border-gray-800 focus:outline-none'>
+                <option value={""}>Please Select</option>
+                {businessLocationData.map((loc) => (
+                  <option key={loc._id} value={loc._id}>
+                    {loc.name}
+                  </option>
+                ))}
+
+              </select>
+
+              <h1 className='mx-2'>{date}</h1>
+            </div>            <div className='flex relative'>
               <FaKeyboard size={20} onMouseOver={() => { setInfo(true) }} onMouseLeave={() => { setInfo(false) }} className=' mx-2' />
               {info &&
                 <div className='flex flex-col w-[280px] rounded-md border-[1px] border-gray-400 absolute top-5 p-2 z-10 bg-white shadow-md shadow-gray-300'>
@@ -632,7 +681,7 @@ const AddPos = () => {
                     <input
                       onClick={() => setOpen(!open)}
                       className='bg-white w-full  flex items-center  focus:outline-none justify-between px-2  border-[1px] border-gray-600'
-                      value={formData.customer}
+                      value={(id) ? formData.customer?.firstName : formData.customerName}
                       onChange={(e) => { setFormData({ ...formData, customer: e.target.value }) }}
                       placeholder='Customer'
                     />
@@ -655,26 +704,26 @@ const AddPos = () => {
                           className="placeholder:text-gray-700 p-1 outline-none border-[1px] border-gray-500"
                         />
                       </div>
-                      {dummyData?.map((data) => (
+                      {customersData?.map((data) => (
                         <li
-                          key={data?.Name}
+                          key={data?.firstName}
                           className={`p-2 text-sm hover:bg-sky-600 hover:text-white
-                                        ${data?.Name?.toLowerCase() === formData.customer?.toLowerCase() &&
+                                        ${data?.firstName?.toLowerCase() === formData.customerName?.toLowerCase() &&
                             "bg-sky-600 text-white"
                             }
-                                         ${data?.Name?.toLowerCase().startsWith(inputValue)
+                                         ${data?.firstName?.toLowerCase().startsWith(inputValue)
                               ? "block"
                               : "hidden"
                             }`}
                           onClick={() => {
-                            if (data?.Name?.toLowerCase() !== formData.customer.toLowerCase()) {
-                              setFormData({ ...formData, customer: data?.Name });
+                            if (data?.firstName?.toLowerCase() !== formData.customerName.toLowerCase()) {
+                              setFormData({ ...formData, customer: data?._id, customerName: data?.prefix + " " + data?.firstName });
                               setOpen(false);
                               setInputValue("");
                             }
                           }}
                         >
-                          {data?.Name}
+                          {data?.prefix + " " + data?.firstName}
                         </li>
                       ))}
                     </ul>
@@ -702,7 +751,7 @@ const AddPos = () => {
                 }
               </div>
 
-              
+
             </div>
             <div className='flex flex-col mx-2 mt-6 w-2/3'>
               <div className='flex w-3/4 items-center  '>
@@ -751,7 +800,7 @@ const AddPos = () => {
               <div className='flex mt-6'>
 
               </div>
-              
+
             </div>
           </div>
 
@@ -800,7 +849,7 @@ const AddPos = () => {
                         </div>
                       </td>
                       <td className=" py-1 px-1 text-center">
-                        <input name="subtotal" type='number' value={value.subtotal = (value.quantity * value.unitPrice)} onChange={(e) => handleChange(e, index)} className='border-[1px] w-3/4 px-1 border-black focus:outline-none' />
+                        <input name="subtotal" type='number' value={value.subtotal = subtotal(value.quantity, value.unitPrice, value.discount, value.discountType)} onChange={(e) => handleChange(e, index)} className='border-[1px] w-3/4 px-1 border-black focus:outline-none' />
                       </td>
                       <td className="px-1 py-1 ">
                         <FaTimes size={15} onClick={() => { deleteByIndex(index) }} className='cursor-pointer text-red-400' />
@@ -824,7 +873,7 @@ const AddPos = () => {
               </div>
               <div className='flex items-center w-full'>
                 <h1 className='font-bold text-sm'>Total:</h1>
-                <h1 className=' text-sm'>Items: {total}</h1>
+                <h1 className=' text-sm'>{total}</h1>
               </div>
               <div className='flex items-center w-full'>
 
@@ -847,20 +896,7 @@ const AddPos = () => {
 
               </div>
 
-              <div className='flex items-center w-full relative'>
-                <h1 className='font-bold text-sm mx-1'>Order Tax:</h1>
-                <FaInfoCircle style={{ color: "skyblue" }} onMouseOver={() => { setInfo4(true) }} onMouseLeave={() => { setInfo4(false) }} size={15} className='mx-1 ' />
-                {info4 &&
-                  <div className='flex flex-col w-[280px] rounded-md border-[2px] border-gray-400 absolute top-8 p-2 z-10 bg-white shadow-md shadow-gray-300'>
-                    <p className='text-start'>Set 'Default Sale Tax' for all sales in business Settings. Click on the edit icon below to add/update Order Tax</p>
 
-                  </div>
-                }
-                <h1 className=' text-sm font-bold mx-1'>(+)</h1>
-                <FaEdit className='cursor-pointer' size={15} onClick={() => { setUpdateOrderTax(true); setIsCliked(true); setDynwidth("50%"); }} />
-                <h1 className=' text-sm font-bold mx-1'>{0.00}</h1>
-
-              </div>
 
               <div className='flex items-center w-full relative'>
                 <h1 className='font-bold text-sm mx-1'>Shipping:</h1>
@@ -937,7 +973,7 @@ const AddPos = () => {
           </div>
           <div className='p-1 cursor-pointer w-[200px] items-center justify-between h-[50px] bg-purple-900 text-white flex'>
             <h1 className='text-sm font-bold'>Total Payable</h1>
-            <h1 className='text-xs'>{parseInt(total) + parseFloat(formData.shippingCharges)}</h1>
+            <h1 className='text-xs'>{totalPayable(total)}</h1>
 
           </div>
         </div>
@@ -957,7 +993,6 @@ const AddPos = () => {
             <div onClick={() => {
               setIsCliked(false);
               setRecentTrx(false);
-              setUpdateOrderTax(false);
               setUpdateShipping(false);
               setCloseRegister(false);
               setUpdateDiscount(false);

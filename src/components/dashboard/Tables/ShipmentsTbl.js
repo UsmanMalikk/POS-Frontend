@@ -277,16 +277,16 @@ const ShipmentsTbl = () => {
                                 </td>}
                                 {col2 && <td className="px-1 py-1 text-sm">{date}</td>}
                                 {col3 && <td className="px-1 py-1"> {value.invoiceNumber}</td>}
-                                {col4 && <td className="px-1 py-1">{value.customer}</td>}
-                                {col5 && <td className=" py-1 px-1">{contactNo}</td>}
-                                {col6 && <td className=" py-1 px-1">{value.businesLocation}</td>}
-                                {col7 && <td className=" py-1 px-1">value.deliveryperson</td>}
+                                {col4 && <td className="px-1 py-1">{value.customer?.firstName}</td>}
+                                {col5 && <td className=" py-1 px-1">{value.customer?.mobile}</td>}
+                                {col6 && <td className=" py-1 px-1">{value.businesLocation?.name}</td>}
+                                {col7 && <td className=" py-1 px-1">{value.deliveryPersonUser?.firstName || value.deliveryPersonAdmin?.firstName}</td>}
                                 {col8 && <td className="px-1 py-1 text-sm">
-                                    <button onClick={() => { setIsCliked(true); setIseditship(true); setPaymentId(value.id); setDynWidth("50%") }} className='bg-green-500 text-white px-2 text-xs rounded-xl'>value.shippingStatus</button>
+                                    <button className='bg-green-500 text-white px-2 text-xs rounded-xl'>{value.shippingStatus}</button>
 
                                 </td>}
                                 {col9 && <td className="px-1 py-1 text-sm">
-                                    <button onClick={() => { setIsCliked(true); setIsShowPayment(true); setPaymentId(value.id); setDynWidth("50%") }} className='bg-green-300 text-white px-2 text-xs rounded-xl'>{(value.amount < value.totalSaleAmount || value.paymentMethod === "") ? "Due" : "Paid"}</button>
+                                    <button className='bg-green-300 text-white px-2 text-xs rounded-xl'>{(value.amount < value.totalSaleAmount || value.paymentMethod === "") ? "Due" : "Paid"}</button>
 
                                 </td>}
                                 {/* {col10 && <td className="px-1 py-1"> {value.Name}</td>} */}

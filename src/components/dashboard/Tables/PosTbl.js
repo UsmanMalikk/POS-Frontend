@@ -15,7 +15,7 @@ import axios from 'axios';
 
 
 const PosTbl = () => {
-    
+
     const printRef = useRef()
     let xlDatas = []
     //Export to Excel
@@ -121,12 +121,8 @@ const PosTbl = () => {
     const [showId, setShowId] = useState(0)
     const displayData = () => {
         if (showId !== 0 && isshow === true) {
-            return <ViewSell id={showId} />
-        } else if (iseditship === true && editShipId !== 0) {
-            return <EditShipping id={editShipId} />
-        } else if (isShowPayment === true) {
-            return <ViewPayment id={paymentId} />
-        }
+            return <ViewSell id={showId} name={"Pos"}/>
+        } 
     }
 
 
@@ -137,13 +133,13 @@ const PosTbl = () => {
             const token = localStorage.getItem('token');
             const response = await axios.get(`http://localhost:8000/admin/pos`, {
                 headers: {
-                  'Authorization': token
+                    'Authorization': token
                 }
-              });
+            });
             // console.log(response)
             setPosData(response.data);
         } catch (error) {
-            console.error('Error fetching Drafts:', error);
+            console.error('Error fetching Sale:', error);
         }
     };
     useEffect(() => {
@@ -152,7 +148,20 @@ const PosTbl = () => {
 
 
     }, []);
-
+    const handleDeleteSale = async (saleId) => {
+        try {
+            const token = localStorage.getItem('token');
+            const response = await axios.delete(`http://localhost:8000/admin/pos/${saleId}`, {
+                headers: {
+                    'Authorization': token
+                }
+            });
+            console.log('Sale deleted:', response.data);
+            fetchSales()
+        } catch (error) {
+            console.error('Error deleting Sale:', error);
+        }
+    };
     return (
         <div>
 
@@ -266,7 +275,7 @@ const PosTbl = () => {
                                             <ul className='absolute top-5 left-10 z-20 flex flex-col items-start w-[200px] bg-white text-gray-600 shadow-xl shadow-gray-400 '>
 
                                                 <li className='w-full'>
-                                                    <Link onClick={() => { setIsCliked(true); setIsshow(true); setShowId(value.id) }} className='flex px-2 py-1 w-full cursor-pointer hover:bg-gray-400 items-center '>
+                                                    <Link onClick={() => { setIsCliked(true); setIsshow(true); setShowId(value._id) }} className='flex px-2 py-1 w-full cursor-pointer hover:bg-gray-400 items-center '>
                                                         <FaEye size={15} />
                                                         <h1 className='text-sm'>View</h1>
                                                     </Link >
@@ -278,64 +287,32 @@ const PosTbl = () => {
                                                     </div>
                                                 </li>
                                                 <li className='w-full'>
-                                                    <Link to={`/pos/edit/${value.id}`} onClick={() => { setIsedit(!isedit); setIsCliked(!isCliked) }} className='flex px-2 py-1 w-full cursor-pointer hover:bg-gray-400 items-center '>
+                                                    <Link to={`/pos/edit/${value._id}`} onClick={() => { setIsedit(!isedit); setIsCliked(!isCliked) }} className='flex px-2 py-1 w-full cursor-pointer hover:bg-gray-400 items-center '>
                                                         <FaEdit size={15} />
                                                         <h1 className='text-sm'>Edit</h1>
-                                                    </Link >
+                                                    </Link>
                                                 </li>
                                                 <li className='w-full'>
-                                                    <div onClick={() => { setIsedit(!isedit); setIsCliked(!isCliked) }} className='flex px-2 py-1 w-full cursor-pointer hover:bg-gray-400 items-center '>
+                                                    <div onClick={() => {handleDeleteSale(value._id)}} className='flex px-2 py-1 w-full cursor-pointer hover:bg-gray-400 items-center '>
                                                         <FaTrash size={15} />
                                                         <h1 className='text-sm'>Delete</h1>
                                                     </div>
                                                 </li>
-                                                <li className='w-full'>
-                                                    <div onClick={() => { setEditShipId(value.id); setIseditship(!iseditship); setIsCliked(!isCliked) }} className='flex px-2 py-1 w-full cursor-pointer hover:bg-gray-400 items-center '>
-                                                        <FaTruck size={15} />
-                                                        <h1 className='text-sm'>Edit Shipping</h1>
-                                                    </div>
-                                                </li>
-                                                <li className='mt-5 w-full'>
-                                                    <Link className='flex px-2 py-1 w-full cursor-pointer hover:bg-gray-400 items-center '>
-                                                        <FaMoneyBillAlt size={15} />
-                                                        <h1 className='text-sm'>Add Payment</h1>
-                                                    </Link >
-                                                </li>
-                                                <li className='w-full'>
-                                                    <Link className='flex px-2 py-1 w-full cursor-pointer hover:bg-gray-400 items-center '>
-                                                        <FaMoneyBillAlt size={15} />
-                                                        <h1 className='text-sm'>View Payment</h1>
-                                                    </Link>
-                                                </li>
-                                                <li className='w-full'>
-                                                    <Link className='flex px-2 py-1 w-full cursor-pointer hover:bg-gray-400 items-center '>
-                                                        <FaUndo size={15} />
-                                                        <h1 className='text-sm'>Purchase Return</h1>
-                                                    </Link>
-                                                </li>
-                                                <li className='w-full'>
-                                                    <Link className='flex px-2 py-1 w-full cursor-pointer hover:bg-gray-400 items-center '>
-                                                        <FaEdit size={15} />
-                                                        <h1 className='text-sm'>Update Status</h1>
-                                                    </Link>
-                                                </li>
-                                                <li className='w-full'>
-                                                    <Link className='flex px-2 py-1 w-full cursor-pointer hover:bg-gray-400 items-center '>
-                                                        <FaEnvelope size={15} />
-                                                        <h1 className='text-sm'>Item Received Notification</h1>
-                                                    </Link>
-                                                </li>
+
                                             </ul>
                                         }
                                     </div>
                                 </td>}
                                 {col2 && <td className="px-1 py-1 text-sm">{date}</td>}
                                 {col3 && <td className="px-1 py-1"> {value.invoiceNumber}</td>}
-                                {col4 && <td className="px-1 py-1">{value.customer}</td>}
-                                {col5 && <td className=" py-1 px-1">{contactNo}</td>}
-                                {col6 && <td className=" py-1 px-1">{value.businesLocation}</td>}
+                                {col4 && <td className="px-1 py-1">{value.customer?.prefix + " " + value.customer?.firstName}</td>}
+                                {col5 && <td className=" py-1 px-1">{value.customer?.mobile}</td>}
+                                {col6 && <td className=" py-1 px-1">{value.businesLocation?.name}</td>}
                                 {col7 && <td className="px-1 py-1 text-sm">
-                                    <button onClick={() => { setIsCliked(true); setIsShowPayment(true); setPaymentId(value.id) }} className='bg-green-400 text-white px-2 text-xs rounded-xl'>{(value.amount < value.totalSaleAmount || value.paymentMethod === "") ? "Due" : "Paid"}</button>
+                                    <button
+                                        //  onClick={() => { setIsCliked(true); setIsShowPayment(true); setPaymentId(value.id) }} 
+                                        className='bg-green-400 text-white px-2 text-xs rounded-xl'>
+                                        {(value.amount < value.totalSaleAmount || value.paymentMethod === "") ? "Due" : "Paid"}</button>
 
                                 </td>}
                                 {col8 && <td className="px-1 py-1"> {value.paymentMethod}</td>}
@@ -345,7 +322,7 @@ const PosTbl = () => {
                                 {/* {col12 && <td className="px-1 py-1 text-sm">{value.Username}</td>} */}
                                 {col13 && <td className="px-1 py-1"> {value.shippingStatus}</td>}
                                 {col14 && <td className="px-1 py-1">{value.inputData.length}</td>}
-                                {col15 && <td className=" py-1 px-1">{(value.deliveryPerson)? value.deliveryPerson.firstName : ""}</td>}
+                                {col15 && <td className=" py-1 px-1">{value.deliveryPersonUser?.firstName || value.deliveryPersonAdmin?.firstName}</td>}
                                 {col16 && <td className=" py-1 px-1">{value.sellNote}</td>}
                                 {/* {col17 && <td className="px-1 py-1 text-sm">{value.Username}</td>} */}
                                 {col18 && <td className="px-1 py-1"> {value.shippingDetails}</td>}

@@ -1,4 +1,4 @@
-import React from 'react'
+import React,{useState,useEffect } from 'react'
 import { AiFillInfoCircle, AiOutlineCalendar, } from 'react-icons/ai'
 import Chart1 from './Chart1'
 import Chart2 from './Chart2'
@@ -8,8 +8,12 @@ import PrdctstkAlrtTbl from './Tables/PrdctstkAlrtTbl'
 import SlsOrderTbl from './Tables/SlsOrderTbl'
 import PrchsOrderTbl from './Tables/PrchsOrderTbl'
 import PndngShpmntTbl from './Tables/PndngShpmntTbl'
+import axios from 'axios';
+
 
 const Dashboard = () => {
+    const [userData, setUserData] = useState([]);
+
     const dateArray = [
 
         "Yesterday",
@@ -24,11 +28,33 @@ const Dashboard = () => {
         "Last financial year",
         "Custom Range",
     ]
+    const fetchLoggedInUser = async () => {
+
+        try {
+            const token = localStorage.getItem('token');
+            const response = await axios.get(`http://localhost:8000/admin/users/profile`, {
+                headers: {
+                    'Authorization': token
+                }
+            });
+            // console.log(response)
+            setUserData(response.data);
+        } catch (error) {
+            console.error('Error fetching Profile:', error);
+        }
+    };
+    useEffect(() => {
+        // Make an API call to fetch user's roles records
+        
+        fetchLoggedInUser()
+
+        
+    }, []);
     return (
         <>
             <div className='flex flex-col relative w-full min-h-[400px]'>
                 <div className='flex flex-col h-[250px]  z-0 w-full border-t-[1px] border-white bg-gradient-to-r from-[#3c3c4e] to-[#245b80]'>
-                    <h1 className='flex text-2xl text-white p-5'>Welcome Username,</h1>
+                    <h1 className='flex text-2xl text-white p-5'>Welcome {userData.firstName +" "+userData.lastName},</h1>
 
                     <div className='flex justify-end  items-center w-full h-10 '>
                         <div className='w-[200px] text-white flex items-center justify-center h-10 bg-blue-500 rounded-md mx-5'>

@@ -210,8 +210,8 @@ const AddorEditProduct = () => {
   };
 
   const handleSave = () => {
-    if (formData.productName.length === 0 ||
-      formData.unit.length === 0
+    if (formData.productName?.length === 0 ||
+      formData.unit?.length === 0
     ) {
       setIsserror(true)
       console.log(isserror)
@@ -406,62 +406,6 @@ const AddorEditProduct = () => {
     }
   };
   const [isserror, setIsserror] = useState(false)
-  // const handleClick = () => {
-  //   // console.log(isOpeningStock)
-  //   if (formData.productName.length === 0 ||
-  //     formData.unit.length === 0 
-  //   ) {
-  //     setIsserror(true)
-  //     console.log(isserror)
-  //   }
-  //   else if (_id) {
-  //     // // Check if isOpeningStock is true
-  //     // if (isOpeningStock) {
-  //     //   // Navigate to the opening stock page and pass the formData as state
-  //     //   navigate("/home/opening-stock/add", { state: { formData } });
-  //     // }
-  //     // else if (isAdSlngPrcGrp) {
-  //     //   navigate("/home/products/add-selling-prices", { state: { formData } })
-  //     //   setIsAdSlngPrcGrp(false)
-  //     // }
-  //     // else {
-  //     // addProductById()
-  //     //   console.log("Handle Update", formData)
-
-  //     // }
-  //   }
-  //   else {
-  //     // Check if isOpeningStock is true
-  //     if (isOpeningStock) {
-  //       // Navigate to the opening stock page and pass the formData as state
-  //       handleOpeningStock()
-  //     }
-  //     else if (isAdSlngPrcGrp) {
-  //       handleSellingPriceGroup()
-  //       // setIsAdSlngPrcGrp(false)
-  //     }
-  //     else if (isAddOther) {
-  //       handleAddOther()
-  //     }
-  //     else {
-  //       // addProduct()
-  //       handleSave()      
-  //     }
-  //     // else {
-  //     //   console.log("Error")
-  //     // }
-
-
-  //   // if (isAdSlngPrcGrp) {
-  //   //   navigate("/home/products/add-selling-prices")
-  //   //   setIsAdSlngPrcGrp(false)
-  //   // }
-  //   // else if (isOpeningStock) {
-  //   //   navigate("/home/opening-stock/add" )}
-
-
-  //   // }
-  // }}
 
 
   return (

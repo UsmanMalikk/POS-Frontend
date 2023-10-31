@@ -59,12 +59,16 @@ const SalesTbl = () => {
     const [salesData, setSalesData] = useState([]);
     const [contactNo, setContactNo] = useState([]);
 
+    const [search, setSearch] = useState('')
+    const [recordPerpage, setRecordPerpage] = useState(25)
     const [crpage, setCrpage] = useState(1)
-    const rcrdprpg = 5
-    const lasIndex = crpage * rcrdprpg
-    const frstIndex = lasIndex - rcrdprpg
-    const record = salesData.slice(frstIndex, lasIndex)
-    const npage = Math.ceil(salesData.length / rcrdprpg)
+
+    const lasIndex = crpage * recordPerpage
+    const frstIndex = lasIndex - recordPerpage
+    const record = salesData.filter((item) => {
+        return search.toLocaleLowerCase() === '' ? item : (item.invoiceNumber?.includes(search) || item.customer?.toLocaleLowerCase().includes(search))
+    }).slice(frstIndex, lasIndex)
+    const npage = Math.ceil(salesData.length / recordPerpage)
     const numbers = [...Array(npage + 1).keys()].slice(1)
 
     const [colvis, setColvis] = useState(false)
@@ -133,7 +137,7 @@ const SalesTbl = () => {
     const [showId, setShowId] = useState(0);
     const displayData = () => {
         if (showId !== 0 && isshow === true) {
-            return <ViewSell id={showId} />;
+            return <ViewSell id={showId} name={"Sale"}/>;
         } else if (iseditship === true && editShipId !== 0) {
             return <EditShipping id={editShipId} />;
         }
@@ -203,7 +207,7 @@ const SalesTbl = () => {
             <div className="flex  flex-col md:flex-row  items-center justify-center mt-3 md:justify-between mx-5">
                 <div className="flex items-center justify-center my-2 md:my-0">
                     <h1 className="text-sm mx-1">Show</h1>
-                    <select className="w-[100px] border-[1px] border-black focus:outline-none text-center">
+                    <select value={recordPerpage} onChange={(e) => { setRecordPerpage(e.target.value) }} className="w-[100px] border-[1px] border-black focus:outline-none text-center">
                         <option value={"25"}> 25</option>
                         <option value={"50"}> 50</option>
                         <option value={"100"}> 100</option>
@@ -426,6 +430,8 @@ const SalesTbl = () => {
                 <div className="flex items-center justify-center  w-[250px] md:w-auto my-2 md:my-0 border-[1px] border-black">
                     <FaSearch size={15} className=" mt-1 mx-1" />
                     <input
+                        value={search}
+                        onChange={(e) => { setSearch(e.target.value) }}
                         className=" focus:outline-none px-2 py-1"
                         type="search"
                         id="search"
@@ -624,18 +630,18 @@ const SalesTbl = () => {
                                     )}
                                     {col2 && <td className="px-1 py-1 text-sm">{date}</td>}
                                     {col3 && <td className="px-1 py-1"> {value.invoiceNumber}</td>}
-                                    {col4 && <td className="px-1 py-1">{value.customer}</td>}
-                                    {col5 && <td className=" py-1 px-1">{contactNo}</td>}
+                                    {col4 && <td className="px-1 py-1">{value.customer?.prefix+" "+value.customer?.firstName}</td>}
+                                    {col5 && <td className=" py-1 px-1">{value.customer?.mobile}</td>}
 
                                     {col6 && <td className=" py-1 px-1">{value.businesLocation?.name}</td>}
                                     {col7 && (
                                         <td className="px-1 py-1 text-sm">
                                             <button
-                                                onClick={() => {
-                                                    setIsCliked(true);
-                                                    setIsShowPayment(true);
-                                                    setPaymentId(value.id);
-                                                }}
+                                                // onClick={() => {
+                                                //     setIsCliked(true);
+                                                //     setIsShowPayment(true);
+                                                //     setPaymentId(value._id);
+                                                // }}
                                                 className="bg-green-400 text-white px-2 text-xs rounded-xl"
                                             >
                                                 {(value.amount < value.totalSaleAmount || value.paymentMethod === "") ? "Due" : "Paid"}
@@ -650,7 +656,7 @@ const SalesTbl = () => {
                                     {col12 && <td className="px-1 py-1 text-sm">{(value.totalSaleAmount - value.amount) >= 0 ? value.totalSaleAmount - value.amount : ""}</td>}
                                     {/* {col13 && <td className="px-1 py-1"> {(value.totalSaleAmount - value.amount) < 0 ? value.totalSaleAmount - value.amount : ""}</td>}      */}
                                     {col14 && <td className="px-1 py-1">{value.shippingStatus}</td>}
-                                    {col15 && <td className=" py-1 px-1">{value.inputData.length}</td>}
+                                    {col15 && <td className=" py-1 px-1">{value.inputData?.length}</td>}
                                     {col16 && <td className=" py-1 px-1">{value.deliveryPersonUser?.firstName || value.deliveryPersonAdmin?.firstName}</td>}
                                     {col17 && <td className="px-1 py-1 text-sm">{value.sellNote}</td>}
                                     {col18 && <td className="px-1 py-1"> {value.shippingDetails}</td>}
@@ -661,7 +667,36 @@ const SalesTbl = () => {
 
                     </tbody>
                     <tfoot>
-                        <tr></tr>
+                        <tr className='h-[100px] bg-gray-400 '>
+                            <td colSpan={5}>Total</td>
+                            <td>
+                                <div className='flex flex-col'>
+                                    <h1 className='text-xs'> Paid - 19</h1>
+                                    <h1 className='text-xs'> Due - 1</h1>
+                                </div>
+                            </td>
+                            <td>
+                                <h1 className='text-xs'> Cash - 11</h1>
+                            </td>
+                            <td>
+                                <h1 className='text-xs'> Rs. 0.00</h1>
+                            </td>
+                            <td>
+                                <h1 className='text-xs'> Rs. 0.00</h1>
+                            </td>
+                            <td>
+                                <h1 className='text-xs'> Rs. 0.00</h1>
+                            </td>
+                            <td>
+                                <h1 className='text-xs'> Rs. 0.00</h1>
+                            </td>
+                            <td>
+
+                            </td>
+                            <td colSpan={6}>
+
+                            </td>
+                        </tr>
                     </tfoot>
                 </table>
             </div>

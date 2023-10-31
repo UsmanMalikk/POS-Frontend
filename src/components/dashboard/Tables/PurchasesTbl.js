@@ -1,4 +1,4 @@
-import React, { useRef, useState } from 'react'
+import React, { useRef, useState, useEffect } from 'react'
 import { AiFillCaretDown } from 'react-icons/ai'
 import {  FaBarcode, FaColumns, FaEdit, FaEnvelope, FaEye, FaFileCsv, FaFileExcel, FaFilePdf, FaMoneyBillAlt, FaPrint, FaSearch, FaTrash, FaUndo } from 'react-icons/fa'
 import { useReactToPrint } from 'react-to-print';
@@ -9,60 +9,12 @@ import * as htmlToImage from 'html-to-image';
 import { MdCancel } from 'react-icons/md';
 import { Link } from 'react-router-dom';
 import ViewPurchase from '../Purchases/ViewPurchase';
+import axios from 'axios';
+import BusinessLocation from './../settings/businesLocation/BusinessLocation';
 
 
 const PurchasesTbl = () => {
-    const dummyData = [
-        {
-            id: 1,
-            Username: "username",
-            Name: "User",
-            Role: "Admin",
-            Email: "username@gmail.com"
-        },
-        {
-            id: 2,
-            Username: "username1",
-            Name: "User1",
-            Role: "Admin",
-            Email: "username@gmail.com"
-        },
-        {
-            id: 3,
-            Username: "username2",
-            Name: "User2",
-            Role: "Admin",
-            Email: "username2@gmail.com"
-        },
-        {
-            id: 4,
-            Username: "username3",
-            Name: "User3",
-            Role: "Admin",
-            Email: "username3@gmail.com"
-        },
-        {
-            id: 5,
-            Username: "username4",
-            Name: "User4",
-            Role: "Admin",
-            Email: "username4@gmail.com"
-        },
-        {
-            id: 6,
-            Username: "username5",
-            Name: "User5",
-            Role: "Admin",
-            Email: "username5@gmail.com"
-        },
-        {
-            id: 7,
-            Username: "username6",
-            Name: "User6",
-            Role: "Admin",
-            Email: "username6@gmail.com"
-        }
-    ]
+    
     const printRef = useRef()
     let xlDatas = []
     //Export to Excel
@@ -90,13 +42,14 @@ const PurchasesTbl = () => {
             });
 
     }
+    const [purchasesData, setPurchasesData] = useState([]);
 
     const [crpage, setCrpage] = useState(1)
     const rcrdprpg = 5
     const lasIndex = crpage * rcrdprpg
     const frstIndex = lasIndex - rcrdprpg
-    const record = dummyData.slice(frstIndex, lasIndex)
-    const npage = Math.ceil(dummyData.length / rcrdprpg)
+    const record = purchasesData.slice(frstIndex, lasIndex)
+    const npage = Math.ceil(purchasesData.length / rcrdprpg)
     const numbers = [...Array(npage + 1).keys()].slice(1)
 
     const [colvis, setColvis] = useState(false)
@@ -124,7 +77,7 @@ const PurchasesTbl = () => {
    
     const csvData = [
         ["Username", "Name", "Role", "Email"],
-        ...dummyData.map(({ Username, Name, Role, Email }) => [
+        ...purchasesData.map(({ Username, Name, Role, Email }) => [
             Username,
             Name,
             Role,
@@ -156,7 +109,44 @@ const PurchasesTbl = () => {
         }
       }
 
+const fetchPurchases = async () => {
+        // let final = "final"
+        try {
+            const token = localStorage.getItem('token');
+            const response = await axios.get(`http://localhost:8000/admin/purchases`, {
+                headers: {
+                    'Authorization': token
+                }
+            });
+            console.log(response)
+            // console.log(response.data)
+            setPurchasesData(response.data);
+        } catch (error) {
+            console.error('Error fetching Drafts:', error);
+        }
+    };
+   
 
+    const handleDeletePurchase = async (purId) => {
+        try {
+            const token = localStorage.getItem('token');
+            const response = await axios.delete(`http://localhost:8000/admin/purchases/${purId}`, {
+                headers: {
+                    'Authorization': token
+                }
+            });
+            console.log('Purchase deleted:', response.data);
+            fetchPurchases()
+        } catch (error) {
+            console.error('Error deleting Purchase:', error);
+        }
+    };
+    useEffect(() => {
+
+        fetchPurchases();
+
+
+    }, []);
 
     return (
         <div>
@@ -186,7 +176,7 @@ const PurchasesTbl = () => {
 
                         </CSVLink>
                     </button>
-                    <button onClick={() => { handleExportExcl(dummyData) }} className='flex border-[1px] px-2 py-1 hover:bg-gray-400 border-gray-600 bg-gray-200 '>
+                    <button onClick={() => { handleExportExcl(purchasesData) }} className='flex border-[1px] px-2 py-1 hover:bg-gray-400 border-gray-600 bg-gray-200 '>
                         <FaFileExcel size={15} className=' mt-1 pr-[2px]' />
                         <h1 className='text-sm'>Export to Excle</h1>
                     </button>
@@ -244,6 +234,8 @@ const PurchasesTbl = () => {
                     </thead>
                     <tbody >
                         {record.map((value, index) => {
+                            let date = new Date(value.purchaseDate).toLocaleDateString()
+
                             return <tr key={index} className=''>
                                 {col1 && <td className='py-1 flex '>
                                     <div onClick={() => { toggleDropdown(index) }} className='flex px-2 py-1 relative cursor-pointer items-center bg-green-600 rounded-xl text-white justify-center'>
@@ -276,54 +268,32 @@ const PurchasesTbl = () => {
                                                         <h1 className='text-sm'>Delete</h1>
                                                     </div>
                                                 </li>
-                                                <li className='w-full'>
-                                                    <div onClick={() => {  }} className='flex px-2 py-1 w-full cursor-pointer hover:bg-gray-400 items-center '>
-                                                        <FaBarcode size={15} />
-                                                        <h1 className='text-sm'>Lables</h1>
-                                                    </div>
-                                                </li>
-                                                <li className='mt-5 w-full'>
-                                                    <Link   className='flex px-2 py-1 w-full cursor-pointer hover:bg-gray-400 items-center '>
-                                                        <FaMoneyBillAlt size={15} />
-                                                        <h1 className='text-sm'>Add Payment</h1>
-                                                    </Link >
-                                                </li>
-                                                <li className='w-full'>
-                                                    <Link    className='flex px-2 py-1 w-full cursor-pointer hover:bg-gray-400 items-center '>
-                                                        <FaMoneyBillAlt size={15} />
-                                                        <h1 className='text-sm'>View Payment</h1>
-                                                    </Link>
-                                                </li>
-                                                <li className='w-full'>
-                                                    <Link   className='flex px-2 py-1 w-full cursor-pointer hover:bg-gray-400 items-center '>
-                                                        <FaUndo size={15} />
-                                                        <h1 className='text-sm'>Purchase Return</h1>
-                                                    </Link>
-                                                </li>
-                                                <li className='w-full'>
-                                                    <Link   className='flex px-2 py-1 w-full cursor-pointer hover:bg-gray-400 items-center '>
-                                                        <FaEdit size={15} />
-                                                        <h1 className='text-sm'>Update Status</h1>
-                                                    </Link>
-                                                </li>
-                                                <li className='w-full'>
-                                                    <Link   className='flex px-2 py-1 w-full cursor-pointer hover:bg-gray-400 items-center '>
-                                                        <FaEnvelope size={15} />
-                                                        <h1 className='text-sm'>Item Received Notification</h1>
-                                                    </Link>
-                                                </li>
+                                                
                                             </ul>
                                         }
                                     </div>
                                 </td>}
-                                {col2 && <td className="px-1 py-1 text-sm">{value.Username}</td>}
-                                {col3 && <td className="px-1 py-1"> {value.Name}</td>}
-                                {col4 && <td className="px-1 py-1">{value.Role}</td>}
-                                {col5 && <td className=" py-1 px-1">{value.Email}</td>}
-                                {col6 && <td className=" py-1 px-1">{value.Role}</td>}
-                                {col7 && <td className="px-1 py-1 text-sm">{value.Username}</td>}
-                                {col8 && <td className="px-1 py-1"> {value.Name}</td>}
-                                {col9 && <td className="px-1 py-1">{value.Role}</td>}
+                                {col2 && <td className="px-1 py-1 text-sm">{date}</td>}
+                                {col3 && <td className="px-1 py-1"> {value.referenceNo}</td>}
+                                {col4 && <td className="px-1 py-1">{value.businessLocation?.name}</td>}
+                                {col5 && <td className=" py-1 px-1">{value.supplier?.firstName}</td>}
+                                {col6 && <td className=" py-1 px-1">{value.status}</td>}
+                                {col7 && (
+                                        <td className="px-1 py-1 text-sm">
+                                            <button
+                                                // onClick={() => {
+                                                //     setIsCliked(true);
+                                                //     setIsShowPayment(true);
+                                                //     setPaymentId(value._id);
+                                                // }}
+                                                className="bg-green-400 text-white px-2 text-xs rounded-xl"
+                                            >
+                                                {(value.amount < value.totalPurchaseAmount || value.paymentMethod === "") ? "Due" : "Paid"}
+                                            </button>
+                                        </td>
+                                    )}                                
+                                    {col8 && <td className="px-1 py-1"> {value.totalPurchaseAmount}</td>}
+                                {col9 && <td className="px-1 py-1">{(value.totalPurchaseAmount - value.amount) >= 0 ? value.totalPurchaseAmount - value.amount : ""}</td>}
                                 {col10 && <td className=" py-1 px-1">{value.Email}</td>}
                                 
                             </tr>

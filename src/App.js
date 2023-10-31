@@ -15,14 +15,14 @@ import AddorEditRoles from './components/dashboard/Roles/AddorEditRoles';
 import SalesCommission from './components/dashboard/Sales Commission Agent/SalesCommission';
 import Contact from './components/dashboard/contacts/Contact';
 import ViewContact from './components/dashboard/contacts/ViewContact';
-import LedgerTab from './components/dashboard/contacts/LedgerTab';
-import PurchasesTab from './components/dashboard/contacts/PurchasesTab';
-import StockReportTab from './components/dashboard/contacts/StockReportTab';
-import DocTable from './components/dashboard/Tables/DocTable';
-import PaymentsTab from './components/dashboard/contacts/PaymentsTab';
-import ActivitiesTable from './components/dashboard/Tables/ActivitiesTable';
-import SalesTab from './components/dashboard/contacts/SalesTab';
-import RewardsTab from './components/dashboard/contacts/RewardsTab';
+// import LedgerTab from './components/dashboard/contacts/LedgerTab';
+// import PurchasesTab from './components/dashboard/contacts/PurchasesTab';
+// import StockReportTab from './components/dashboard/contacts/StockReportTab';
+// import DocTable from './components/dashboard/Tables/DocTable';
+// import PaymentsTab from './components/dashboard/contacts/PaymentsTab';
+// import ActivitiesTable from './components/dashboard/Tables/ActivitiesTable';
+// import SalesTab from './components/dashboard/contacts/SalesTab';
+// import RewardsTab from './components/dashboard/contacts/RewardsTab';
 import AddorEditPurchase from './components/dashboard/Purchases/AddorEditPurchase';
 import ImporContact from './components/dashboard/contacts/ImportContact';
 import CustomerGroup from './components/dashboard/contacts/CustomerGroup';
@@ -109,9 +109,16 @@ import Settings from './components/dashboard/settings/businesLocation/Settings';
 import BalanceSheet from './components/dashboard/PaymentsAccounts/BalanceSheet';
 import TrialBalance from './components/dashboard/PaymentsAccounts/TrialBalance';
 import CashFlow from './components/dashboard/PaymentsAccounts/CashFlow';
-
+import BusinessSetting from './components/dashboard/settings/businessSetting/BusinessSetting';
+import Business from './components/dashboard/settings/businessSetting/Business';
+import Tax from './components/dashboard/settings/businessSetting/Tax';
+import System from './components/dashboard/settings/businessSetting/System';
+import Prefixes from './components/dashboard/settings/businessSetting/Prefixes';
+import CustomLables from './components/dashboard/settings/businessSetting/CustomLables';
+import AutoGuard from './AutoGuard';
 
 function App() {
+
   return (
     <div className="App">
 
@@ -122,8 +129,10 @@ function App() {
           <Route path='/pricing' element={<Pricing />} />
           <Route path='/business/Register' element={<Registration />} />
           <Route path='/repair-status' element={<RepaiStatus />} />
-          <Route path='/home' element={<Home1 />} >
+          <Route path='/home' element={(<AutoGuard><Home1/></AutoGuard> )} >
+
             <Route path='' element={<Dashboard />} />
+
             <Route path='/home/users' element={<User />} />
             <Route path='/home/users/addusers' element={<AddorEditUsers />} />
             <Route path="/home/users/profile" element={<UserProfile />} />
@@ -147,9 +156,9 @@ function App() {
               <Route path='/home/contact/view/:id/rewards_tab' element={<RewardsTab />} /> */}
             <Route path='/home/contacts/:type' element={<Contact />} />
             <Route path='/home/contacts/:type/view/:id' element={<ViewContact />} >
-              <Route path='/home/contacts/:type/view/:id/ledger_tab' element={<LedgerTab />} />
-              <Route path='/home/contacts/:type/view/:id/purchase_tab' element={<PurchasesTab />} />
-              <Route path='/home/contacts/:type/view/:id/stock_report_tab' element={<StockReportTab />} />
+              {/* <Route path='/home/contacts/:type/view/:id/ledger_tab' element={<LedgerTab />} /> */}
+              {/* <Route path='/home/contacts/:type/view/:id/purchase_tab' element={<PurchasesTab />} /> */}
+              {/* <Route path='/home/contacts/:type/view/:id/stock_report_tab' element={<StockReportTab />} /> */}
               {/* <Route path='/home/contact/view/:id/document_tab' element={<DocTable />} />
                 <Route path='/home/contact/view/:id/payment_tab' element={<PaymentsTab />} />
                 <Route path='/home/contact/view/:id/activities_tab' element={<ActivitiesTable />} />
@@ -288,7 +297,14 @@ function App() {
             {/* <Route path='/home/invoice-layout/:id/edit' element={<AddorEditInvoiceLayout />} /> */}
             <Route path='/home/business-location' element={<BusinessLocation />} />
             <Route path='/home/business-location/settings/:id' element={<Settings />} />
+            <Route path='/home/business-settings' element={<BusinessSetting />} >
+              <Route path='/home/business-settings/business' element={<Business />} />
+              <Route path='/home/business-settings/tax' element={<Tax />} />
+              <Route path='/home/business-settings/system' element={<System />} />
+              <Route path='/home/business-settings/prefixes' element={<Prefixes />} />
+              <Route path='/home/business-settings/custom-lables' element={<CustomLables />} />
 
+            </Route>
           </Route>
           <Route path='/pos/create' element={<AddPos />} />
           <Route path='/pos/edit/:id' element={<AddPos />} />

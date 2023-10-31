@@ -122,13 +122,15 @@ const ProductsTbl = () => {
 
     }
     const [productsData, setProductsData] = useState([]);
-
+    const [search, setSearch] = useState('')
+    const [recordPerpage, setRecordPerpage] = useState(25)
     const [crpage, setCrpage] = useState(1)
-    const rcrdprpg = 5
-    const lasIndex = crpage * rcrdprpg
-    const frstIndex = lasIndex - rcrdprpg
-    const record = productsData.slice(frstIndex, lasIndex)
-    const npage = Math.ceil(productsData.length / rcrdprpg)
+    const lasIndex = crpage * recordPerpage
+    const frstIndex = lasIndex - recordPerpage
+    const record = productsData.filter((item) => {
+        return search.toLocaleLowerCase() === '' ? item : item.productName?.toLocaleLowerCase().includes(search)
+    }).slice(frstIndex, lasIndex)
+    const npage = Math.ceil(productsData.length / recordPerpage)
     const numbers = [...Array(npage + 1).keys()].slice(1)
 
     const [colvis, setColvis] = useState(false)
@@ -243,7 +245,7 @@ const ProductsTbl = () => {
 
                 <div className='flex items-center justify-center my-2 md:my-0'>
                     <h1 className='text-sm mx-1'>Show</h1>
-                    <select className='w-[100px] border-[1px] border-black focus:outline-none text-center' >
+                    <select value={recordPerpage} onChange={(e)=>{setRecordPerpage(e.target.value)}} className='w-[100px] border-[1px] border-black focus:outline-none text-center' >
                         <option value={"25"}> 25</option>
                         <option value={"50"}> 50</option>
                         <option value={"100"}> 100</option>
@@ -300,7 +302,7 @@ const ProductsTbl = () => {
                 </div>
                 <div className='flex items-center justify-center  w-[250px] md:w-auto my-2 md:my-0 border-[1px] border-black'>
                     <FaSearch size={15} className=' mt-1 mx-1' />
-                    <input className=' focus:outline-none px-2 py-1' type='search' id="search" name='serch' placeholder='Search' />
+                    <input value={search} onChange={(e)=>{setSearch(e.target.value)}} className=' focus:outline-none px-2 py-1' type='search' id="search" name='serch' placeholder='Search' />
                 </div>
 
 
@@ -383,8 +385,8 @@ const ProductsTbl = () => {
                                 </td>}
                                 {col3 && <td className="px-1 py-1 text-sm">{value.productName}</td>}
                                 {col4 && <td className="px-1 py-1"> {value.businessLocation[0]?.name}</td>}
-                                {col5 && <td className=" py-1 px-1">{value.Name}</td>}
-                                {col6 && <td className=" py-1 px-1">{value.Name}</td>}
+                                {col5 && <td className=" py-1 px-1">{value.unitPurchasePrice}</td>}
+                                {col6 && <td className=" py-1 px-1">{value.unitSellingPrice}</td>}
                                 {col7 && <td className="px-1 py-1 text-sm">{value.totalQuantity}</td>}
                                 {col8 && <td className=" py-1 px-1">{value.productType}</td>}
                                 {col9 && <td className="px-1 py-1">{value.Role}</td>}

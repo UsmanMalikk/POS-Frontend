@@ -1,8 +1,29 @@
 import React, { useRef } from 'react'
 import { FaDownload } from "react-icons/fa"
+import axios from 'axios'
 
 const ImporContact = () => {
-    const ref = useRef();
+    
+    const fileInputRef = useRef();
+
+    const handleFileUpload = async () => {
+        const formData = new FormData();
+        formData.append('file', fileInputRef.current.files[0]);
+
+        try {
+            const response = await axios.post('http://localhost:8000/upload', formData, {
+                headers: {
+                    'Content-Type': 'multipart/form-data'
+                }
+            });
+            console.log('File uploaded:', response.data);
+            
+        } catch (error) {
+            console.error('Error uploading file:', error);
+           
+        }
+    };
+
     const record = [
         {
             columnName: "Contact type",
@@ -41,7 +62,7 @@ const ImporContact = () => {
             columnName: "Tax Number",
             required: "Optional"
         },
-        
+
         {
             columnName: "Opening Balance",
             required: "Optional"
@@ -124,9 +145,7 @@ const ImporContact = () => {
 
 
     ]
-    const handleFileUpload = () => {
-        ref.current?.click();
-    }
+
     return (
         <div className='flex flex-col min-h-screen bg-white p-5'>
             <h1 className='text-xl  text-start mb-4'>Import Contacts</h1>
@@ -135,7 +154,12 @@ const ImporContact = () => {
                     <h1 className='text-xl  text-start '>File To Import</h1>
                     <div className='flex w-full h-[200px] border-[2px] border-gray-700 cursor-pointer items-center justify-center '>
                         <span>Drop Files Here to Upload</span>
-                        <input type='file' className='hidden' ref={ref} />
+                        <input
+                            type='file'
+                            className='hidden'
+                            ref={fileInputRef}
+                            onChange={handleFileUpload} // This line ensures the file gets uploaded on selection
+                        />
                     </div>
 
 
@@ -147,6 +171,12 @@ const ImporContact = () => {
                     </div>
                     <div className='flex items-end justify-end mt-5'>
                         <button className='bg-blue-500 px-2 py-2 rounded-md items-center justify-center flex'>Import</button>
+                        <input
+                        type='file'
+                        className='hidden'
+                        ref={fileInputRef}
+                        onChange={handleFileUpload}
+                    />
                     </div>
                 </div>
 

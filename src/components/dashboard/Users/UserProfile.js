@@ -20,7 +20,7 @@ const UserProfile = () => {
         lastName: "",
         email: "",
         language: "",
-        file:"",
+        // file:"",
         dateOfBirth: "",
         gender: "",
         maritalStatus: "",
@@ -255,7 +255,7 @@ const UserProfile = () => {
                     </div>
 
                 </div>
-                <div className='flex flex-col p-5 w-full md:w-[35%] bg-white'>
+                {/* <div className='flex flex-col p-5 w-full md:w-[35%] bg-white'>
                 <h1 className='text-2xl text-start'>Profile Photo</h1>
                 <div className='flex flex-col w-full mt-5  mx-5'>
                             <h1 className='text-sm font-bold text-start'>Upload Image:</h1>
@@ -267,7 +267,7 @@ const UserProfile = () => {
 
 
                         </div>
-                </div>
+                </div> */}
 
 
             </div>

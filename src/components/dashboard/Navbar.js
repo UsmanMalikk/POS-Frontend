@@ -1,4 +1,4 @@
-import React, { useState } from 'react'
+import React, { useState,useEffect } from 'react'
 import { AiOutlineMenu, AiOutlineUser } from "react-icons/ai"
 import { MdCancel, MdNotifications } from "react-icons/md"
 // import { motion } from "framer-motion"
@@ -11,9 +11,11 @@ import { setTrue, setFalse } from '../../app/clickedSlice'
 import { useNavigate } from "react-router-dom"
 import TodaysProfit from './TodaysProfit'
 import { Link } from 'react-router-dom'
+import axios from 'axios';
 
 const Navbra = () => {
     const Navigate = useNavigate();
+    const [userData, setUserData] = useState([]);
 
     const clicked = useSelector((state) => state.sidebar.value)
 
@@ -42,7 +44,28 @@ const Navbra = () => {
             return < TodaysProfit />;
         }
     };
+const fetchLoggedInUser = async () => {
 
+        try {
+            const token = localStorage.getItem('token');
+            const response = await axios.get(`http://localhost:8000/admin/users/profile`, {
+                headers: {
+                    'Authorization': token
+                }
+            });
+            // console.log(response)
+            setUserData(response.data);
+        } catch (error) {
+            console.error('Error fetching Profile:', error);
+        }
+    };
+    useEffect(() => {
+        // Make an API call to fetch user's roles records
+        
+        fetchLoggedInUser()
+
+        
+    }, []);
 
 
 const handleLogout = async () => {
@@ -96,7 +119,7 @@ const handleLogout = async () => {
                             </div>
                         </div>
                         <div className='flex w-[15%]  h-[80%] justify-center items-center mx-2 relative hover:bg-black' onClick={() => { setUsrcliked(!usrcliked) }}>
-                            <h1 className='text-sm  text-white'>Username</h1>
+                            <h1 className='text-sm  text-white'>{userData.firstName+" "+userData.lastName}</h1>
                         </div>
                         {usrcliked &&
                             <div className='w-[250px] h-[175px] bg-gray-100  absolute top-12 z-20 right-5 border-[1px] border-black  flex  flex-col'>

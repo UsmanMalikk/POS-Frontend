@@ -1,12 +1,45 @@
-import React, { useState } from 'react'
+import React, { useState ,useEffect} from 'react'
 import { FaFilter } from 'react-icons/fa'
 import ContactTbl from '../Tables/ContactTbl'
 import { useParams } from 'react-router-dom'
+import axios from 'axios'
 
 const Contact = () => { 
     const params = useParams()
-    const type= params.type
-    const [isFilter, setIsFilter] = useState(false)
+    const type= params.type;
+    const [isFilter, setIsFilter] = useState(false);
+    
+    const [filters, setFilters] = useState({
+        showAdvanceBalance: false,
+        showOpeningBalance: false,
+        showPurchaseDue: false,
+        showPurchaseReturn: false,
+        showSellDue: false,
+        showSellReturn: false,
+        assignedTo: '',
+        status: '',
+      });
+      const applyFilters = async () => {
+        try {
+          const response = await axios.get(`http://localhost:8000/admin/contacts/${type}`, { params: filters });
+          // Handle the response - update UI with filtered contacts
+          console.log(response.data); 
+          setIsFilter(response.data);// You can update your UI with the fetched contacts
+        } catch (error) {
+          console.error('Error fetching contacts:', error);
+          // Handle errors here
+        }
+      };
+      useEffect(() => {
+        if (isFilter) {
+          applyFilters();
+        }
+      }, [isFilter, filters]);
+    
+      // Function to handle filter option changes
+      const handleFilterChange = (filterName, value) => {
+        setFilters({ ...filters, [filterName]: value });
+      };
     return (
         <div className='flex flex-col items-center min-h-screen justify-self-center w-full p-5 bg-gray-100'>
             <div className='flex justify-start items-start w-full'>
@@ -20,19 +53,38 @@ const Contact = () => {
                 </div>
             {isFilter && <div className=' grid grid-cols-1 bg-white rounded-md gap-5 md:grid-cols-4 mt-5 w-full'>
                     <div className='flex  items-start justify-start'>
-                        <input type='checkbox' className='w-5 h-5'/>
-                        <h1 className='text-sm mx-2  font-semibold'>Purchase Due</h1>
+                        <input type='checkbox' className='w-5 h-5'
+                        checked={filters.showPurchaseDue}
+                        onChange={(e) => handleFilterChange('showPurchaseDue', e.target.checked)}
+                      />
+                        
+                       
+                        <h1 className='text-sm mx-2  font-semibold'>Purchase Due1</h1>
                     </div>
                     <div className='flex  items-start justify-start'>
-                        <input type='checkbox' className='w-5 h-5'/>
+                        <input type='checkbox' className='w-5 h-5'
+                         checked={filters.showPurchaseReturn}
+                         onChange={(e) => handleFilterChange('showPurchaseReturn', e.target.checked)}
+                        
+                        
+                        
+                        />
                         <h1 className='text-sm mx-2  font-semibold'>Purchase Return</h1>
                     </div>
                     <div className='flex  items-start justify-start'>
-                        <input type='checkbox' className='w-5 h-5'/>
+                        <input type='checkbox' className='w-5 h-5'
+                        
+                        checked={filters.showAdvanceBalance}
+                        onChange={(e) => handleFilterChange('showAdvanceBalance', e.target.checked)}/>
                         <h1 className='text-sm mx-2 font-semibold'>Advance Balance</h1>
                     </div>
                     <div className='flex  items-start justify-start'>
-                        <input type='checkbox' className='w-5 h-5'/>
+                        <input type='checkbox' className='w-5 h-5'
+                         checked={filters.showOpeningBalance}
+                         onChange={(e) => handleFilterChange('showOpeningBalance', e.target.checked)}
+                        
+                        
+                        />
                         <h1 className='text-sm mx-2  font-semibold'>Opening Balance</h1>
                     </div>
                     <div className='flex flex-col w-full items-start justify-start'>
@@ -57,7 +109,7 @@ const Contact = () => {
             </div>
 
             <div className='flex flex-col bg-white border-t-[3px] rounded-md w-full mt-5 border-blue-500'>
-               <ContactTbl /> 
+               <ContactTbl  data={filters} /> 
             </div>
         </div>
     )

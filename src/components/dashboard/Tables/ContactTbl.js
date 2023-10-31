@@ -1,4 +1,4 @@
-import React, { useRef, useState,useEffect } from 'react'
+import React, { useRef, useState, useEffect } from 'react'
 import { AiFillCaretDown, AiOutlinePlus } from 'react-icons/ai'
 import { FaArrowCircleDown, FaColumns, FaEdit, FaEye, FaFileCsv, FaFileExcel, FaFilePdf, FaHourglassHalf, FaMoneyBillAlt, FaPaperclip, FaPowerOff, FaPrint, FaScroll, FaSearch, FaTrash } from 'react-icons/fa'
 import { useReactToPrint } from 'react-to-print';
@@ -13,35 +13,14 @@ import axios from 'axios';
 
 
 const ContactTbl = () => {
-    
-   
+
+
 
     const params = useParams()
     const type = params.type
-    const {_id}=params;
-    console.log(type);
-   const [data,setData]=useState([]);
-   const [updatedContactData, setUpdatedContactData] = useState([]);
-   
+    const [data, setData] = useState([]);
+    const [updatedContactData, setUpdatedContactData] = useState([]);
 
-useEffect(()=>{
-    
-    const getDataFromApi=async()=>{
-        try{
-            const response= await axios.get(`http://localhost:8000/contacts/${type}`);
-            console.log(response);
-            setData(response.data);
-
-        }catch(e){
-            console.error(e)
-        }
-
-    }
-
-    getDataFromApi();
-
-
-},[type])
     const printRef = useRef()
     let xlDatas = []
     //Export to Excel
@@ -107,32 +86,61 @@ useEffect(()=>{
     const [editId, setEditId] = useState(0)
     const [isCliked, setIsCliked] = useState(false)
     const [actionList, setActionList] = useState(Array(record.length).fill(false))
-    useEffect(() => {
-    
-        if (isedit && editId !== 0) {
-            const updateData=async()=>{
-                try{
-                 const response=await   axios.delete(`http://localhost:8000/contacts/${type}/${_id}`, updatedContactData)
-                 setUpdatedContactData(response.data)
-                 setIsedit(false);
-                 setEditId(0);
-                 setIsCliked(false);
-    
-                }catch(e){
-                    console.error('Error updating supplier contact:', e);
-    
+    // useEffect(() => {
+
+    //     if (isedit && editId !== 0) {
+    //         const updateData=async()=>{
+    //             try{
+    //              const response=await   axios.delete(`http://localhost:8000/contacts/${type}/${_id}`, updatedContactData)
+    //              setUpdatedContactData(response.data)
+    //              setIsedit(false);
+    //              setEditId(0);
+    //              setIsCliked(false);
+
+    //             }catch(e){
+    //                 console.error('Error updating supplier contact:', e);
+
+    //             }
+    //         }
+    //       updateData();
+
+
+
+
+    //     }
+    //   }, [isedit, editId, updatedContactData,_id,type]);
+
+
+    const handleDeleteContact = async (purId) => {
+        try {
+            const token = localStorage.getItem('token');
+            const response = await axios.delete(`http://localhost:8000/admin/contacts/${type}/${purId}`, {
+                headers: {
+                    'Authorization': token
                 }
-            }
-          updateData();
-          
-            
-            
-            
+            });
+            // console.log('Contact deleted:', response.data);
+            getDataFromApi()
+        } catch (error) {
+            console.error('Error deleting Contact:', error);
         }
-      }, [isedit, editId, updatedContactData,_id,type]);
-    
-      
-    
+    };
+    const getDataFromApi = async () => {
+        try {
+            const response = await axios.get(`http://localhost:8000/admin/contacts/${type}`);
+            // console.log(response);
+            setData(response.data);
+
+        } catch (e) {
+            console.error(e)
+        }
+
+    }
+
+    useEffect(() => {
+        getDataFromApi();
+    }, [type])
+
 
     const toggleDropdown = (index) => {
         const dropDownAction = [...actionList];
@@ -169,15 +177,15 @@ useEffect(()=>{
         }
     }
     const displayData = () => {
-        if (editId === 0 && isedit === false) {
-            return <AddorEditContact id={0} />
-        } else if (editId !== 0 && isedit === true) {
+       if (editId !== 0 && isedit === true) {
             return <AddorEditContact id={editId} />
+        }else{
+            return <AddorEditContact />
+
         }
     }
 
 
-    console.log(data)
 
 
     return (
@@ -302,87 +310,47 @@ useEffect(()=>{
                     </thead>
                     <tbody >
                         {data.map((value, index) => {
-                            
-                         
+
+
                             return <tr key={index} className=''>
-                             
+
                                 {col1 && <td className='py-1 flex '>
                                     <div onClick={() => { toggleDropdown(index) }} className='flex px-2 py-1 relative cursor-pointer items-center bg-green-600 rounded-xl text-white justify-center'>
                                         <h1 className='text-sm'>Action</h1>
                                         <AiFillCaretDown size={10} />
                                         {actionList[index] &&
                                             <ul className='absolute top-5 left-10 z-20 flex flex-col items-start w-[150px] bg-white text-gray-600 shadow-xl shadow-gray-400 '>
-                                                <li className='w-full'>
-                                                    <div onClick={() => { setEditId(value.id); setIsedit(!isedit); setIsCliked(!isCliked) }} className='flex px-2 py-1 w-full cursor-pointer hover:bg-gray-400 items-center '>
-                                                        <FaMoneyBillAlt size={15} />
-                                                        <h1 className='text-sm'>Pay</h1>
-                                                    </div>
-                                                </li>
+
 
                                                 <li className='w-full'>
-                                                   
+
                                                     <Link to={`/home/contacts/${type}/view/${value._id}`} className='flex px-2 py-1 w-full cursor-pointer hover:bg-gray-400 items-center '>
                                                         <FaEye size={15} />
                                                         <h1 className='text-sm'>View</h1>
-                                                        
+
                                                     </Link >
                                                 </li>
                                                 <li className='w-full'>
-                                                    <div onClick={() => { setEditId(value.id); setIsedit(!isedit); setIsCliked(!isCliked) }} className='flex px-2 py-1 w-full cursor-pointer hover:bg-gray-400 items-center '>
+                                                    <div onClick={() => { setEditId(value._id); setIsedit(!isedit); setIsCliked(!isCliked) }} className='flex px-2 py-1 w-full cursor-pointer hover:bg-gray-400 items-center '>
                                                         <FaEdit size={15} />
                                                         <h1 className='text-sm'>Edit</h1>
                                                     </div>
                                                 </li>
                                                 <li className='w-full'>
-                                                    <div onClick={() => { setEditId(value.id); setIsedit(!isedit); setIsCliked(!isCliked) }} className='flex px-2 py-1 w-full cursor-pointer hover:bg-gray-400 items-center '>
+                                                    <div onClick={() => { handleDeleteContact(value._id) }} className='flex px-2 py-1 w-full cursor-pointer hover:bg-gray-400 items-center '>
                                                         <FaTrash size={15} />
                                                         <h1 className='text-sm'>Delete</h1>
                                                     </div>
                                                 </li>
-                                                <li className='w-full'>
-                                                    <div onClick={() => { setEditId(value.id); setIsedit(!isedit); setIsCliked(!isCliked) }} className='flex px-2 py-1 w-full cursor-pointer hover:bg-gray-400 items-center '>
-                                                        <FaPowerOff size={15} />
-                                                        <h1 className='text-sm'>Activate</h1>
-                                                    </div>
-                                                </li>
-                                                <li className='mt-5 w-full'>
-                                                    <Link to={`/home/contact/${value.id}/ledger_tab`} className='flex px-2 py-1 w-full cursor-pointer hover:bg-gray-400 items-center '>
-                                                        <FaScroll size={15} />
-                                                        <h1 className='text-sm'>Ledger</h1>
-                                                    </Link >
-                                                </li>
-                                                {type === 'customer' && <li className='w-full'>
-                                                    <Link to={`/home/contact/view/${value.id}/sales_tab`} className='flex px-2 py-1 w-full cursor-pointer hover:bg-gray-400 items-center '>
-                                                        <FaArrowCircleDown size={15} />
-                                                        <h1 className='text-sm'>Sales</h1>
-                                                    </Link>
-                                                </li>}
-                                                {type === 'supplier' && <li className='w-full'>
-                                                    <Link to={`/home/contact/view/${value.id}/purchase_tab`} className='flex px-2 py-1 w-full cursor-pointer hover:bg-gray-400 items-center '>
-                                                        <FaArrowCircleDown size={15} />
-                                                        <h1 className='text-sm'>Purchases</h1>
-                                                    </Link>
-                                                </li>}
-                                                {type === "supplier" && <li className='w-full'>
-                                                    <Link to={`/home/contact/view/${value.id}/stock_report_tab`} className='flex px-2 py-1 w-full cursor-pointer hover:bg-gray-400 items-center '>
-                                                        <FaHourglassHalf size={15} />
-                                                        <h1 className='text-sm'>Stock Report</h1>
-                                                    </Link>
-                                                </li>}
-                                                <li className='w-full'>
-                                                    <Link to={`/home/contact/view/${value.id}/document_tab`} className='flex px-2 py-1 w-full cursor-pointer hover:bg-gray-400 items-center '>
-                                                        <FaPaperclip size={15} />
-                                                        <h1 className='text-sm'>Document & Note</h1>
-                                                    </Link>
-                                                </li>
+
                                             </ul>
                                         }
                                     </div>
                                 </td>}
-                            
-                                
 
-                                 {col2 && <td className="px-1 py-1 text-sm">{value.contactId}</td>}
+
+
+                                {col2 && <td className="px-1 py-1 text-sm">{value.contact_id}</td>}
                                 {col3 && <td className="px-1 py-1"> {value.businessName}</td>}
                                 {col4 && <td className="px-1 py-1">{value.firstName}</td>}
                                 {col5 && <td className=" py-1 px-1">{value.email}</td>}
@@ -393,7 +361,7 @@ useEffect(()=>{
                                 {col10 && <td className=" py-1 px-1">{value.addressLine1}</td>}
                                 {col11 && <td className=" py-1 px-1">{value.mobile}</td>}
                                 {col12 && <td className="px-1 py-1 text-sm">{value.purchaseDue}</td>}
-                                {col13 && <td className="px-1 py-1"> {value.purchaseReturn}</td>}
+                                {col13 && <td className="px-1 py-1"> {(type === 'supplier')? value.totalSaleDue: value.totalPurchaseDue}</td>}
                                 {col14 && <td className="px-1 py-1">{value.customField1}</td>}
                                 {col15 && <td className=" py-1 px-1">{value.customField2}</td>}
                                 {col16 && <td className=" py-1 px-1">{value.customField3}</td>}
@@ -404,7 +372,7 @@ useEffect(()=>{
                                 {col21 && <td className=" py-1 px-1">{value.customField7}</td>}
                                 {col22 && <td className="px-1 py-1"> {value.customField8}</td>}
                                 {col23 && <td className="px-1 py-1">{value.customField9}</td>}
-                                {col24 && <td className=" py-1 px-1">{value.customField10}</td>} 
+                                {col24 && <td className=" py-1 px-1">{value.customField10}</td>}
                             </tr>
                         })}
 
@@ -414,7 +382,7 @@ useEffect(()=>{
                         <tr></tr>
                     </tfoot>
                 </table>
-                
+
             </div>
             <nav className='  my-2 w-full'>
                 <ul className='flex justify-end'>

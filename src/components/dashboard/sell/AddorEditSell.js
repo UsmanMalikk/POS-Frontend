@@ -14,59 +14,8 @@ import { useNavigate } from "react-router-dom"
 const AddorEditSell = () => {
     const Navigate = useNavigate();
 
-    const dummyData = [
-        {
-            id: 1,
-            Username: "username",
-            Name: "User",
-            Role: "Admin",
-            Email: "username@gmail.com"
-        },
-        {
-            id: 2,
-            Username: "username1",
-            Name: "User1",
-            Role: "Admin",
-            Email: "username@gmail.com"
-        },
-        {
-            id: 3,
-            Username: "username2",
-            Name: "User2",
-            Role: "Admin",
-            Email: "username2@gmail.com"
-        },
-        {
-            id: 4,
-            Username: "username3",
-            Name: "User3",
-            Role: "Admin",
-            Email: "username3@gmail.com"
-        },
-        {
-            id: 5,
-            Username: "username4",
-            Name: "User4",
-            Role: "Admin",
-            Email: "username4@gmail.com"
-        },
-        {
-            id: 6,
-            Username: "username5",
-            Name: "User5",
-            Role: "Admin",
-            Email: "username5@gmail.com"
-        },
-        {
-            id: 7,
-            Username: "username6",
-            Name: "User6",
-            Role: "Admin",
-            Email: "username6@gmail.com"
-        }
-    ]
     const [productsData, setProductsData] = useState([]);
-    // const [customersData, setCustomersData] = useState([]);
+    const [customersData, setCustomersData] = useState([]);
     const [spgsData, setSPGsData] = useState([]);
     const [usersData, setUsersData] = useState([]);
     // const [unitsData, setUnitsData] = useState([]);
@@ -90,15 +39,16 @@ const AddorEditSell = () => {
 
     const [formData, setFormData] = useState({
         customer: "",
+        customerName:"",
         invoiceNumber: "",
         salesDate: "",
         status: "",
         invoiceSchema: "",
-        sellingPrice: "",
+        sellingPrice: null,
         sellingPriceName: "",
         // tables: "",
         // serviceStaff: "",
-        businesLocation: "",
+        businesLocation: null,
         inputData: [],
         payTerm: "",
         // payTerm1: "",
@@ -133,7 +83,7 @@ const AddorEditSell = () => {
         paymentMethod: "",
         paymentAccount: null,
         paymentNote: "",
-        totalSaleAmount:0
+        totalSaleAmount: 0
     })
     const params = useParams()
     const id = params.id
@@ -183,6 +133,19 @@ const AddorEditSell = () => {
             return total
         }
     }
+    const finalDiscount = (p, d, dt) => {
+        let total = 0
+        if (dt === "Percentage") {
+            total = (d / 100) * (p)
+            return total
+        } else if (dt === "Fixed") {
+            total = d
+            return total
+        }else{
+            return total
+
+        }
+    }
     const findTotal = () => {
         let total = 0
         formData.inputData.map(val => {
@@ -190,8 +153,17 @@ const AddorEditSell = () => {
         })
         return total
     }
-    const total = findTotal()
-    const totalSaleAmount = parseFloat(total) + parseFloat(formData.shippingCharges)
+    let total = findTotal()
+    const totalPayable = (ttl) => {
+        ttl = parseFloat(ttl) - parseFloat(formData.discount);
+        ttl = parseFloat(ttl) + parseFloat(formData.shippingCharges);
+        ttl = parseFloat(ttl) + parseFloat(formData.additionalExpenseAmount)
+        ttl = parseFloat(ttl) + parseFloat(formData.additionalExpenseAmount1)
+        ttl = parseFloat(ttl) + parseFloat(formData.additionalExpenseAmount2)
+        ttl = parseFloat(ttl) + parseFloat(formData.additionalExpenseAmount3)
+        return ttl
+    }
+    const totalSaleAmount = totalPayable(total)
     formData.totalSaleAmount = totalSaleAmount
 
     const [isserror, setIsserror] = useState(false)
@@ -216,12 +188,12 @@ const AddorEditSell = () => {
 
         try {
             const token = localStorage.getItem('token');
-            const response = await axios.get(`http://localhost:8000/admin/business-locations`,{
+            const response = await axios.get(`http://localhost:8000/admin/business-locations`, {
                 headers: {
                     'Authorization': token
                 }
             });
-            console.log(response.data)
+            // console.log(response.data)
             setBusinessLocationData(response.data);
             // console.log(variationData)
 
@@ -233,12 +205,12 @@ const AddorEditSell = () => {
 
         try {
             const token = localStorage.getItem('token');
-            const response = await axios.get(`http://localhost:8000/admin/sales/${type}/${id}`,{
+            const response = await axios.get(`http://localhost:8000/admin/sales/${type}/${id}`, {
                 headers: {
                     'Authorization': token
                 }
             });
-            console.log(response)
+            // console.log(response)
             response.data.salesDate = new Date(response.data.salesDate).toLocaleDateString("fr-CA")
             response.data.paymentDate = new Date(response.data.paymentDate).toLocaleDateString("fr-CA")
 
@@ -251,7 +223,7 @@ const AddorEditSell = () => {
 
         try {
             const token = localStorage.getItem('token');
-            const response = await axios.get(`http://localhost:8000/admin/products`,{
+            const response = await axios.get(`http://localhost:8000/admin/products`, {
                 headers: {
                     'Authorization': token
                 }
@@ -277,7 +249,7 @@ const AddorEditSell = () => {
 
         try {
             const token = localStorage.getItem('token');
-            const response = await axios.get(`http://localhost:8000/admin/selling-price-groups`,{
+            const response = await axios.get(`http://localhost:8000/admin/selling-price-groups`, {
                 headers: {
                     'Authorization': token
                 }
@@ -295,7 +267,7 @@ const AddorEditSell = () => {
 
         try {
             const token = localStorage.getItem('token');
-            const response = await axios.get(`http://localhost:8000/admin/users`,{
+            const response = await axios.get(`http://localhost:8000/admin/users`, {
                 headers: {
                     'Authorization': token
                 }
@@ -310,7 +282,7 @@ const AddorEditSell = () => {
 
         try {
             const token = localStorage.getItem('token');
-            const response = await axios.get(`http://localhost:8000/admin/add-accounts`,{
+            const response = await axios.get(`http://localhost:8000/admin/add-accounts`, {
                 headers: {
                     'Authorization': token
                 }
@@ -334,29 +306,59 @@ const AddorEditSell = () => {
     //         console.error('Error fetching Selling price Group:', error);
     //     }
     // };
-    const addSale = async () => {
-
-        try {
+    const fetchCustomers = async()=>{
+        try{
             const token = localStorage.getItem('token');
-            // console.log(finalFormData)
-            const response = await axios.post(`http://localhost:8000/admin/sales/${type}`, formData,{
+
+            const response= await axios.get(`http://localhost:8000/admin/contacts/customer`, {
                 headers: {
                     'Authorization': token
                 }
             });
-            console.log(response)
-            if (response.status === 201 && type === "draft") {
-                Navigate("/home/draft");
+            console.log(response);
+            setCustomersData(response.data);
 
-            }
-            else if (response.status === 201 && type === "quotations") {
-                Navigate("/home/quotations");
+        }catch(e){
+            console.error(e)
+        }
 
-            }
-            else {
-                Navigate("/home/sells");
+    }
+    const addSale = async () => {
 
+        try {
+            const token = localStorage.getItem('token');
+
+            if(type!=="draft" && type!=="quotations"){
+                const response = await axios.post(`http://localhost:8000/admin/sales/final`, formData, {
+                    headers: {
+                        'Authorization': token
+                    }
+                });
+                console.log(response)
+                if (response.status === 201) {
+                    Navigate("/home/sells");
+    
+                }
+            }else{
+                const response = await axios.post(`http://localhost:8000/admin/sales/${type}`, formData, {
+                    headers: {
+                        'Authorization': token
+                    }
+                });
+                console.log(response)
+                if (response.status === 201 && type === "draft") {
+                    Navigate("/home/sell/draft");
+    
+                }
+                else if (response.status === 201 && type === "quotations") {
+                    Navigate("/home/sell/quotations");
+    
+                }
+               
             }
+                
+            
+            
         } catch (error) {
             console.error('Error Adding Sale:', error);
         }
@@ -367,7 +369,7 @@ const AddorEditSell = () => {
         try {
             const token = localStorage.getItem('token');
             // console.log(finalFormData)
-            const response = await axios.put(`http://localhost:8000/admin/sales/${type}/${id}`, formData,{
+            const response = await axios.put(`http://localhost:8000/admin/sales/${type}/${id}`, formData, {
                 headers: {
                     'Authorization': token
                 }
@@ -393,14 +395,17 @@ const AddorEditSell = () => {
         // Make an API call to fetch SPG's records
         if (id) {
             fetchSPGs()
+            fetchCustomers()
             fetchProducts()
             fetchUsers()
             fetchSaleById();
             fetchAccounts()
             fetchLocations()
+
         }
         else {
             fetchSPGs()
+            fetchCustomers()
             fetchProducts()
             fetchUsers()
             fetchAccounts()
@@ -492,7 +497,7 @@ const AddorEditSell = () => {
                                 <li
                                     key={data?._id}
                                     className={`p-2 text-sm hover:bg-sky-600 hover:text-white
-                                        ${data?.name?.toLowerCase() === formData.sellingPrice?.toLowerCase() &&
+                                        ${data?.name?.toLowerCase() === formData.sellingPriceName?.toLowerCase() &&
                                         "bg-sky-600 text-white"
                                         }
                                          ${data?.name?.toLowerCase().startsWith(inputValue)
@@ -500,7 +505,7 @@ const AddorEditSell = () => {
                                             : "hidden"
                                         }`}
                                     onClick={() => {
-                                        if (data?.name?.toLowerCase() !== formData.sellingPrice.toLowerCase()) {
+                                        if (data?.name?.toLowerCase() !== formData.sellingPriceName.toLowerCase()) {
 
                                             setFormData({ ...formData, sellingPrice: data?._id, sellingPriceName: data?.name });
                                             setOpen1(false);
@@ -526,7 +531,7 @@ const AddorEditSell = () => {
                                 <input
                                     onClick={() => setOpen(!open)}
                                     className='bg-white w-full  flex items-center  focus:outline-none justify-between px-2  border-[1px] border-gray-600'
-                                    value={formData.customer}
+                                    value={(id) ? formData.customer.firstName : formData.customerName}
                                     onChange={(e) => { setFormData({ ...formData, customer: e.target.value }) }}
                                     placeholder='Select Value'
                                 />
@@ -549,26 +554,26 @@ const AddorEditSell = () => {
                                             className="placeholder:text-gray-700 p-1 outline-none border-[1px] border-gray-500"
                                         />
                                     </div>
-                                    {dummyData?.map((data) => (
+                                    {customersData?.map((data) => (
                                         <li
-                                            key={data?.Name}
+                                            key={data?.firstName}
                                             className={`p-2 text-sm hover:bg-sky-600 hover:text-white
-                                        ${data?.Name?.toLowerCase() === formData.customer?.toLowerCase() &&
+                                        ${data?.firstName?.toLowerCase() === formData.customerName?.toLowerCase() &&
                                                 "bg-sky-600 text-white"
                                                 }
-                                         ${data?.Name?.toLowerCase().startsWith(inputValue)
+                                         ${data?.firstName?.toLowerCase().startsWith(inputValue)
                                                     ? "block"
                                                     : "hidden"
                                                 }`}
                                             onClick={() => {
-                                                if (data?.Name?.toLowerCase() !== formData.customer.toLowerCase()) {
-                                                    setFormData({ ...formData, customer: data?.Name });
+                                                if (data?.firstName?.toLowerCase() !== formData.customerName.toLowerCase()) {
+                                                    setFormData({ ...formData, customer: data?._id , customerName: data?.prefix+" "+data?.firstName});
                                                     setOpen(false);
                                                     setInputValue("");
                                                 }
                                             }}
                                         >
-                                            {data?.Name}
+                                            {data?.prefix+" "+data?.firstName}
                                         </li>
                                     ))}
                                 </ul>
@@ -660,7 +665,7 @@ const AddorEditSell = () => {
                     </div>
                     <div className='flex flex-col'>
                         <h1 className='flex text-sm text-start font-bold'>Invoice No:</h1>
-                        <input value={formData.invoiceNumber} onChange={(e) => { setFormData({ ...formData, invoiceNumber: e.target.value }) }} type='Text' placeholder='Invoice No' className='px-2 py-[2px] w-full border-[1px] border-gray-600 focus:outline-none' />
+                        <input value={formData.invoiceNumber} onChange={(e) => { setFormData({ ...formData, invoiceNumber: e.target.value }) }} type='text' placeholder='Invoice No' className='px-2 py-[2px] w-full border-[1px] border-gray-600 focus:outline-none' />
                         <h1 className='flex text-sm text-start '>Keep Blank to autogenerate</h1>
 
                     </div>
@@ -710,12 +715,12 @@ const AddorEditSell = () => {
                         <div className='flex w-full   md:mt-0 relative'>
                             <div className='flex w-full'>
                                 < FaSearch size={15} className='w-8 h-8 p-2 border-[1px] border-gray-600' />
-                                <input onClick={() => { setIsClicked(!isClicked) }} value={inputValue1} onChange={(e) => { setInputValue1(e.target.value) }} type='Text' placeholder='Enter Product name / SKU / Scan bar code' className='px-2 w-full py-[2px] border-[1px] border-gray-600 focus:outline-none' />
+                                <input onClick={() => { setIsClicked(!isClicked) }} value={inputValue1} onChange={(e) => { setInputValue1(e.target.value) }} type='text' placeholder='Enter Product name / SKU / Scan bar code' className='px-2 w-full py-[2px] border-[1px] border-gray-600 focus:outline-none' />
                             </div>
                             {isClicked &&
                                 <ul
 
-                                    className={`bg-white w-full    border-[1px]   z-10 absolute top-8 border-gray-600  ${isClicked ? "max-h-60" : "max-h-0"} `}
+                                    className={`bg-white w-full    border-[1px]   z-10 absolute top-8 border-gray-600  ${isClicked ? " overflow-y-auto max-h-40" : "max-h-0"} `}
                                 >
 
                                     {productsData?.map((data) => (
@@ -735,7 +740,7 @@ const AddorEditSell = () => {
                                                     // let name = data?.productName
                                                     let array = formData.inputData
                                                     // let _id = data?._id
-                                                    array = [...array, { product: data?._id, productName: data?.productName, quantity: 0, unit: data?.unit, unitPrice: 0, discount: 0, subtotal: 0 }]
+                                                    array = [...array, { product: data?._id, productName: data?.productName, quantity: 0, unit: data?.unit, unitPrice: data?.unitSellingPrice, discount: 0, subtotal: 0, prevPrice: data?.unitSellingPrice}]
                                                     setFormData({ ...formData, inputData: array })
                                                     setInputValue1('')
                                                     setIsClicked(!isClicked);
@@ -791,7 +796,7 @@ const AddorEditSell = () => {
                                     <td className="px-1 py-1">
                                         <div className='flex flex-col'>
                                             <input name="unitPrice" type='number' value={value.unitPrice} onChange={(e) => handleChange(e, index)} className='border-[1px] w-full px-1 py-1 border-black focus:outline-none' />
-                                            <h1 className='text-xs mt-3 text-gray-500'>Previous Unit Price:  Rs. {20.50}</h1>
+                                            <h1 className='text-xs mt-3 text-gray-500'>Previous Unit Price:  Rs. {value.prevPrice}</h1>
 
                                         </div>
                                     </td>
@@ -850,7 +855,7 @@ const AddorEditSell = () => {
                         <div className='flex'>
                             < FaInfo size={15} className='w-8 h-8 p-2 border-[1px] border-gray-600' />
 
-                            <select value={formData.discountType} onChange={(e) => { setFormData({ ...formData, discountType: e.target.value }) }} type='Text' placeholder='Enter Product name / SKU / Scan bar code' className='px-2 py-[2px] w-full border-[1px] border-gray-600 focus:outline-none'>
+                            <select value={formData.discountType} onChange={(e) => { setFormData({ ...formData, discountType: e.target.value }) }} type='text' placeholder='Enter Product name / SKU / Scan bar code' className='px-2 py-[2px] w-full border-[1px] border-gray-600 focus:outline-none'>
                                 <option value={""}>None</option>
                                 <option value={"Fixed"}>Fixed</option>
                                 <option value={"Percentage"}>Percentage</option>
@@ -873,7 +878,7 @@ const AddorEditSell = () => {
 
                     </div>
                     <div className='flex flex-col items-end'>
-                        <h1 className='flex text-sm  font-bold'>Discount <p className='mx-2'>(-) {formData.discount}</p> </h1>
+                        <h1 className='flex text-sm  font-bold'>Discount <p className='mx-2'>(-) {formData.discount = finalDiscount(total, formData.discountAmount, formData.discountType)}</p> </h1>
 
                     </div>
                 </div>
@@ -937,12 +942,12 @@ const AddorEditSell = () => {
                 <div className='grid grid-cols-1 md:grid-cols-3 gap-5'>
                     <div className='flex flex-col '>
                         <h1 className='flex text-sm text-start font-bold'>Shipping Detials:</h1>
-                        <textarea rows={4} value={formData.shippingDetails} onChange={(e) => { setFormData({ ...formData, shippingDetails: e.target.value }) }} placeholder='Shipping Details' type='Text' className='px-2 py-[2px] w-full border-[1px] border-gray-600 focus:outline-none' />
+                        <textarea rows={4} value={formData.shippingDetails} onChange={(e) => { setFormData({ ...formData, shippingDetails: e.target.value }) }} placeholder='Shipping Details' type='text' className='px-2 py-[2px] w-full border-[1px] border-gray-600 focus:outline-none' />
 
                     </div>
                     <div className='flex flex-col'>
                         <h1 className='flex text-sm text-start font-bold'>Shipping Address:</h1>
-                        <textarea rows={4} value={formData.shippingAddress} onChange={(e) => { setFormData({ ...formData, shippingAddress: e.target.value }) }} placeholder='Shipping Details' type='Text' className='px-2 py-[2px] w-full border-[1px] border-gray-600 focus:outline-none' />
+                        <textarea rows={4} value={formData.shippingAddress} onChange={(e) => { setFormData({ ...formData, shippingAddress: e.target.value }) }} placeholder='Shipping Details' type='text' className='px-2 py-[2px] w-full border-[1px] border-gray-600 focus:outline-none' />
 
                     </div>
                     <div className='flex flex-col '>
@@ -955,7 +960,7 @@ const AddorEditSell = () => {
                     <div className='flex flex-col '>
                         <h1 className='flex text-sm text-start font-bold'>Shipping Status:</h1>
 
-                        <select value={formData.shippingStatus} onChange={(e) => { setFormData({ ...formData, shippingStatus: e.target.value }) }} type='Text' placeholder='Enter Product name / SKU / Scan bar code' className='px-2 py-[2px] w-full border-[1px] border-gray-600 focus:outline-none'>
+                        <select value={formData.shippingStatus} onChange={(e) => { setFormData({ ...formData, shippingStatus: e.target.value }) }} type='text' placeholder='Enter Product name / SKU / Scan bar code' className='px-2 py-[2px] w-full border-[1px] border-gray-600 focus:outline-none'>
                             <option value={""}>Please Selecet</option>
                             <option value={"Ordered"}>Ordered</option>f
                             <option value={"Packed"}>Packed</option>
@@ -969,7 +974,7 @@ const AddorEditSell = () => {
                     <div className='flex flex-col '>
                         <h1 className='flex text-sm text-start font-bold'>Delivery Person:</h1>
 
-                        <select value={formData.deliveryPerson} onChange={(e) => { setFormData({ ...formData, deliveryPerson: e.target.value }) }} type='Text' placeholder='Enter Product name / SKU / Scan bar code' className='px-2 py-[2px] w-full border-[1px] border-gray-600 focus:outline-none'>
+                        <select value={formData.deliveryPerson} onChange={(e) => { setFormData({ ...formData, deliveryPerson: e.target.value }) }} type='text' placeholder='Enter Product name / SKU / Scan bar code' className='px-2 py-[2px] w-full border-[1px] border-gray-600 focus:outline-none'>
                             <option value={""}>Please Selecet</option>
                             {usersData.map((user) => (
                                 <option key={user._id} value={user._id}>
@@ -1012,8 +1017,8 @@ const AddorEditSell = () => {
                 </div>
                 <div className='flex items-end justify-end mt-5'>
                     <div className='flex '>
-                        <h1 className='font-bold mx-2'>Total Payable:</h1>
-                        <h1 className=' mx-2'>Rs {parseFloat(total) + parseFloat(formData.shippingCharges)}</h1>
+                    <h1 className='text-center font-bold mx-2'>Total Payable:</h1>
+                        <h1 className=' mx-2'>{totalPayable(total)}</h1>
 
                     </div>
                 </div>
@@ -1115,7 +1120,7 @@ const AddorEditSell = () => {
                 <div className='flex items-end justify-end mt-5'>
                     <div className='flex '>
                         <h1 className='font-bold mx-2'>Payment Due:</h1>
-                        <h1 className=' mx-2'>Rs {((parseFloat(total) + parseFloat(formData.shippingCharges)) - formData.amount) >= 0 ? (parseFloat(total) + parseFloat(formData.shippingCharges)) - formData.amount : 0}</h1>
+                        <h1 className=' mx-2'>Rs {(totalPayable(total) - formData.amount) >= 0 ? (totalPayable(total)) - formData.amount : 0}</h1>
 
                     </div>
                 </div>

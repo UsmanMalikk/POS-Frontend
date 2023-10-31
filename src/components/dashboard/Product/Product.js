@@ -281,14 +281,7 @@ const Product = () => {
                         </div>
 
                     </div>
-                    <div onClick={() => { setStock(true); setProducts(false); }} className={`flex md:mx-3 py-1  ${stock ? "border-t-[3px]  border-blue-500" : "border-b-[1px] border-gray-500"} h-[50px] `}>
-
-                        <div className='flex cursor-pointer  items-center justify-center'>
-                            <FaHourglassHalf size={20} />
-                            <h1 className='text-lg font-bold'>Stock Report</h1>
-                        </div>
-
-                    </div>
+                    
 
 
                 </div>
@@ -307,7 +300,6 @@ const Product = () => {
 
                         </div>
                     }
-                    {stock && <StockReportTbl />}
 
 
                 </div>

@@ -5,10 +5,10 @@ const AddorEditExpenseCategory = (props) => {
     const [expenseCategoryData, setExpenseCategoryData] = useState([]); //update dropdown py use hogi
 
     const [formData, setFormData] = useState({
-        categoryName:'',
-        categoryCode:'',
-        subCategory:false
-
+        categoryName: '',
+        categoryCode: '',
+        subCategory: false,
+        parentCategory: ""
     })
     const [isserror, setIsserror] = useState(false);
     const handleClick = (e) => {
@@ -25,11 +25,11 @@ const AddorEditExpenseCategory = (props) => {
             console.log("Handle Save", formData);
         }
     };
-const fetchExpenseCategories = async () => {
+    const fetchExpenseCategories = async () => {
 
         try {
             const token = localStorage.getItem('token');
-            const response = await axios.get(`http://localhost:8000/admin/expense-categories`,{
+            const response = await axios.get(`http://localhost:8000/admin/expense-categories`, {
                 headers: {
                     'Authorization': token
                 }
@@ -45,7 +45,7 @@ const fetchExpenseCategories = async () => {
 
         try {
             const token = localStorage.getItem('token');
-            const response = await axios.get(`http://localhost:8000/admin/expense-categories/${props.id}`,{
+            const response = await axios.get(`http://localhost:8000/admin/expense-categories/${props.id}`, {
                 headers: {
                     'Authorization': token
                 }
@@ -62,7 +62,7 @@ const fetchExpenseCategories = async () => {
         try {
             const token = localStorage.getItem('token');
             // console.log(formData)
-            const response = await axios.post(`http://localhost:8000/admin/expense-categories`, formData,{
+            const response = await axios.post(`http://localhost:8000/admin/expense-categories`, formData, {
                 headers: {
                     'Authorization': token
                 }
@@ -83,7 +83,7 @@ const fetchExpenseCategories = async () => {
         try {
             const token = localStorage.getItem('token');
             // console.log(formData)
-            const response = await axios.put(`http://localhost:8000/admin/expense-categories/${props.id}`, formData,{
+            const response = await axios.put(`http://localhost:8000/admin/expense-categories/${props.id}`, formData, {
                 headers: {
                     'Authorization': token
                 }
@@ -135,6 +135,21 @@ const fetchExpenseCategories = async () => {
                         <b>Add as Sub-Category</b>
                     </h2>
                 </div>
+                {formData.subCategory === true &&
+                    <div className='flex flex-col'>
+                        <h1 className='text-start font-bold'>Select Parent Category</h1>
+                        <select value={formData.parentCategory} onChange={(e) => { setFormData({ ...formData, parentCategory: e.target.value }) }} className='border-[1px] border-gray-400 px-2 py-1 focus:outline-none mx-2' >
+                            <option value={""}>None</option>
+                            {expenseCategoryData.map((cat) => (
+                                <option key={cat._id} value={cat._id}>
+                                    {cat.categoryName}
+                                </option>
+                            ))}
+
+                        </select>
+
+                    </div>
+                }
             </div>
             <div className='flex items-end justify-end'>
                 <button

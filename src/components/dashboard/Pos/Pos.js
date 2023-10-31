@@ -282,8 +282,8 @@ const Pos = () => {
             <div className='flex flex-col bg-white border-t-[3px] rounded-md w-full mt-5 border-blue-500'>
                 <div className='flex justify-between items-end mt-2 text-sm mx-5'>
                     <h1 className='text-lg font-semibold'>List POS</h1>
-                    <Link to={'/home/sells/create'} className='flex items-center justify-center mx-5 font-semibold w-20 h-10 rounded-md mt-3 text-white bg-blue-500'>
-                        <AiOutlinePlus size={15} /> Add Draft
+                    <Link to={'/pos/create'} className='flex items-center justify-center mx-5 font-semibold w-20 h-10 rounded-md mt-3 text-white bg-blue-500'>
+                        <AiOutlinePlus size={15} /> Add
 
                     </Link>
 

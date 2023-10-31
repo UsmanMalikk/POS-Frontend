@@ -1,4 +1,4 @@
-import React, { useState } from 'react'
+import React, { useState, useEffect } from 'react'
 
 const EditProduct = (props) => {
     const [formData, setFormData] = useState({
@@ -15,6 +15,12 @@ const EditProduct = (props) => {
         // console.log("Handle Save", formData)
 
     }
+//     useEffect(() => {
+//         if(props.formData){
+//             console.log(props.formData.inputData)
+//         }
+    
+// }, [])
     return (
         <div className='w-full flex flex-col px-5 pb-5 bg-white'>
             <h1 className='flex text-sm text-gray-600 text-start font-bold' >{props.name} ({props.id})</h1>
@@ -32,7 +38,7 @@ const EditProduct = (props) => {
                     </select>
                 </div>
                 <div className='flex w-full flex-col mt-5 mx-2'>
-                    <h1 className='flex text-sm text-start font-bold' >Discount Amountt</h1>
+                    <h1 className='flex text-sm text-start font-bold' >Discount Amount</h1>
                     <input value={formData.discountAmount} onChange={(e) => { setFormData({ ...formData, discountAmount: e.target.value }) }} type='text' className='px-2 py-[2px] w-full border-[1px] border-gray-600 focus:outline-none' />
                 </div>
             </div>

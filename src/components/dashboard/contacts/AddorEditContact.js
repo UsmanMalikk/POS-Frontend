@@ -5,48 +5,49 @@ import axios from 'axios'
 
 const AddorEditContact = (props) => {
     const params = useParams()
-    const type= params.type
-    console.log(type)
+    const type = params.type
+    const [customerGrpData, setCustomerGrpData] = useState([])
+
     const [iserror, setIsError] = useState(false)
     const [moreInfor, setMoreInfor] = useState(false)
     const [radioVal, setRadioVal] = useState('')
     const [formData, setFormData] = useState({
         contactType: type,
-        contact_id:"",
-        customer_grp:"",
-        prefix:"",
-        firstName:"",
-        middleName:"",
-        lastName:"",
-        mobile:"",
-        businessName:"",
-        alternateContactNumber:"",
-        landline:"",
-        email:"",
-        assignedTo:"",
-        dateOfBirth:"",
-        taxNumber:"",
-        openingBalance:"",
-        payTerm:"",
-        payTerm1:"",
-        creditLimit:"",
-        addressLine1:"",
-        addressLine2:"",
-        city:"",
-        state:"",
-        country:"",
-        zipCode:"",
-        customField1:"",
-        customField2:"",
-        customField3:"",
-        customField4:"",
-        customField5:"",
-        customField6:"",
-        customField7:"",
-        customField8:"",
-        customField9:"",
-        customField10:"",
-        shippingAddress:""
+        contact_id: "",
+        customer_grp: null,
+        prefix: "",
+        firstName: "",
+        middleName: "",
+        lastName: "",
+        mobile: "",
+        businessName: "",
+        alternateContactNumber: "",
+        landline: "",
+        email: "",
+        assignedTo: "",
+        dateOfBirth: "",
+        taxNumber: "",
+        openingBalance: "",
+        payTerm: "",
+        payTerm1: "",
+        creditLimit: "",
+        addressLine1: "",
+        addressLine2: "",
+        city: "",
+        state: "",
+        country: "",
+        zipCode: "",
+        customField1: "",
+        customField2: "",
+        customField3: "",
+        customField4: "",
+        customField5: "",
+        customField6: "",
+        customField7: "",
+        customField8: "",
+        customField9: "",
+        customField10: "",
+        shippingAddress: ""
 
     })
 
@@ -54,43 +55,49 @@ const AddorEditContact = (props) => {
         if (
             (formData.firstName.length === 0 && radioVal === "individual") ||
             formData.contactType.length === 0 ||
-            formData.mobile.length === 0
+            formData.mobile.length === 0 ||
+            formData.prefix.length === 0
         ) {
             setIsError(true);
+            console.log(iserror)
         } else {
-            const postData = {
-                contactType: formData.contactType,
-                businessName:formData.businessName,
-                firstName: formData.firstName,
-                email:formData.email,
-                mobile: formData.mobile,
-                taxNumber:formData.taxNumber,
-                
-                openingBalance:formData.openingBalance,
-                advanceBalance:formData.advanceBalance,
-                addressLine1:formData.addressLine1,
-                purchaseDue:formData.purchaseDue,
-                purchaseReturn:formData.purchaseReturn,
-                customField1:formData.customField1,
-                customField2:formData.customField2,
-                customField3:formData.customField3,
-                customField4:formData.customField4,
-                customField5:formData.customField5,
-                customField6:formData.customField6,
-                customField7:formData.customField7,
-                customField8:formData.customField8,
-                customField9:formData.customField9,
-                customField10:formData.customField10,
-                
+            // const postData = {
+            //     contactType: formData.contactType,
+            //     businessName:formData.businessName,
+            //     firstName: formData.firstName,
+            //     email:formData.email,
+            //     mobile: formData.mobile,
+            //     taxNumber:formData.taxNumber,
+
+            //     openingBalance:formData.openingBalance,
+            //     advanceBalance:formData.advanceBalance,
+            //     addressLine1:formData.addressLine1,
+            //     purchaseDue:formData.purchaseDue,
+            //     purchaseReturn:formData.purchaseReturn,
+            //     customField1:formData.customField1,
+            //     customField2:formData.customField2,
+            //     customField3:formData.customField3,
+            //     customField4:formData.customField4,
+            //     customField5:formData.customField5,
+            //     customField6:formData.customField6,
+            //     customField7:formData.customField7,
+            //     customField8:formData.customField8,
+            //     customField9:formData.customField9,
+            //     customField10:formData.customField10,
 
 
-                // Add other fields here...
-            };
+
+            //     // Add other fields here...
+            // };
 
             try {
-                const response = await axios.post('http://localhost:8000/contacts/supplier', postData);
-                console.log('Contact created successfully:', response.data);
-                // Handle any further actions after successful creation
+                const response = await axios.post(`http://localhost:8000/admin/contacts/${type}`, formData);
+                // console.log('Contact created successfully:', response.data);
+                if (response.status === 201) {
+                    window.location.reload();
+
+                    console.log("Success")
+                }
             } catch (error) {
                 console.error('Error creating contact:', error);
                 // Handle errors here
@@ -98,7 +105,53 @@ const AddorEditContact = (props) => {
         }
     };
 
-   
+    const getCustomerGrps = async () => {
+        try {
+            const token = localStorage.getItem('token');
+
+            const response = await axios.get(`http://localhost:8000/admin/contact/customergroup`, {
+                headers: {
+                    'Authorization': token
+                }
+            });
+            console.log(response);
+            setCustomerGrpData(response.data);
+
+        } catch (e) {
+            console.error(e)
+        }
+
+    }
+    const fetchContactById=async()=>{
+            
+        try{
+            const token = localStorage.getItem('token');
+
+            const response=await axios.get(`http://localhost:8000/admin/contacts/${type}/${props.id}` , {
+                headers: {
+                    'Authorization': token
+                }
+            });
+          
+            setFormData(response.data);
+            // console.log("single data",response);
+
+        }
+        catch(error){
+            console.log('view is not fetched', error)
+        }
+        
+    }
+    
+    useEffect(() => {
+
+        if (props.id) {
+            fetchContactById()
+        } else {
+            getCustomerGrps()
+
+        }
+    }, []);
 
     return (
         <div className='flex w-full  flex-col justify-center items-center bg-white p-5'>
@@ -106,10 +159,10 @@ const AddorEditContact = (props) => {
             <div className=' w-full flex flex-col'>
                 <div className='grid grid-cols-1 mt-2 md:grid-cols-3 gap-2'>
                     <div className='flex flex-col'>
-                        <h1 className='flex text-sm text-start'>Contact Type:* <p className='text-red-400'>{iserror && formData.contactType.length === 0 ? "Required Field":""}</p></h1>
+                        <h1 className='flex text-sm text-start'>Contact Type:* <p className='text-red-400'>{iserror && formData.contactType.length === 0 ? "Required Field" : ""}</p></h1>
                         <div className='flex'>
                             < FaUser size={15} className='w-8 h-8 p-2 border-[1px] border-gray-600' />
-                            <select value={formData.contactType} onChange={(e) => { setFormData({ ...formData, contactType: e.target.value }) }} type='text'  className='px-2 py-[3px] border-[1px] border-gray-600 focus:outline-none' >
+                            <select value={formData.contactType} onChange={(e) => { setFormData({ ...formData, contactType: e.target.value }) }} type='text' className='px-2 py-[3px] border-[1px] border-gray-600 focus:outline-none' >
                                 <option value={""}>Please Select</option>
                                 <option value={"supplier"}>Suppliers</option>
                                 <option value={"customer"}>Customers</option>
@@ -150,7 +203,11 @@ const AddorEditContact = (props) => {
                                 < FaUsers size={15} className='w-8 h-8 p-2 border-[1px] border-gray-600' />
                                 <select value={formData.customer_grp} onChange={(e) => { setFormData({ ...formData, customer_grp: e.target.value }) }} type='text' className='px-2 py-[3px] w-full border-[1px] border-gray-600 focus:outline-none' >
                                     <option value={""}>None</option>
-
+                                    {customerGrpData.map((cgp) => (
+                                        <option key={cgp._id} value={cgp._id}>
+                                            {cgp.customerGroupName}
+                                        </option>
+                                    ))}
 
                                 </select>
                             </div>
@@ -164,11 +221,11 @@ const AddorEditContact = (props) => {
                 {radioVal === "individual" &&
                     <div className='grid grid-cols-1 md:grid-cols-4 mt-2 gap-2'>
                         <div className='flex flex-col'>
-                            <h1 className='flex text-sm text-start'>Prefix:</h1>
+                            <h1 className='flex text-sm text-start'>Prefix: <p className='text-red-400'>{iserror && formData.prefix.length === 0 && radioVal === "individual" ? "Required Field" : ""}</p></h1>
                             <input value={formData.prefix} onChange={(e) => { setFormData({ ...formData, prefix: e.target.value }) }} type='text' placeholder='Mr / Mrs / Miss' className='px-2 py-[3px] w-full border-[1px] border-gray-600 focus:outline-none' />
                         </div>
                         <div className='flex flex-col'>
-                            <h1 className='flex text-sm text-start'> First Name:* <p className='text-red-400'>{iserror && formData.firstName.length === 0 && radioVal ==="individual" ? "Required Field":""}</p></h1>
+                            <h1 className='flex text-sm text-start'> First Name:* <p className='text-red-400'>{iserror && formData.firstName.length === 0 && radioVal === "individual" ? "Required Field" : ""}</p></h1>
                             <input value={formData.firstName} onChange={(e) => { setFormData({ ...formData, firstName: e.target.value }) }} type='text' placeholder='First Name' className='px-2 py-[3px] w-full border-[1px] border-gray-600 focus:outline-none' />
                         </div>
                         <div className='flex flex-col'>
@@ -197,7 +254,7 @@ const AddorEditContact = (props) => {
                 }
                 <div className='grid grid-cols-1 md:grid-cols-4 mt-2 gap-2'>
                     <div className='flex flex-col'>
-                        <h1 className='flex text-sm text-start'>Mobile:* <p className='text-red-400'>{iserror && formData.mobile.length === 0 ? "Required Field":""}</p></h1>
+                        <h1 className='flex text-sm text-start'>Mobile:* <p className='text-red-400'>{iserror && formData.mobile.length === 0 ? "Required Field" : ""}</p></h1>
                         <div className='flex'>
                             < FaMobile size={15} className='w-8 h-8 p-2 border-[1px] border-gray-600' />
                             <input value={formData.mobile} onChange={(e) => { setFormData({ ...formData, mobile: e.target.value }) }} type='text' placeholder='Mobile' className='px-2 py-[3px] w-full border-[1px] border-gray-600 focus:outline-none' />

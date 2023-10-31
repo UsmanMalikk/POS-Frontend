@@ -7,10 +7,7 @@ import axios from 'axios'
 const ViewContact = () => {
    
     const [data,setData]=useState([]);
-    const params = useParams();
-    const type=params.type
-    const { _id } = params;
-    console.log("i am id",_id);
+    const { id, type } = useParams();
     
     
     
@@ -20,10 +17,10 @@ const ViewContact = () => {
         const getDataFromApi=async()=>{
             
             try{
-                const response=await axios.get(`http://localhost:5000/contacts/${type}/${_id}` );
+                const response=await axios.get(`http://localhost:8000/admin/contacts/${type}/${id}` );
               
                 setData(response.data);
-                console.log("single data",response);
+                // console.log("single data",response);
 
             }
             catch(error){
@@ -33,7 +30,7 @@ const ViewContact = () => {
         }
         getDataFromApi();
 
-    },[_id,type]);
+    },[id,type]);
        
     return (
         <div className='w-full p-2 bg-gray-200 min-h-screen'>
@@ -81,7 +78,7 @@ const ViewContact = () => {
                 </div>
             </div>
 
-
+{/* 
             <div className='grid grid-cols-1 md:grid-cols-6 mt-3 bg-white'>
                 <NavLink to={"ledger_tab"} className={`flex aria-[current=page]:border-t-[3px] aria-[current=page]:border-blue-600  items-center justify-center`}>
                     <FaScroll size={20} />
@@ -119,9 +116,9 @@ const ViewContact = () => {
             <div className='flex w-full  min-h-[400px] bg-white'>
                 <Outlet />
             </div>
+*/}
 
-
-        </div>
+        </div> 
     )
 }
 

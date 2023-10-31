@@ -7,6 +7,7 @@ import { MdCancel } from 'react-icons/md'
 import AddProduct from '../Product/AddProduct'
 import AddorEditContact from "../contacts/AddorEditContact"
 import ImportProduct from '../Product/ImportProduct'
+import axios from 'axios'
 
 const AddorEditPurchaseOrder = () => {
     const dummyData = [
@@ -101,31 +102,39 @@ const AddorEditPurchaseOrder = () => {
     const [newProduct, setNewProduct] = useState(false)
     const [isProductUpload, setIsProductUpload] = useState(false)
 
-    const handleClick = (e) => {
+    
+    const handleClick = async () => {
 
-        if (id) {
-            if (formData.supplier.length === 0 ||
-                formData.orderDate.length === 0 ||
-                formData.referenceNo.length === 0 ||
-                formData.businesLocation.length === 0
-                ) {
-                setIsserror(true)
-            } else {
 
-                console.log("Handle Update", formData)
-            }
-        } else {
-            if (formData.supplier.length === 0 ||
-                formData.orderDate.length === 0 ||
-                formData.businesLocation.length === 0
-                ) {
-                setIsserror(true)
-            } else {
 
-                console.log("Handle Save", formData)
+        if (formData.supplier.length === 0 ||
+            formData.orderDate.length === 0) {
+            setIsserror(true)
+        }
+        else {
+
+
+            const postData = {
+
+                orderDate: formData.orderDate,
+                supplier: formData.supplier,
+                businessLocation: formData.businesLocation
+               
+                // Add other fields here...
+            };
+            try {
+                const response = await axios.post('http://localhost:8000/purchase-order/create', postData);
+                console.log('purchase order created successfully:', response.data);
+                // Handle any further actions after successful creation
+            } catch (error) {
+                console.error('Error creating contact:', error);
+                // Handle errors here
             }
         }
+
     }
+
+    
 
 
     const displayData = () => {
