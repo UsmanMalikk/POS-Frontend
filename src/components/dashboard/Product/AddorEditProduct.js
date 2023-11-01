@@ -20,6 +20,7 @@ const AddorEditProduct = () => {
   const [variationData, setVariationData] = useState([]);
   const [businessLocationData, setBusinessLocationData] = useState([]);
   const [spgData, setSpgData] = useState([]);
+  const [contactCustomData, setContactCustomData] = useState([])
 
   const [skuInfor, setSkuInfor] = useState(false)
   const [skuInfor1, setSkuInfor1] = useState(false)
@@ -242,7 +243,23 @@ const AddorEditProduct = () => {
       console.error('Error fetching spg:', error);
     }
   };
+  const fetchCustomFields = async () => {
+    try {
+      const token = localStorage.getItem('token');
 
+      const response = await axios.get(`http://localhost:8000/admin/product-custom-label`, {
+        headers: {
+          'Authorization': token
+        }
+      });
+      console.log(response.data);
+      setContactCustomData(response.data);
+
+    } catch (e) {
+      console.error(e)
+    }
+
+  }
   const fetchUnits = async () => {
 
     try {
@@ -334,7 +351,7 @@ const AddorEditProduct = () => {
       fetchProductById();
       fetchVariations()
       fetchSPG()
-
+      fetchCustomFields()
     }
     else {
       fetchUnits()
@@ -342,7 +359,7 @@ const AddorEditProduct = () => {
       fetchProducts()
       fetchVariations()
       fetchSPG()
-
+      fetchCustomFields()
     }
 
 

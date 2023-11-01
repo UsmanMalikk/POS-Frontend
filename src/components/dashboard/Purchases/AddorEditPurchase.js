@@ -13,11 +13,12 @@ import { useNavigate } from "react-router-dom"
 const AddorEditPurchase = () => {
     const Navigate = useNavigate();
 
-    
+
     const [supplierData, setSupplierData] = useState('')
     const [businessLocationData, setBusinessLocationData] = useState([]);
-  const [productsData, setProductsData] = useState([]);
+    const [productsData, setProductsData] = useState([]);
     const [AccountsData, setAccountsData] = useState([]);
+    const [purchaseCustomData, setPurchaseCustomData] = useState([])
 
     const [inputValue, setInputValue] = useState('')
     const [open, setOpen] = useState(false)
@@ -28,7 +29,7 @@ const AddorEditPurchase = () => {
     const [info2, setInfo2] = useState(false)
     const [formData, setFormData] = useState({
         supplier: "",
-        supplierName:"",
+        supplierName: "",
         referenceNo: "",
         purchaseDate: "",
         businessLocation: "",
@@ -55,7 +56,19 @@ const AddorEditPurchase = () => {
         paymentAccount: null,
         paymentMethod: "",
         documents: "",
-        totalPurchaseAmount:0
+        totalPurchaseAmount: 0,
+        cardNumber: "",
+        holderName: "",
+        transactionNumber: "",
+        cardType: "",
+        month: "",
+        year: "",
+        securityCode: "",
+
+        checqueNumber: "",
+        bankAccountNumber: "",
+        easyTransactionNumber: "",
+        easyTransactionNumber: "",
     })
     const [isserror, setIsserror] = useState(false)
     const inpuRef = useRef()
@@ -68,35 +81,35 @@ const AddorEditPurchase = () => {
 
     const [newProduct, setNewProduct] = useState(false)
 
-    const subtotal =(q, p, d)=>{
+    const subtotal = (q, p, d) => {
         let total = 0
         // total = (q * p) - (d / 100) * (q * p)
 
         total = p - (d / 100) * p;
         return total
     }
-    const lineTotal =(q,p)=>{
+    const lineTotal = (q, p) => {
         // console.log(q, "   ", p)
         let total = 0
-        total = q*p
+        total = q * p
         return total
     }
-    const finalProfitMargin =(cp, sp)=>{
+    const finalProfitMargin = (cp, sp) => {
         let total = 0
-        total = (sp-cp)/cp * 100
-        total = Math.round(total *100)/100
+        total = (sp - cp) / cp * 100
+        total = Math.round(total * 100) / 100
         return total
     }
-    const finalDiscount =(p,d,dt)=>{
+    const finalDiscount = (p, d, dt) => {
         let total = 0
-        if(dt ==="Percentage"){
-            total = (d/100)*(p)
+        if (dt === "Percentage") {
+            total = (d / 100) * (p)
             total = total.toFixed(2)
             return total
-        }else if(dt ==="Fixed"){
-            total =  d
+        } else if (dt === "Fixed") {
+            total = d
             return total
-        }else{
+        } else {
             return total
 
         }
@@ -134,14 +147,14 @@ const AddorEditPurchase = () => {
         return total
     }
     const total = findTotal()
-    const totalPayable = (ttl)=>{
+    const totalPayable = (ttl) => {
         // console.log(ttl)
-        ttl =parseFloat(ttl)  - parseFloat(formData.discount);
-        ttl =parseFloat(ttl)  + parseFloat(formData.additionalShippingCharges);
-        ttl =parseFloat(ttl)  + parseFloat(formData.additionalExpenseAmount)    
-        ttl =parseFloat(ttl)  + parseFloat(formData.additionalExpenseAmount1)
-        ttl =parseFloat(ttl)  + parseFloat(formData.additionalExpenseAmount2)
-        ttl =parseFloat(ttl)  + parseFloat(formData.additionalExpenseAmount3)
+        ttl = parseFloat(ttl) - parseFloat(formData.discount);
+        ttl = parseFloat(ttl) + parseFloat(formData.additionalShippingCharges);
+        ttl = parseFloat(ttl) + parseFloat(formData.additionalExpenseAmount)
+        ttl = parseFloat(ttl) + parseFloat(formData.additionalExpenseAmount1)
+        ttl = parseFloat(ttl) + parseFloat(formData.additionalExpenseAmount2)
+        ttl = parseFloat(ttl) + parseFloat(formData.additionalExpenseAmount3)
         return ttl
     }
     const totalPurchaseAmount = totalPayable(total)
@@ -149,19 +162,19 @@ const AddorEditPurchase = () => {
     const handleClick = (e) => {
 
         if (id) {
-            if (formData.supplier.length === 0 ||
+            if (!formData.supplier ||
                 formData.prefix.length === 0 ||
                 formData.purchaseDate.length === 0) {
                 setIsserror(true)
             } else {
-
+                addPurchaseById()
                 console.log("Handle Update", formData)
             }
         } else {
             if (!formData.supplier ||
-                
+
                 formData.purchaseDate.length === 0 ||
-                formData.amount.length === 0 ) {
+                formData.amount.length === 0) {
                 setIsserror(true)
             } else {
                 addPurchase()
@@ -216,20 +229,20 @@ const AddorEditPurchase = () => {
     }
     const fetchProducts = async () => {
 
-    try {
-      const token = localStorage.getItem('token');
-      const response = await axios.get(`http://localhost:8000/admin/products`, {
-        headers: {
-          'Authorization': token
+        try {
+            const token = localStorage.getItem('token');
+            const response = await axios.get(`http://localhost:8000/admin/products`, {
+                headers: {
+                    'Authorization': token
+                }
+            });
+            // console.log(response)
+            setProductsData(response.data);
+        } catch (error) {
+            console.error('Error fetching products:', error);
         }
-      });
-      // console.log(response)
-      setProductsData(response.data);
-    } catch (error) {
-      console.error('Error fetching products:', error);
-    }
-  };
-const fetchAccounts = async () => {
+    };
+    const fetchAccounts = async () => {
 
         try {
             const token = localStorage.getItem('token');
@@ -245,16 +258,57 @@ const fetchAccounts = async () => {
             console.error('Error fetching Accounnt:', error);
         }
     };
+    const fetchCustomFields = async () => {
+        try {
+            const token = localStorage.getItem('token');
 
+            const response = await axios.get(`http://localhost:8000/admin/purchase-custom-label`, {
+                headers: {
+                    'Authorization': token
+                }
+            });
+            console.log(response.data);
+            setPurchaseCustomData(response.data);
+
+        } catch (e) {
+            console.error(e)
+        }
+
+    }
+    const fetchPurchaseById = async () => {
+
+        try {
+          const token = localStorage.getItem('token');
+          const response = await axios.get(`http://localhost:8000/admin/purchases/${id}`,{
+            headers: {
+                'Authorization': token
+            }
+        });
+          // console.log(response)
+          response.data.purchaseDate = new Date(response.data.purchaseDate).toLocaleDateString("fr-CA")
+          response.data.paymentDate = new Date(response.data.paymentDate).toLocaleDateString("fr-CA")
+
+          setFormData(response.data);
+        } catch (error) {
+          console.error('Error fetching Stock Tranfers:', error);
+        }
+      };
+    
     useEffect(() => {
 
         if (id) {
-
+            fetchPurchaseById()
+            fetchCustomFields()
+            fetchLocations()
+            getSuppliers()
+            fetchProducts()
+            fetchAccounts()
         } else {
             fetchLocations()
             getSuppliers()
             fetchProducts()
             fetchAccounts()
+            fetchCustomFields()
         }
     }, []);
     const addPurchase = async () => {
@@ -267,34 +321,34 @@ const fetchAccounts = async () => {
                 }
             });
             if (response.status === 201) {
-                // Navigate("/home/stock-transfer");
+                Navigate("/home/purchase");
                 console.log(response)
 
             }
         } catch (error) {
-            console.error('Error creating contact:', error);
+            console.error('Error creating Purchase:', error);
             // Handle errors here
         }
 
     };
-    //   const addPurchaseById = async () => {
+      const addPurchaseById = async () => {
 
-    //     try {
-    //       const token = localStorage.getItem('token');
-    //       // console.log(formData)
-    //       const response = await axios.put(`http://localhost:8000/admin/stock-adjustment/${id}`, formData,{
-    //         headers: {
-    //             'Authorization': token
-    //         }
-    //     });
-    //       // console.log(response)
-    //       if (response.status === 200) {
-    //         Navigate("/home/stock-transfer");
-    //       }
-    //     } catch (error) {
-    //       console.error('Error Adding Stock Tranfers:', error);
-    //     }
-    //   };
+        try {
+          const token = localStorage.getItem('token');
+          // console.log(formData)
+          const response = await axios.put(`http://localhost:8000/admin/purchases/${id}`, formData,{
+            headers: {
+                'Authorization': token
+            }
+        });
+          // console.log(response)
+          if (response.status === 200) {
+            Navigate("/home/purchase");
+          }
+        } catch (error) {
+          console.error('Error Adding Purchase:', error);
+        }
+      };
     return (
         <div className='w-full p-5 bg-gray-100'>
             <h1 className='text-xl text-start font-bold '>{id ? "Edit Purchase" : "Add Purchase"}</h1>
@@ -311,7 +365,7 @@ const fetchAccounts = async () => {
                                 <input
                                     onClick={() => setOpen(!open)}
                                     className='bg-white w-full  flex items-center  focus:outline-none justify-between px-2  border-[1px] border-gray-600'
-                                    value={(id) ? (formData.supplier?.prefix + ' ' + formData.supplier?.firstName) : formData.supplierName}
+                                    value={(id) ? (formData.supplier?.firstName) : formData.supplierName}
                                     onChange={(e) => { setFormData({ ...formData, supplier: e.target.value }) }}
 
                                     placeholder='Select Value'
@@ -339,7 +393,7 @@ const fetchAccounts = async () => {
                                         <li
                                             key={data?.firstName}
                                             className={`p-2 text-sm hover:bg-sky-600 hover:text-white
-                                        ${data?.firstName?.toLowerCase() === formData.supplier?.toLowerCase() &&
+                                        ${data?.firstName?.toLowerCase() === formData.supplierName?.toLowerCase() &&
                                                 "bg-sky-600 text-white"
                                                 }
                                          ${data?.firstName?.toLowerCase().startsWith(inputValue)
@@ -347,8 +401,8 @@ const fetchAccounts = async () => {
                                                     : "hidden"
                                                 }`}
                                             onClick={() => {
-                                                if (data?.firstName?.toLowerCase() !== formData.supplier.toLowerCase()) {
-                                                    setFormData({ ...formData, supplier: data?._id, supplierName: data?.prefix + ' ' + data?.firstName })
+                                                if (data?.firstName?.toLowerCase() !== formData.supplierName?.toLowerCase()) {
+                                                    setFormData({ ...formData, supplier: data?._id, supplierName: data?.firstName })
                                                     setOpen(false);
                                                     setInputValue("");
                                                 }
@@ -466,7 +520,7 @@ const fetchAccounts = async () => {
                     </div>
 
 
-                    
+
                 </div>
                 <div className='grid grid-cols-1 md:grid-cols-3 mt-3 gap-4'>
                     <div className='flex flex-col'>
@@ -507,7 +561,7 @@ const fetchAccounts = async () => {
                                                 if (data?.productName?.toLowerCase() !== inputValue1.toLowerCase()) {
                                                     setInputValue1(data?.productName)
                                                     let array = formData.inputData
-                                                    array = [...array, { product: data?._id, productName: data?.productName, quantity: 0, unit: data?.unit, unitCostBeforeDiscount: 0, discountPercent: 0, unitCostBeforeTax: 0,profitMarginPercentage:0, unitSellingPrice:0 }]
+                                                    array = [...array, { product: data?._id, productName: data?.productName, quantity: 0, unit: data?.unit, unitCostBeforeDiscount: 0, discountPercent: 0, unitCostBeforeTax: 0, profitMarginPercentage: 0, unitSellingPrice: 0 }]
                                                     setFormData({ ...formData, inputData: array })
                                                     setInputValue1('')
                                                     setIsClicked(!isClicked);
@@ -579,15 +633,15 @@ const fetchAccounts = async () => {
                                         </div>
                                     </td>
                                     <td className=" py-1 px-1">
-                                    <input name="unitCostBeforeTax" type='number' value={value.unitCostBeforeTax =subtotal(value.quantity, value.unitCostBeforeDiscount, value.discountPercent) } onChange={(e) => handleChange(e, index)} className='border-[1px] w-3/4 px-1 border-black focus:outline-none' />                                    </td>
+                                        <input name="unitCostBeforeTax" type='number' value={value.unitCostBeforeTax = subtotal(value.quantity, value.unitCostBeforeDiscount, value.discountPercent)} onChange={(e) => handleChange(e, index)} className='border-[1px] w-3/4 px-1 border-black focus:outline-none' />                                    </td>
                                     <td className=" py-1 px-1">
-                                    <input name="lineTotal" type='number' value={value.lineTotal = lineTotal(value.quantity , value.unitCostBeforeTax) }  onChange={(e) => handleChange(e, index)} className='border-[1px] w-3/4 px-1 border-black focus:outline-none' />                                    </td>
+                                        <input name="lineTotal" type='number' value={value.lineTotal = lineTotal(value.quantity, value.unitCostBeforeTax)} onChange={(e) => handleChange(e, index)} className='border-[1px] w-3/4 px-1 border-black focus:outline-none' />                                    </td>
                                     <td className="px-1 py-1 text-sm">
-                                    <input name="profitMarginPercentage" type='number' value={value.profitMarginPercentage = finalProfitMargin(value.unitCostBeforeTax, value.unitSellingPrice)} onChange={(e) => handleChange(e, index)} className='border-[1px] w-3/4 px-1 border-black focus:outline-none' />                                    </td>
+                                        <input name="profitMarginPercentage" type='number' value={value.profitMarginPercentage = finalProfitMargin(value.unitCostBeforeTax, value.unitSellingPrice)} onChange={(e) => handleChange(e, index)} className='border-[1px] w-3/4 px-1 border-black focus:outline-none' />                                    </td>
                                     <td className="px-1 py-1">
                                         <input name="unitSellingPrice" type='number' value={value.unitSellingPrice} onChange={(e) => handleChange(e, index)} className='border-[1px] w-3/4 px-1 border-black focus:outline-none' />
                                     </td>
-                                    
+
                                     <td className="px-1 py-1 text-red-400"> <FaTimes size={15} onClick={() => { deleteByIndex(index) }} className='cursor-pointer' /> </td>
                                 </tr>
                             })}
@@ -631,10 +685,10 @@ const fetchAccounts = async () => {
 
                     </div>
                     <div className='flex flex-col items-end'>
-                    <h1 className='flex text-sm  font-bold'>Discount <p className='mx-2'>(-) {formData.discount=finalDiscount(total, formData.discountAmount, formData.discountType )}</p> </h1>
+                        <h1 className='flex text-sm  font-bold'>Discount <p className='mx-2'>(-) {formData.discount = finalDiscount(total, formData.discountAmount, formData.discountType)}</p> </h1>
                     </div>
                 </div>
-                
+
                 <div className='w-full h-[1px] bg-gray-300 my-5'></div>
                 <div className='w-full flex flex-col'>
                     <h1 className='flex text-sm  font-bold'>Additional Note</h1>
@@ -759,10 +813,10 @@ const fetchAccounts = async () => {
                                 <select value={formData.paymentAccount} onChange={(e) => { setFormData({ ...formData, paymentAccount: e.target.value }) }} type="text" className='px-2 py-1 w-full border-[1px] border-gray-600 focus:outline-none'>
                                     <option value={""}>None</option>
                                     {AccountsData.map((acc) => (
-                                    <option key={acc._id} value={acc._id}>
-                                        {acc.name}
-                                    </option>
-                                ))}
+                                        <option key={acc._id} value={acc._id}>
+                                            {acc.name}
+                                        </option>
+                                    ))}
 
                                 </select>
                             </div>
@@ -770,12 +824,77 @@ const fetchAccounts = async () => {
                         </div>
 
                     </div>
+                    {
+                        formData.paymentMethod === 'Card' ?
+                            <>
+                                <div className='grid grid-cols-1 md:grid-cols-3 mt-2 gap-5'>
+                                    <div className='flex flex-col '>
+                                        <h1 className='flex text-sm text-start font-bold' >Card Number:</h1>
+                                        <input value={formData.cardNumber} onChange={(e) => { setFormData({ ...formData, cardNumber: e.target.value }) }} type='number' placeholder='Card Number' className='px-2 py-[2px] w-full border-[1px] border-gray-600 focus:outline-none' />
+                                    </div>
+                                    <div className='flex flex-col '>
+                                        <h1 className='flex text-sm text-start font-bold' >Card holder name:</h1>
+                                        <input value={formData.holderName} onChange={(e) => { setFormData({ ...formData, holderName: e.target.value }) }} type='text' placeholder='Card holder name' className='px-2 py-[2px] w-full border-[1px] border-gray-600 focus:outline-none' />
+                                    </div>
+                                    <div className='flex flex-col '>
+                                        <h1 className='flex text-sm text-start font-bold' >Card Transaction Number:</h1>
+                                        <input value={formData.transactionNumber} onChange={(e) => { setFormData({ ...formData, transactionNumber: e.target.value }) }} type='text' placeholder='Select Date Time' className='px-2 py-[2px] w-full border-[1px] border-gray-600 focus:outline-none' />
+                                    </div>
+
+
+                                </div>
+                                <div className='grid grid-cols-1 md:grid-cols-4 mt-2 gap-5'>
+                                    <div className='flex flex-col '>
+                                        <h1 className='flex text-sm text-start font-bold' >Card Type:</h1>
+                                        <select value={formData.cardType} onChange={(e) => { setFormData({ ...formData, cardType: e.target.value }) }} type='text' className='px-2 py-[2px] w-full border-[1px] border-gray-600 focus:outline-none' >
+                                            <option value={"Credit Card"}>Credit Card</option>
+                                            <option value={"Debit Card"}>Debit Card</option>
+                                            <option value={"Visa"}>Visa</option>
+                                            <option value={"Master Card"}>Master Card</option>
+                                        </select>
+                                    </div>
+                                    <div className='flex flex-col '>
+                                        <h1 className='flex text-sm text-start font-bold' >Month:</h1>
+                                        <input value={formData.month} onChange={(e) => { setFormData({ ...formData, month: e.target.value }) }} type='text' placeholder='Month' className='px-2 py-[2px] w-full border-[1px] border-gray-600 focus:outline-none' />
+                                    </div>
+                                    <div className='flex flex-col '>
+                                        <h1 className='flex text-sm text-start font-bold' >Year:</h1>
+                                        <input value={formData.year} onChange={(e) => { setFormData({ ...formData, year: e.target.value }) }} type='text' placeholder='Year' className='px-2 py-[2px] w-full border-[1px] border-gray-600 focus:outline-none' />
+                                    </div>
+                                    <div className='flex flex-col '>
+                                        <h1 className='flex text-sm text-start font-bold' >Security Code:</h1>
+                                        <input value={formData.securityCode} onChange={(e) => { setFormData({ ...formData, securityCode: e.target.value }) }} type='number' placeholder='Security Code' className='px-2 py-[2px] w-full border-[1px] border-gray-600 focus:outline-none' />
+                                    </div>
+
+                                </div>
+                            </>
+                            : formData.paymentMethod === 'Checque' ?
+                                <div className='flex flex-col '>
+                                    <h1 className='flex text-sm text-start font-bold' >Checque Number:</h1>
+                                    <input value={formData.checqueNumber} onChange={(e) => { setFormData({ ...formData, checqueNumber: e.target.value }) }} type='text' placeholder='Checque' className='px-2 py-[2px] w-full border-[1px] border-gray-600 focus:outline-none' />
+                                </div>
+                                : formData.paymentMethod === 'Bank Transfer' ?
+                                    <div className='flex flex-col '>
+                                        <h1 className='flex text-sm text-start font-bold' >Bank Account Number:</h1>
+                                        <input value={formData.bankAccountNumber} onChange={(e) => { setFormData({ ...formData, bankAccountNumber: e.target.value }) }} type='text' placeholder='Bank Account Number' className='px-2 py-[2px] w-full border-[1px] border-gray-600 focus:outline-none' />
+                                    </div>
+                                    : formData.paymentMethod === 'Easypais' ?
+                                        <div className='flex flex-col '>
+                                            <h1 className='flex text-sm text-start font-bold' >Transaction Number:</h1>
+                                            <input value={formData.easyTransactionNumber} onChange={(e) => { setFormData({ ...formData, easyTransactionNumber: e.target.value }) }} type='text' placeholder='Bank Account Number' className='px-2 py-[2px] w-full border-[1px] border-gray-600 focus:outline-none' />
+                                        </div> :
+                                        formData.paymentMethod === 'Custom Payment 2' || 'Custom Payment 3' || 'Custom Payment 4' || 'Custom Payment 5' || 'Custom Payment 6' || 'Custom Payment 7' ?
+                                            <div className='flex flex-col '>
+                                                <h1 className='flex text-sm text-start font-bold' >Transaction Number:</h1>
+                                                <input value={formData.easyTransactionNumber} onChange={(e) => { setFormData({ ...formData, easyTransactionNumber: e.target.value }) }} type='text' placeholder='Bank Account Number' className='px-2 py-[2px] w-full border-[1px] border-gray-600 focus:outline-none' />
+                                            </div> : ""
+                    }
                     <div className='w-full flex flex-col mt-3'>
                         <h1 className='flex text-sm  font-bold'>Payment Note:</h1>
 
                         <textarea rows={4} value={formData.paymentNote} onChange={(e) => { setFormData({ ...formData, paymentNote: e.target.value }) }} className='px-2 py-[2px] w-full border-[1px] border-gray-600 focus:outline-none' />
                     </div>
-                    
+
                     <div className='w-full h-[1px] bg-black my-5'></div>
 
                     <div className='flex items-end justify-end mt-5'>

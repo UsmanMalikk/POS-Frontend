@@ -1,348 +1,273 @@
-import React, { useState } from 'react'
+import React, { useState, useEffect } from 'react'
 import { useParams } from 'react-router-dom'
+import { toast, ToastContainer } from 'react-toastify';
+import "react-toastify/dist/ReactToastify.css";
 import axios from 'axios';
 import { useNavigate } from "react-router-dom"
+
 const AddorEditRoles = () => {
     const Navigate = useNavigate();
 
     const [otherPerm, setOtherPerm] = useState([
-        { name: "serviceStaff", lable: "Service Staff" },
-        { name: "viewExport", lable: " View export to buttons (csv/excel/print/pdf) on tables" }
+        { name: "service_Staff", lable: "Service Staff" },
+        { name: "view_export_to_buttons", lable: " View export to buttons (csv/excel/print/pdf) on tables" }
 
     ])
     const [userPerm, setUserPerm] = useState([
-        { name: "viewUser", lable: " View user" },
-        { name: "addUser", lable: "Add user" },
-        { name: "editUser", lable: "Edit user" },
-        { name: "deleteUser", lable: "Delete user" }
+        { name: "view_user", lable: " View user" },
+        { name: "add_user", lable: "Add user" },
+        { name: "edit_user", lable: "Edit user" },
+        { name: "delete_user", lable: "Delete user" }
     ])
     const [rolePerm, setRolePerm] = useState([
-        { name: "viewRole", lable: " View role" },
-        { name: "addRole", lable: "Add role" },
-        { name: "editRole", lable: "Edit role" },
-        { name: "deleteRole", lable: "Delete role" }
+        { name: "view_role", lable: " View role" },
+        { name: "add_role", lable: "Add role" },
+        { name: "edit_role", lable: "Edit role" },
+        { name: "delete_role", lable: "Delete role" }
     ])
     const [supplierPerm, setSupplierPerm] = useState([
-        { name: "viewAllSupplier", lable: " View All Supplier", type: "radio" },
-        { name: "viewOwnSupplier", lable: "View Own Supplier", type: "radio" },
-        // { name: "view_supplier", lable: " View supplier" },
-        { name: "addSupplier", lable: "Add supplier" },
-        { name: "editSupplier", lable: "Edit supplier" },
-        { name: "deleteSupplier", lable: "Delete supplier" }
+        { name: "view_all_supplier", lable: " View All Supplier", type: "radio" },
+        { name: "view_all_supplier", lable: "View Own Supplier", type: "radio" },
+        { name: "view_supplier", lable: " View supplier" },
+        { name: "add_supplier", lable: "Add supplier" },
+        { name: "edit_supplier", lable: "Edit supplier" },
+        { name: "delete_supplier", lable: "Delete supplier" }
     ])
     const [customerPerm, setCustomerPerm] = useState([
-        { name: "viewAllCustomer", lable: " View All Customer", type: "radio" },
-        { name: "viewOwnCutomer", lable: "View Own Customer", type: "radio" },
-        { name: "viewCustomerswithnosellfromonemonthonly", lable: "View customers with no sell from one month only", type: "radio" },
-        { name: "viewCustomerswithnosellfromthreemonthonly", lable: "View customers with no sell from three months only", type: "radio" },
-        { name: "viewCustomerswithnosellfromsixmonthonly", lable: "View customers with no sell from six months only", type: "radio" },
-        { name: "viewCustomerswithnosellfromoneyearonly", lable: "View customers with no sell from one year only", type: "radio" },
-        { name: "viewCustomersirrespectiveoftheirsell", lable: "View customers with no sell from one year only", type: "radio" },
-        { name: "addCustomer", lable: "Add Customer" },
-        { name: "editCustomer", lable: "Edit Customer" },
-        { name: "deleteCustomer", lable: "Delete Customer" }
+        { name: "view_all_customer", lable: " View All Customer", type: "radio" },
+        { name: "view_all_customer", lable: "View Own Customer", type: "radio" },
+        { name: "view_sell_customer", lable: "View customers with no sell from one month only", type: "radio" },
+        { name: "view_sell_customer", lable: "View customers with no sell from three months only", type: "radio" },
+        { name: "view_sell_customer", lable: "View customers with no sell from six months only", type: "radio" },
+        { name: "view_sell_customer", lable: "View customers with no sell from one year only", type: "radio" },
+        { name: "view_sell_customer", lable: "View customers with no sell from one year only", type: "radio" },
+        { name: "add_customer", lable: "Add Customer" },
+        { name: "edit_customer", lable: "Edit Customer" },
+        { name: "delete_customer", lable: "Delete Customer" }
     ])
     const [productPerm, setProductPerm] = useState([
-        { name: "viewProduct", lable: " View Product" },
-        { name: "addProduct", lable: "Add Product" },
-        { name: "editProduct", lable: "Edit Product" },
-        { name: "deleteProduct", lable: "Delete Product" },
-        { name: "addOpeningStock", lable: "Add Opening Stock" },
-        { name: "viewPurchasePrice", lable: "View Purchase Price" }
+        { name: "view_product", lable: " View Product" },
+        { name: "add_product", lable: "Add Product" },
+        { name: "edit_product", lable: "Edit Product" },
+        { name: "delete_product", lable: "Delete Product" },
+        { name: "add_operning_stock", lable: "Add Opening Stock" },
+        { name: "view_purchase_price", lable: "View Purchase Price" }
     ])
     const [purStkAdjusPerm, setPurStkAdjusPerm] = useState([
-        { name: "viewAllPurchaseStockAdjustment", lable: " View All Purchase & Stock Adjustment", type: "radio" },
-        { name: "viewOwnPurchaseStockAdjustment", lable: "View Own Purchase & Stock Adjustment", type: "radio" },
-        { name: "addPurchaseStockAdjustment", lable: "Add purchase & Stock Adjustment" },
-        { name: "editPurchaseStockAdjustment", lable: "Edit purchase & Stock Adjustment" },
-        { name: "deletePurchaseStockAdjustment", lable: "Delete purchase & Stock Adjustment" },
-        { name: "addPurchasePayment", lable: "Add purchase payment" },
-        { name: "editPurchasePayment", lable: "Edit purchase payment" },
-        { name: "deletePurchasePayment", lable: "Delete purchase payment" },
-        { name: "updateStatus", lable: "Update Status" }
+        { name: "view_all_psd", lable: " View All Purchase & Stock Adjustment", type: "radio" },
+        { name: "view_all_psd", lable: "View Own Purchase & Stock Adjustment", type: "radio" },
+        { name: "add_psd", lable: "Add purchase & Stock Adjustment" },
+        { name: "edit_psd", lable: "Edit purchase & Stock Adjustment" },
+        { name: "delete_psd", lable: "Delete purchase & Stock Adjustment" },
+        { name: "add_purch_pmnt", lable: "Add purchase payment" },
+        { name: "edit_purch_pmnt", lable: "Edit purchase payment" },
+        { name: "delete_purch_pmnt", lable: "Delete purchase payment" },
+        { name: "update_status", lable: "Update Status" }
 
     ])
     const [purOrderPerm, setPurOrderPerm] = useState([
-        { name: "viewAllPurchaseOrder", lable: " View All Purchase Order", type: "radio" },
-        { name: "viewOwnPurchaseOrder", lable: "View Own Purchase Order", type: "radio" },
-        { name: "createPurchaseOrder", lable: "Add Purchase Order" },
-        { name: "editPurchaseOrder", lable: "Edit Purchase Order" },
-        { name: "deletePurchaseOrder", lable: "Delete Purchase Order" }
+        { name: "view_all_purcOrder", lable: " View All Purchase Order", type: "radio" },
+        { name: "view_all_purcOrder", lable: "View Own Purchase Order", type: "radio" },
+        { name: "add_purcOrder", lable: "Add Purchase Order" },
+        { name: "edit_purcOrder", lable: "Edit Purchase Order" },
+        { name: "delete_purcOrder", lable: "Delete Purchase Order" }
     ])
     const [posPerm, setPosPerm] = useState([
-        { name: "viewPossell", lable: " View Product" },
-        { name: "addPossell", lable: "Add Product" },
-        { name: "editPossell", lable: "Edit Product" },
-        { name: "deletePossell", lable: "Delete Product" },
-        { name: "editProductpricefromposscreen", lable: "Edit Product Price From POS Screen" },
-        { name: "editProductdiscountfromposscreen", lable: "Edit Product Discount From POS Screen" },
-        { name: "addeditPayment", lable: "Add/Edit Payment" },
-        { name: "printinvoice", lable: "Print Invoice" },
+        { name: "view_pos", lable: " View Product" },
+        { name: "add_pos", lable: "Add Product" },
+        { name: "edit_pos", lable: "Edit Product" },
+        { name: "delete_pos", lable: "Delete Product" },
+        { name: "edit_prdct_price_fromPosScreen", lable: "Edit Product Price From POS Screen" },
+        { name: "edit_prdct_discount_fromPosScreen", lable: "Edit Product Discount From POS Screen" },
+        { name: "addEdit_pmnt", lable: "Add/Edit Payment" },
+        { name: "prnt_Invoice", lable: "Print Invoice" },
     ])
     const [sellPerm, setSellPerm] = useState([
-        { name: "viewAllSell", lable: " View All Sell", type: "radio" },
-        { name: "viewOwnSellOnly", lable: "View Own Sell only", type: "radio" },
-        { name: "viewPaidSellOnly", lable: "View Paid Sell Only" },
-        { name: "viewdueSellOnly", lable: "View Due Sell Only" },
-        { name: "viewPartiallyPaidSellsOnly", lable: "View Partially Paid Sell Only" },
-        { name: "viewOverDueSellsOnly", lable: "View Overdue Sell Only" },
-        { name: "addSell", lable: "Add Sell" },
-        { name: "updateSell", lable: "Update Sell" },
-        { name: "deleteSell", lable: "Delete Sell" },
-        // { name: "cmsn_agnt_cn_vw_thr_own_sell", lable: "Commission Agent Can View Their Own Sell" },
-        { name: "addSellPayment", lable: "AdD Sell Payment" },
-        { name: "editSellPayment", lable: "Edit Sell Payment" },
-        { name: "deleteSellPayment", lable: "Delete Sell Payment" },
-        { name: "editProductPriceFromSalesScreen", lable: "Edit Product Price From Sale Screen" },
-        { name: "editProductDiscountFromSalesScreen", lable: "Edit Product Discount From Sale Screen" },
-        { name: "addEditDeleteDiscount", lable: "ADD/Edit/Delete Discount" },
-        { name: "accessTypesOfService", lable: "Access Types Of Service" },
-        { name: "accessAllSellReturn", lable: "Access All Sell Return" },
-        { name: "accessOwnSellReturn", lable: "Access Own Sell Return" },
-        { name: "addEditInvoiceNumber", lable: "Add/Edit Invoice Number" }
+        { name: "view_all_sell", lable: " View All Sell", type: "radio" },
+        { name: "view_all_sell", lable: "View Own Sell only", type: "radio" },
+        { name: "view_paid_sell_only", lable: "View Paid Sell Only" },
+        { name: "view_due_sell_only", lable: "View Due Sell Only" },
+        { name: "view_partially_paid_sell_only", lable: "View Partially Paid Sell Only" },
+        { name: "view_overdue_sell_only", lable: "View Overdue Sell Only" },
+        { name: "add_sell", lable: "Add Sell" },
+        { name: "update_sell", lable: "Update Sell" },
+        { name: "delete_sell", lable: "Delete Sell" },
+        { name: "add_sell_payment", lable: "AdD Sell Payment" },
+        { name: "edit_sell_payment", lable: "Edit Sell Payment" },
+        { name: "delete_sell_payment", lable: "Delete Sell Payment" },
+        { name: "edit_prdct_price_fromSaleScreen", lable: "Edit Product Price From Sale Screen" },
+        { name: "edit_prdct_discount_fromSaleScreen", lable: "Edit Product Discount From Sale Screen" },
+        { name: "ad_edt_dlt_discount", lable: "ADD/Edit/Delete Discount" },
+        { name: "access_typesOfService", lable: "Access Types Of Service" },
+        { name: "access_all_sell_return", lable: "Access All Sell Return" },
+        { name: "access_own_sell_return", lable: "Access Own Sell Return" },
+        { name: "ad_edt_Invoice_number", lable: "Add/Edit Invoice Number" }
     ])
     const [draftPerm, setDraftPerm] = useState([
-        { name: "viewAllDrafts", lable: " View All Draft", type: "radio" },
-        { name: "viewOwnDrafts", lable: "View Own Draft", type: "radio" },
-        { name: "editDraft", lable: "Edit Draft" },
-        { name: "deleteDraft", lable: "Delete Draft" }
+        { name: "view_draft", lable: " View All Draft", type: "radio" },
+        { name: "view_draft", lable: "View Own Draft", type: "radio" },
+        { name: "edit_draft", lable: "Edit Draft" },
+        { name: "delete_draft", lable: "Delete Draft" }
     ])
     const [quotationPerm, setQuotationPerm] = useState([
-        { name: "viewAllQuotations", lable: " View All Quotation", type: "radio" },
-        { name: "viewOwnQuotations", lable: "View Own Quotation", type: "radio" },
-        { name: "editQuotation", lable: "Edit Quotation" },
-        { name: "deleteQuotation", lable: "Delete Quotation" }
+        { name: "view_quotation", lable: " View All Quotation", type: "radio" },
+        { name: "view_quotation", lable: "View Own Quotation", type: "radio" },
+        { name: "edit_quotation", lable: "Edit Quotation" },
+        { name: "delete_quotation", lable: "Delete Quotation" }
     ])
     const [shipmentPerm, setShipmentPerm] = useState([
-        { name: "accessAllShipments", lable: " View All Shipment", type: "radio" },
-        { name: "accessOwnShipments", lable: "View Own Shipment", type: "radio" },
-        // { name: "edit_shipmet", lable: "Edit Shipment" },
-        // { name: "delete_shipmet", lable: "Delete Shipment" }
+        { name: "view_shipmet", lable: " View All Shipment", type: "radio" },
+        { name: "view_shipmet", lable: "View Own Shipment", type: "radio" },
+        { name: "edit_shipmet", lable: "Edit Shipment" },
+        { name: "delete_shipmet", lable: "Delete Shipment" }
     ])
-    const [cashPerm, setCashPerm] = useState([
+    // const [cashPerm, setCashPerm] = useState([
 
-        { name: "viewCashRegister", lable: "View Cash Register" },
-        { name: "closeCashRegister", lable: "Close Cash Register" }
-    ])
+    //     { name: "view_cash_register", lable: "View Cash Register" },
+    //     { name: "close_cash_register", lable: "Close Cash Register" }
+    // ])
     const [brandPerm, setBrandPerm] = useState([
-        { name: "viewBrand", lable: "View Brand" },
-        { name: "addBrand", lable: "Add Brand" },
-        { name: "editBrand", lable: "Edit Brand" },
-        { name: "deleteBrand", lable: "Delete Brand" }
+        { name: "view_brand", lable: "View Brand" },
+        { name: "add_brand", lable: "Add Brand" },
+        { name: "edit_brand", lable: "Edit Brand" },
+        { name: "delete_brand", lable: "Delete Brand" }
     ])
-    const [taxratePerm, setTaxratePerm] = useState([
-        { name: "viewTaxRate", lable: "View Tax Rate" },
-        { name: "addTaxRate", lable: "Add Tax Rate" },
-        { name: "editTaxRate", lable: "Edit Tax Rate" },
-        { name: "deleteTaxRate", lable: "Delete Tax Rate" }
-    ])
+    // const [taxratePerm, setTaxratePerm] = useState([
+    //     { name: "view_tax_rate", lable: "View Tax Rate" },
+    //     { name: "add_tax_rate", lable: "Add Tax Rate" },
+    //     { name: "edit_tax_rate", lable: "Edit Tax Rate" },
+    //     { name: "delete_tax_rate", lable: "Delete Tax Rate" }
+    // ])
     const [unitPerm, setUnitPerm] = useState([
-        { name: "viewUnit", lable: "View Unit" },
-        { name: "addUnit", lable: "Add Unit" },
-        { name: "editUnit", lable: "Edit Unit" },
-        { name: "deleteUnit", lable: "Delete Unit" }
+        { name: "view_unit", lable: "View Unit" },
+        { name: "add_unit", lable: "Add Unit" },
+        { name: "edit_unit", lable: "Edit Unit" },
+        { name: "delete_unit", lable: "Delete Unit" }
     ])
     const [categoryPerm, setCategoryPerm] = useState([
-        { name: "viewCategory", lable: "View Category" },
-        { name: "addCategory", lable: "Add Category" },
-        { name: "editCategory", lable: "Edit Category" },
-        { name: "deleteCategory", lable: "Delete Category" }
+        { name: "view_category", lable: "View Category" },
+        { name: "add_category", lable: "Add Category" },
+        { name: "edit_category", lable: "Edit Category" },
+        { name: "delete_category", lable: "Delete Category" }
     ])
     const [reportPerm, setReportPerm] = useState([
-        { name: "viewPurchasesellreport", lable: "View Purchase  & Sell Report" },
-        { name: "viewTaxreport", lable: "View Tax Report" },
-        { name: "viewSuppliercustomerreport", lable: "View Supplier & Customer Report" },
-        { name: "viewExpensereport", lable: "View Expense Reoprt" },
-        { name: "viewProfitlossreport", lable: "View Profit/loss Report" },
-        { name: "viewStockreportstockadjustmentreportstockexpiryreport", lable: "View stock report, stock adjustment report & stock expiry report" },
-        { name: "viewTrendingproductreport", lable: "View Trending Product Report" },
-        { name: "viewRegisterreport", lable: "View Register Report" },
-        { name: "viewSalesrepresentativereport", lable: "View Sales Representative Report" },
-        { name: "viewProductstockvalue", lable: "View Product Stock Value" }
+        { name: "view_pr_sell_report", lable: "View Purchase  & Sell Report" },
+        { name: "view_tax_report", lable: "View Tax Report" },
+        { name: "view_suplr_custmr_report", lable: "View Supplier & Customer Report" },
+        { name: "view_expense_report", lable: "View Expense Reoprt" },
+        { name: "view_prft_los_report", lable: "View Profit/loss Report" },
+        { name: "view_stk_adjsmnt_expiry_report", lable: "View stock report, stock adjustment report & stock expiry report" },
+        { name: "view_trndng_prdct_report", lable: "View Trending Product Report" },
+        { name: "view_register_report", lable: "View Register Report" },
+        { name: "view_sls_rprsntative_report", lable: "View Sales Representative Report" },
+        { name: "view_prdct_stk_value", lable: "View Product Stock Value" }
     ])
     const [settingPerm, setSettingPerm] = useState([
-        { name: "accessBusinessSettings", lable: "Access Business Setting" },
-        // { name: "axs_brcd_stng", lable: "Access Barcode Setting" },
-        { name: "accessInvoiceSettings", lable: "Access Invoice Setting" },
-        // { name: "axs_printers", lable: "Access Printers" }
+        { name: "axs_bzns-stng", lable: "Access Business Setting" },
+        { name: "axs_invic_stng", lable: "Access Invoice Setting" },
     ])
     const [expensePerm, setExpensePerm] = useState([
-        { name: "accessAlleEpenses", lable: "Access all Expense" },
-        { name: "viewOwnExpenseOnly", lable: "Access only own Expense" },
-        { name: "addExpense", lable: "Add Expense" },
-        { name: "editExpense", lable: "Edit Expense" },
-        { name: "deleteExpense", lable: "Delete Expense" }
+        { name: "axs_expense", lable: "Access all Expense" },
+        { name: "axs_expense", lable: "Access only own Expense" },
+        { name: "add_expense", lable: "Add Expense" },
+        { name: "edit_expense", lable: "Edit Expense" },
+        { name: "delete_expense", lable: "Delete Expense" }
 
     ])
     const [homePerm, setHomePerm] = useState([
-        { name: "viewHomeData", lable: "View Home Data", isChecked: true }
+        { name: "view_home_data", lable: "View Home Data", isChecked: true }
     ])
     const [accountPerm, setAccountPerm] = useState([
-        { name: "accessAccounts", lable: "Access Accounts" },
-        { name: "editAccountTransaction", lable: "Edit Account Transaction" },
-        { name: "deleteAccountTransaction", lable: "Delete Account Transaction" }
+        { name: "axs_accounts", lable: "Access Accounts" },
+        { name: "edit_account_trx", lable: "Edit Account Transaction" },
+        { name: "delete_account_trx", lable: "Delete Account Transaction" }
 
     ])
-    // const [bookingPerm, setBookingPerm] = useState([
-    //     { name: "ad_edt_vw", lable: "Add/Edit/View All Bookings" },
-    //     { name: "ad_edt_vw", lable: "Add/Edit/View All Bookings" }
 
-    // ])
-    const [axsslngprcgrpPerm, setAxsslngprcgrpPerm] = useState([
-        { name: "defaultSellingPrice", lable: "Default Selling Price" },
-        { name: "retail", lable: "Retail" },
-        { name: "saleMan", lable: "Saleman" },
-        { name: "localSale", lable: "Local Aale" },
-        { name: "minimumPrice", lable: "Minimum Price" },
-        { name: "salePoint", lable: "Sale Point" },
-        // { name: "axs_tables", lable: "Access Tables" },
 
-    ])
-    // const [essentialPerm, setEssentialPerm] = useState([
-    //     { name: "crud_leave_type", lable: " Add/Edit/View/Delete leave type" },
-    //     { name: "approve_leave", lable: "Approve Leave" },
-    //     { name: "crud_leave", lable: "Add/Edit/View/Delete all leave", type: "radio" },
-    //     { name: "crud_leave", lable: "Add/View own leave", type: "radio" },
-    //     { name: "crud_attendence", lable: "Add/Edit/View/Delete all attendance", type: "radio" },
-    //     { name: "crud_attendence", lable: "View own attendance", type: "radio" },
-    //     { name: "attendence_from_web", lable: "Allow users to enter their own attendance from web" },
-    //     { name: "attendence_from_api", lable: "Allow users to enter their own attendance from api" },
-    //     { name: "view_pay_component", lable: " View Pay Component" },
-    //     { name: "add_pay_component", lable: "Add Pay Component" },
-    //     { name: "crud_department", lable: "Add/Edit/View/Delete department" },
-    //     { name: "crud_designation", lable: "Add/Edit/View/Delete designation" },
-    //     { name: "view_all_payroll", lable: "View all Payroll" },
-    //     { name: "add_payroll", lable: "Add Payroll" },
-    //     { name: "edit_payroll", lable: "Edit Payroll" },
-    //     { name: "delete_payroll", lable: "Delete Payroll" },
-    //     { name: "asgn_todo's_to_others", lable: "Assign To Do's to others" },
-    //     { name: "add_todo's", lable: "Add To Do's" },
-    //     { name: "edit_todo's", lable: "Edit To Do's" },
-    //     { name: "delete_todo's", lable: "Delete To Do's" },
-    //     { name: "create_msg", lable: "Create Message" },
-    //     { name: "view_msg", lable: "View Message" },
-    //     { name: "axs_sales_targets", lable: " Access Sales Targets" }
 
-    // ])
-    const [manufacturingPerm, setManufacturingPerm] = useState([
-        { name: "addRecipe", lable: "Add Recipe" },
-        { name: "editRecipe", lable: "Edit Recipe" },
-        { name: "viewRecipe", lable: "View Recipe" },
-        { name: "accessProduction", lable: "Access Production" }
 
-    ])
-    // const [projectPerm, setProjectPerm] = useState([
-    //     { name: "add_projects", lable: "Add Projects" },
-    //     { name: "edit_projects", lable: "Edit Projects" },
-    //     { name: "delete_projects", lable: "Delete Projects" },
-    // ])
-    // const [superadminPerm, setSuperadminPerm] = useState([
-    //     { name: "axs_pkg_subscriptions", lable: "Access Pekage Subscription" }
-    // ])
-    // const [woocommercePerm, setWoocommercePerm] = useState([
-    //     { name: "sync_prdct_catg", lable: "Sync Product Category" },
-    //     { name: "sync_prdct", lable: "Sync Product" },
-    //     { name: "sync_orders", lable: "Sync Orders" },
-    //     { name: "map_taxrate", lable: "Map Tax Rate" },
-    //     { name: "axs_wocmrc_api_stng", lable: "Access Woocommerce Api Setting" }
-    // ])
-    // const [roleName, setRoleName] = useState('')
+    const parms = useParams()
+    const id = parms.id
+
+
     const [formData, setFormData] = useState({
-        firstName: "",
-        aaleman: false,
-        adEdtInvoiceNumber: false,
-        adEdtVw: false,
-        addPayComponent: false,
-        addPayroll: false,
-        addProjects: false,
-        addRecipe: false,
-        addTodos: false,
-        asgnTodosToOthers: false,
-        attendenceFromApi: false,
-        attendenceFromWeb: false,
-        axsAccounts: false,
-        axsPkgSubscriptions: false,
-        axsPrinters: false,
-        axsProduction: false,
-        axsSalesTargets: false,
-        axsTables: false,
-        axsWocmrcApiStng: false,
-        closeCashRegister: false,
-        createMsg: false,
-        crudAttendence: false,
-        crudDepartment: false,
-        crudDesignation: false,
-        crudLeave: false,
-        crudLeaveType: false,
-        deleteAccountTrx: false,
-        deleteBrand: false,
-        deleteCategory: false,
-        deleteCustomer: false,
-        deleteDraft: false,
-        deleteExpense: false,
-        deletePayroll: false,
-        deleteProjects: false,
-        deletePurcOrder: false,
-        deleteQuotation: false,
-        deleteRole: false,
-        deleteShipmet: false,
-        deleteSupplier: false,
-        deleteTaxRate: false,
-        deleteTodos: false,
-        deleteUnit: false,
-        deleteUser: false,
-        dfltSellingPrice: false,
-        editAccountTrx: false,
-        editDraft: false,
-        editPayroll: false,
-        editProjects: false,
-        editRecipe: false,
-        editTodos: false,
-        localSale: false,
-        mapTaxrate: false,
-        minimumPrice: false,
-        prntInvoice: false,
-        retail: false,
-        salePoint: false,
-        syncOrders: false,
-        syncPrdct: false,
-        syncPrdctCatg: false,
-        updateStatus: false,
-        viewAllPayroll: false,
-        viewDraft: false,
-        viewExportToButtons: false,
-        viewHomeData: false,
-        viewMsg: false,
-        viewPayComponent: false,
-        viewPrdctStkValue: false,
-        viewPurchasePrice: false,
-        viewRecipe: false,    })
+        roleName: "",
+    })
     const [iserror, setIserror] = useState(false)
-    // const addRole = async () => {
 
-    //     try {
-    //         // const token = localStorage.getItem('token');
-    //         // console.log(finalFormData)
-    //         const response = await axios.post(`http://localhost:8000/admin/roles`,userData);
-    //         console.log(response)
-    //         if (response.status === 201) {
-    //             Navigate("/home/users");
-    //         }
-    //     } catch (error) {
-    //         console.error('Error Adding User:', error);
-    //     }
-    // };
+    const fetchRoleById = async () => {
+
+    try {
+      const token = localStorage.getItem('token');
+      const response = await axios.get(`http://localhost:8000/admin/roles/${id}`,{
+        headers: {
+            'Authorization': token
+        }
+    });
+    //   console.log(response.data)
+
+      setFormData(response.data);
+    } catch (error) {
+      console.error('Error fetching roles:', error);
+    }
+  };
+    const addRole = async () => {
+
+        try {
+            const token = localStorage.getItem('token');
+            // console.log(finalFormData)
+            const response = await axios.post(`http://localhost:8000/admin/roles`, formData,{
+                headers: {
+                    'Authorization': token
+                }
+            });
+            console.log(response)
+            if (response.status === 201) {
+                Navigate("/home/roles");
+            }
+        } catch (error) {
+            console.error('Error Adding roles:', error);
+        }
+    };
+const addRoleById = async () => {
+
+    try {
+      const token = localStorage.getItem('token');
+      // console.log(formData)
+      const response = await axios.put(`http://localhost:8000/admin/roles/${id}`, formData,{
+        headers: {
+            'Authorization': token
+        }
+    });
+    //   console.log(response.data)
+      if (response.status === 200) {
+        Navigate("/home/roles");
+      }
+    } catch (error) {
+      console.error('Error Adding roles:', error);
+    }
+  };
     const handleClick = (e) => {
         e.preventDefault()
         if (formData.roleName.length === 0) {
             setIserror(true)
-            console.log(iserror)
+            toast.error('Some fields are required', {
+                position: "top-right",
+                autoClose: 2000,
+                hideProgressBar: false,
+                closeOnClick: true,
+                pauseOnHover: true,
+                draggable: true,
+                progress: undefined,
+                theme: "light",
+            });
         }
         else if (id) {
+            addRoleById()
             console.log("Handle Update", formData)
         } else {
-            // console.log(manufacturingPerm)
-
+            addRole()
             console.log("Handle Create", formData)
         }
 
@@ -359,30 +284,63 @@ const AddorEditRoles = () => {
         const { name, checked } = e.target
         if (name === id) {
             let tempData = array.map((val) => {
-                setFormData({ ...formData, [val.name.replace(/_./g, (m) => m[1].toUpperCase())]: checked || false })
                 return { ...val, isChecked: checked }
+
             });
+            let newObj = { ...formData }
+            tempData.forEach(element => {
+                newObj[element.name.replace(/_./g, (m) => m[1].toUpperCase())] = element.type === "radio" ? element.lable : true
+
+            })
+            setFormData(newObj)
+            console.log(formData)
             setArray(tempData)
+
         }
 
     }
+    // const toCamelCase = (str) =>{
+    //     str = str.replace(/-./g, (m) => m[1].toUpperCase())
+    //     console.log(str)
+    //     return str
+
+    // }
 
 
+    useEffect(() => {
+        // Make an API call to fetch SPG's records
+        if (id) {
+            fetchRoleById()
 
-
-    const parms = useParams()
-    const id = parms.id
+        }
+        
+    }, [])
+ 
     return (
         <div className='w-full min-h-screen bg-gray-200 p-2'>
+            <ToastContainer
+                position="top-right"
+                autoClose={2000}
+                hideProgressBar={false}
+                newestOnTop={false}
+                closeOnClick
+                rtl={false}
+                pauseOnFocusLoss
+                draggable
+                pauseOnHover
+                theme="colored"
+            />
             <h1 className='text-2xl items-start flex mx-6 justify-start  font-semibold'>{id ? "Edit Role" : "Add Role"}</h1>
             <div className='flex flex-col rounded-md border-t-[3px] p-5 border-blue-600 bg-white w-[96%] mx-[2%] min-h-screen'>
                 <div className='flex flex-col items-start w-full'>
-                    <h1 className='text-lg flex'>Role Name:  <span className='text-red-500 mx-2 mt-1 text-sm'>{iserror && formData.roleName.length === 0 ? "Required Field" : ""} </span></h1>
+
+                    <h1 className='text-lg flex'>Role Name: *  <span className='text-red-500 mx-2 mt-1 text-sm'>{iserror && formData.roleName.length === 0 ? "Required Field" : ""} </span></h1>
                     <input type='text' value={formData.roleName} onChange={(e) => { setFormData({ ...formData, roleName: e.target.value }) }} placeholder='First Name' className='focus:outline-none w-full md:w-1/3 border-[1px] border-gray-300 px-2  rounded-sm p-1' />
+
                 </div>
                 <h1 className='flex text-lg font-semibold'>Permissions:</h1>
                 {/* Others */}
-                <h1 className='flex text-sm mt-3'>Others:</h1>
+                <h1 className='flex  text-xl mt-3'>Others:</h1>
                 <div className='flex flex-col md:flex-row w-full mt-3'>
                     <div className='w-full md:w-1/4'>
                         <div className='flex  items-center justify-start'>
@@ -400,6 +358,8 @@ const AddorEditRoles = () => {
                             return <div key={index} className='flex  items-center justify-start'>
                                 <input type='checkbox'
                                     checked={data?.isChecked || false}
+
+
                                     onChange={(e) => { handleChange(e, otherPerm, setOtherPerm); }}
                                     name={data.name}
                                     className='w-5 h-5 mt-2 mx-2'
@@ -416,7 +376,7 @@ const AddorEditRoles = () => {
                 </div>
                 <div className=' w-[94%] mx-[3%] mt-5 h-[2px] bg-black'></div>
                 {/* User */}
-                <h1 className='flex text-sm mt-3'>User:</h1>
+                <h1 className='flex text-xl mt-3'>User:</h1>
                 <div className='flex flex-col md:flex-row w-full mt-3'>
                     <div className='w-full md:w-1/4'>
                         <div className='flex  items-center justify-start'>
@@ -444,7 +404,7 @@ const AddorEditRoles = () => {
                 </div>
                 <div className=' w-[94%] mx-[3%] mt-5 h-[2px] bg-black'></div>
                 {/* Roles */}
-                <h1 className='flex text-sm mt-3'>Roles:</h1>
+                <h1 className='flex text-xl mt-3'>Roles:</h1>
                 <div className='flex flex-col md:flex-row w-full mt-3'>
 
                     <div className='w-full md:w-1/4'>
@@ -477,7 +437,7 @@ const AddorEditRoles = () => {
                 </div>
                 <div className=' w-[94%] mx-[3%] mt-5 h-[2px] bg-black'></div>
                 {/* Supplier */}
-                <h1 className='flex text-sm mt-3'>Supplier:</h1>
+                <h1 className='flex text-xl mt-3'>Supplier:</h1>
                 <div className='flex flex-col md:flex-row w-full mt-3'>
                     <div className='w-full md:w-1/4'>
                         <div className='flex  items-center justify-start'>
@@ -506,7 +466,7 @@ const AddorEditRoles = () => {
                 </div>
                 <div className=' w-[94%] mx-[3%] mt-5 h-[2px] bg-black'></div>
                 {/* Customer */}
-                <h1 className='flex text-sm mt-3'>Customer:</h1>
+                <h1 className='flex text-xl mt-3'>Customer:</h1>
                 <div className='flex flex-col md:flex-row w-full mt-3'>
                     <div className='w-full md:w-1/4'>
                         <div className='flex  items-center justify-start'>
@@ -536,7 +496,7 @@ const AddorEditRoles = () => {
                 </div>
                 <div className=' w-[94%] mx-[3%] mt-5 h-[2px] bg-black'></div>
                 {/* Product */}
-                <h1 className='flex text-sm mt-3'>Product:</h1>
+                <h1 className='flex text-xl mt-3'>Product:</h1>
                 <div className='flex flex-col md:flex-row w-full mt-3'>
                     <div className='w-full md:w-1/4'>
                         <div className='flex  items-center justify-start'>
@@ -566,7 +526,7 @@ const AddorEditRoles = () => {
                 </div>
                 <div className=' w-[94%] mx-[3%] mt-5 h-[2px] bg-black'></div>
                 {/* Purchase & Stock Adjustment */}
-                <h1 className='flex text-sm mt-3'>Purchase & Stock Adjustment:</h1>
+                <h1 className='flex text-xl mt-3'>Purchase & Stock Adjustment:</h1>
                 <div className='flex flex-col md:flex-row w-full mt-3'>
                     <div className='w-full md:w-1/4'>
                         <div className='flex  items-center justify-start'>
@@ -596,7 +556,7 @@ const AddorEditRoles = () => {
                 </div>
                 <div className=' w-[94%] mx-[3%] mt-5 h-[2px] bg-black'></div>
                 {/* Purchase Order */}
-                <h1 className='flex text-sm mt-3'>Purchase Order:</h1>
+                <h1 className='flex text-xl mt-3'>Purchase Order:</h1>
                 <div className='flex flex-col md:flex-row w-full mt-3'>
                     <div className='w-full md:w-1/4'>
                         <div className='flex  items-center justify-start'>
@@ -626,7 +586,7 @@ const AddorEditRoles = () => {
                 </div>
                 <div className=' w-[94%] mx-[3%] mt-5 h-[2px] bg-black'></div>
                 {/* POS */}
-                <h1 className='flex text-sm mt-3'>POS:</h1>
+                <h1 className='flex text-xl mt-3'>POS:</h1>
                 <div className='flex flex-col md:flex-row w-full mt-3'>
                     <div className='w-full md:w-1/4'>
                         <div className='flex  items-center justify-start'>
@@ -659,7 +619,7 @@ const AddorEditRoles = () => {
                 </div>
                 <div className=' w-[94%] mx-[3%] mt-5 h-[2px] bg-black'></div>
                 {/* Sell */}
-                <h1 className='flex text-sm mt-3'>Sell:</h1>
+                <h1 className='flex text-xl mt-3'>Sell:</h1>
                 <div className='flex flex-col md:flex-row w-full mt-3'>
                     <div className='w-full md:w-1/4'>
                         <div className='flex  items-center justify-start'>
@@ -689,7 +649,7 @@ const AddorEditRoles = () => {
                 </div>
                 <div className=' w-[94%] mx-[3%] mt-5 h-[2px] bg-black'></div>
                 {/* Draft */}
-                <h1 className='flex text-sm mt-3'>Draft:</h1>
+                <h1 className='flex text-xl mt-3'>Draft:</h1>
                 <div className='flex flex-col md:flex-row w-full mt-3'>
                     <div className='w-full md:w-1/4'>
                         <div className='flex  items-center justify-start'>
@@ -719,7 +679,7 @@ const AddorEditRoles = () => {
                 </div>
                 <div className=' w-[94%] mx-[3%] mt-5 h-[2px] bg-black'></div>
                 {/* Quotation */}
-                <h1 className='flex text-sm mt-3'>Quotation:</h1>
+                <h1 className='flex text-xl mt-3'>Quotation:</h1>
                 <div className='flex flex-col md:flex-row w-full mt-3'>
                     <div className='w-full md:w-1/4'>
                         <div className='flex  items-center justify-start'>
@@ -749,7 +709,7 @@ const AddorEditRoles = () => {
                 </div>
                 <div className=' w-[94%] mx-[3%] mt-5 h-[2px] bg-black'></div>
                 {/* Shipments */}
-                <h1 className='flex text-sm mt-3'>Shipments:</h1>
+                <h1 className='flex text-xl mt-3'>Shipments:</h1>
                 <div className='flex flex-col md:flex-row w-full mt-3'>
                     <div className='w-full md:w-1/4'>
                         <div className='flex  items-center justify-start'>
@@ -778,38 +738,9 @@ const AddorEditRoles = () => {
 
                 </div>
                 <div className=' w-[94%] mx-[3%] mt-5 h-[2px] bg-black'></div>
-                {/* Cash Register */}
-                <h1 className='flex text-sm mt-3'>Cash Register:</h1>
-                <div className='flex flex-col md:flex-row w-full mt-3'>
-                    <div className='w-full md:w-1/4'>
-                        <div className='flex  items-center justify-start'>
-                            <input type='checkbox'
-                                checked={cashPerm.filter((data) => data?.isChecked !== true).length < 1}
-                                onChange={(e) => { handleAllSelect(e, cashPerm, setCashPerm, "cashAll") }}
-                                name='cashAll' className='w-5 h-5 mt-2 mx-2' />
-                            <h1 className='flex text-sm mt-3'>Select All</h1>
 
-                        </div>
-                    </div>
-                    <div className='w-full md:w-3/4 grid grid-cols-1 md:grid-cols-2'>
-                        {cashPerm.map((data, index) => {
-                            return <div key={index} className='flex  items-center justify-start'>
-                                <input type={data.type || "checkbox"}
-                                    checked={data?.isChecked || false}
-                                    onChange={(e) => { handleChange(e, cashPerm, setCashPerm) }}
-                                    name={data.name}
-                                    className='w-5 h-5 mt-2 mx-2'
-                                />
-                                <h1 className='flex text-sm mt-3'>{data.lable}</h1>
-                            </div>
-
-                        })}
-                    </div>
-
-                </div>
-                <div className=' w-[94%] mx-[3%] mt-5 h-[2px] bg-black'></div>
                 {/* Brand */}
-                <h1 className='flex text-sm mt-3'>Brand:</h1>
+                <h1 className='flex text-xl mt-3'>Brand:</h1>
                 <div className='flex flex-col md:flex-row w-full mt-3'>
                     <div className='w-full md:w-1/4'>
                         <div className='flex  items-center justify-start'>
@@ -837,39 +768,10 @@ const AddorEditRoles = () => {
                     </div>
                     {/* Tax Rate */}
                 </div>
-                {/* Tax Rate */}
-                <div className=' w-[94%] mx-[3%] mt-5 h-[2px] bg-black'></div>
-                <h1 className='flex text-sm mt-3'>Tax Rate:</h1>
-                <div className='flex flex-col md:flex-row w-full mt-3'>
-                    <div className='w-full md:w-1/4'>
-                        <div className='flex  items-center justify-start'>
-                            <input type='checkbox'
-                                checked={taxratePerm.filter((data) => data?.isChecked !== true).length < 1}
-                                onChange={(e) => { handleAllSelect(e, taxratePerm, setTaxratePerm, "taxrateAll") }}
-                                name='taxrateAll' className='w-5 h-5 mt-2 mx-2' />
-                            <h1 className='flex text-sm mt-3'>Select All</h1>
 
-                        </div>
-                    </div>
-                    <div className='w-full md:w-3/4 grid grid-cols-1 md:grid-cols-2'>
-                        {taxratePerm.map((data, index) => {
-                            return <div key={index} className='flex  items-center justify-start'>
-                                <input type={data.type || "checkbox"}
-                                    checked={data?.isChecked || false}
-                                    onChange={(e) => { handleChange(e, taxratePerm, setTaxratePerm) }}
-                                    name={data.name}
-                                    className='w-5 h-5 mt-2 mx-2'
-                                />
-                                <h1 className='flex text-sm mt-3'>{data.lable}</h1>
-                            </div>
-
-                        })}
-                    </div>
-
-                </div>
                 <div className=' w-[94%] mx-[3%] mt-5 h-[2px] bg-black'></div>
                 {/* Unit */}
-                <h1 className='flex text-sm mt-3'>Unit:</h1>
+                <h1 className='flex text-xl mt-3'>Unit:</h1>
                 <div className='flex flex-col md:flex-row w-full mt-3'>
                     <div className='w-full md:w-1/4'>
                         <div className='flex  items-center justify-start'>
@@ -899,7 +801,7 @@ const AddorEditRoles = () => {
                 </div>
                 <div className=' w-[94%] mx-[3%] mt-5 h-[2px] bg-black'></div>
                 {/* Category */}
-                <h1 className='flex text-sm mt-3'>Category:</h1>
+                <h1 className='flex text-xl mt-3'>Category:</h1>
                 <div className='flex flex-col md:flex-row w-full mt-3'>
                     <div className='w-full md:w-1/4'>
                         <div className='flex  items-center justify-start'>
@@ -929,7 +831,7 @@ const AddorEditRoles = () => {
                 </div>
                 <div className=' w-[94%] mx-[3%] mt-5 h-[2px] bg-black'></div>
                 {/* Report */}
-                <h1 className='flex text-sm mt-3'>Report:</h1>
+                <h1 className='flex text-xl mt-3'>Report:</h1>
                 <div className='flex flex-col md:flex-row w-full mt-3'>
                     <div className='w-full md:w-1/4'>
                         <div className='flex  items-center justify-start'>
@@ -959,7 +861,7 @@ const AddorEditRoles = () => {
                 </div>
                 <div className=' w-[94%] mx-[3%] mt-5 h-[2px] bg-black'></div>
                 {/* Settings */}
-                <h1 className='flex text-sm mt-3'>Settings:</h1>
+                <h1 className='flex text-xl mt-3'>Settings:</h1>
                 <div className='flex flex-col md:flex-row w-full mt-3'>
                     <div className='w-full md:w-1/4'>
                         <div className='flex  items-center justify-start'>
@@ -989,7 +891,7 @@ const AddorEditRoles = () => {
                 </div>
                 <div className=' w-[94%] mx-[3%] mt-5 h-[2px] bg-black'></div>
                 {/* Expense */}
-                <h1 className='flex text-sm mt-3'>Expense:</h1>
+                <h1 className='flex text-xl mt-3'>Expense:</h1>
                 <div className='flex flex-col md:flex-row w-full mt-3'>
                     <div className='w-full md:w-1/4'>
                         <div className='flex  items-center justify-start'>
@@ -1019,7 +921,7 @@ const AddorEditRoles = () => {
                 </div>
                 <div className=' w-[94%] mx-[3%] mt-5 h-[2px] bg-black'></div>
                 {/* Home */}
-                <h1 className='flex text-sm mt-3'>Home:</h1>
+                <h1 className='flex text-xl mt-3'>Home:</h1>
                 <div className='flex flex-col md:flex-row w-full mt-3'>
                     <div className='w-full md:w-1/4'>
 
@@ -1042,7 +944,7 @@ const AddorEditRoles = () => {
                 </div>
                 <div className=' w-[94%] mx-[3%] mt-5 h-[2px] bg-black'></div>
                 {/* Account */}
-                <h1 className='flex text-sm mt-3'>Account:</h1>
+                <h1 className='flex text-xl mt-3'>Account:</h1>
                 <div className='flex flex-col md:flex-row w-full mt-3'>
                     <div className='w-full md:w-1/4'>
 
@@ -1063,178 +965,15 @@ const AddorEditRoles = () => {
                     </div>
 
                 </div>
-                {/* <div className=' w-[94%] mx-[3%] mt-5 h-[2px] bg-black'></div> */}
-                {/* Booking
-                <h1 className='flex text-sm mt-3'>Booking:</h1>
-                <div className='flex flex-col md:flex-row w-full mt-3'>
-                    <div className='w-full md:w-1/4'>
-                        
-                    </div>
-                    <div className='w-full md:w-3/4 grid grid-cols-1 md:grid-cols-2'>
-                        {bookingPerm.map((data, index) => {
-                            return <div key={index} className='flex  items-center justify-start'>
-                                <input type={data.type || "checkbox"}
-                                    checked={data?.isChecked || false}
-                                    onChange={(e) => { handleChange(e, bookingPerm, setBookingPerm) }}
-                                    name={data.name}
-                                    className='w-5 h-5 mt-2 mx-2'
-                                />
-                                <h1 className='flex text-sm mt-3'>{data.lable}</h1>
-                            </div>
-
-                        })}
-                    </div>
-
-                </div> */}
-                <div className=' w-[94%] mx-[3%] mt-5 h-[2px] bg-black'></div>
-                {/* Access Selling Price Group */}
-                <h1 className='flex text-sm mt-3'>Access Selling Price Group:</h1>
-                <div className='flex flex-col md:flex-row w-full mt-3'>
-                    <div className='w-full md:w-1/4'>
-                        <div className='flex  items-center justify-start'>
-
-
-                        </div>
-                    </div>
-                    <div className='w-full md:w-3/4 grid grid-cols-1 md:grid-cols-2'>
-                        {axsslngprcgrpPerm.map((data, index) => {
-                            return <div key={index} className='flex  items-center justify-start'>
-                                <input type={data.type || "checkbox"}
-                                    checked={data?.isChecked || false}
-                                    onChange={(e) => { handleChange(e, axsslngprcgrpPerm, setAxsslngprcgrpPerm) }}
-                                    name={data.name}
-                                    className='w-5 h-5 mt-2 mx-2'
-                                />
-                                <h1 className='flex text-sm mt-3'>{data.lable}</h1>
-                            </div>
-
-                        })}
-                    </div>
-
-                </div>
-                <div className=' w-[94%] mx-[3%] mt-5 h-[2px] bg-black'></div>
-                {/* Essentials
-                <h1 className='flex text-sm mt-3'>Essentials:</h1>
-                <div className='flex flex-col md:flex-row w-full mt-3'>
-                    <div className='w-full md:w-1/4'>
-                        
-                    </div>
-                    <div className='w-full md:w-3/4 grid grid-cols-1 md:grid-cols-2'>
-                        {essentialPerm.map((data, index) => {
-                            return <div key={index} className='flex  items-center justify-start'>
-                                <input type={data.type || "checkbox"}
-                                    checked={data?.isChecked || false}
-                                    onChange={(e) => { handleChange(e, essentialPerm, setEssentialPerm) }}
-                                    name={data.name}
-                                    className='w-5 h-5 mt-2 mx-2'
-                                />
-                                <h1 className='flex text-sm mt-3'>{data.lable}</h1>
-                            </div>
-
-                        })}
-                    </div>
-
-                </div> */}
-                {/* <div className=' w-[94%] mx-[3%] mt-5 h-[2px] bg-black'></div> */}
-                {/* Manufacturing */}
-                <h1 className='flex text-sm mt-3'>Manufacturing:</h1>
-                <div className='flex flex-col md:flex-row w-full mt-3'>
-                    <div className='w-full md:w-1/4'>
-
-                    </div>
-                    <div className='w-full md:w-3/4 grid grid-cols-1 md:grid-cols-2'>
-                        {manufacturingPerm.map((data, index) => {
-                            return <div key={index} className='flex  items-center justify-start'>
-                                <input type={data.type || "checkbox"}
-                                    checked={data?.isChecked || false}
-                                    onChange={(e) => { handleChange(e, manufacturingPerm, setManufacturingPerm) }}
-                                    name={data.name}
-                                    className='w-5 h-5 mt-2 mx-2'
-                                />
-                                <h1 className='flex text-sm mt-3'>{data.lable}</h1>
-                            </div>
-
-                        })}
-                    </div>
-
-                </div>
-                {/* <div className=' w-[94%] mx-[3%] mt-5 h-[2px] bg-black'></div> */}
-                {/* Project
-                <h1 className='flex text-sm mt-3'>Project:</h1>
-                <div className='flex flex-col md:flex-row w-full mt-3'>
-                    <div className='w-full md:w-1/4'>
-                        
-                    </div>
-                    <div className='w-full md:w-3/4 grid grid-cols-1 md:grid-cols-2'>
-                        {projectPerm.map((data, index) => {
-                            return <div key={index} className='flex  items-center justify-start'>
-                                <input type={data.type || "checkbox"}
-                                    checked={data?.isChecked || false}
-                                    onChange={(e) => { handleChange(e, projectPerm, setProjectPerm) }}
-                                    name={data.name}
-                                    className='w-5 h-5 mt-2 mx-2'
-                                />
-                                <h1 className='flex text-sm mt-3'>{data.lable}</h1>
-                            </div>
-
-                        })}
-                    </div>
-
-                </div> */}
-                {/* <div className=' w-[94%] mx-[3%] mt-5 h-[2px] bg-black'></div> */}
-                {/* Super Admin
-                <h1 className='flex text-sm mt-3'>Super Admin:</h1>
-                <div className='flex flex-col md:flex-row w-full mt-3'>
-                    <div className='w-full md:w-1/4'>
-                        
-                    </div>
-                    <div className='w-full md:w-3/4 grid grid-cols-1 md:grid-cols-2'>
-                        {superadminPerm.map((data, index) => {
-                            return <div key={index} className='flex  items-center justify-start'>
-                                <input type={data.type || "checkbox"}
-                                    checked={data?.isChecked || false}
-                                    onChange={(e) => { handleChange(e, superadminPerm, setSuperadminPerm) }}
-                                    name={data.name}
-                                    className='w-5 h-5 mt-2 mx-2'
-                                />
-                                <h1 className='flex text-sm mt-3'>{data.lable}</h1>
-                            </div>
-
-                        })}
-                    </div>
-
-                </div> */}
-                {/* <div className=' w-[94%] mx-[3%] mt-5 h-[2px] bg-black'></div> */}
-                {/* Woocommerce
-                <h1 className='flex text-sm mt-3'>Woocommerce:</h1>
-                <div className='flex flex-col md:flex-row w-full mt-3'>
-                    <div className='w-full md:w-1/4'>
-                        
-                    </div>
-                    <div className='w-full md:w-3/4 grid grid-cols-1 md:grid-cols-2'>
-                        {woocommercePerm.map((data, index) => {
-                            return <div key={index} className='flex  items-center justify-start'>
-                                <input type={data.type || "checkbox"}
-                                    checked={data?.isChecked || false}
-                                    onChange={(e) => { handleChange(e, woocommercePerm, setWoocommercePerm) }}
-                                    name={data.name}
-                                    className='w-5 h-5 mt-2 mx-2'
-                                />
-                                <h1 className='flex text-sm mt-3'>{data.lable}</h1>
-                            </div>
-
-                        })}
-                    </div> */}
-
-                {/* </div> */}
                 <div className=' w-[94%] mx-[3%] mt-5 h-[2px] bg-black'></div>
 
-                `` <button button onClick={handleClick} className='flex items-center  text-white w-20 bg-green-400 rounded-sm px-3 py-1 justify-start m-5' > {id ? "Update" : "Save"}</button>
+                <div className=' w-[94%] mx-[3%] mt-5 h-[2px] bg-black'></div>
+
+                ``<button onClick={handleClick} className='flex items-center  text-white w-20 bg-green-400 rounded-sm px-3 py-1 justify-start m-5'>{id ? "Update" : "Save"}</button>
 
             </div>
 
         </div>
-
     )
 }
 

@@ -96,7 +96,8 @@ const Login = () => {
     const [password, setPassword] = useState('')
     const [remember, setRemember] = useState(false)
 
-    const handleLogin = async () => {
+    const handleLogin = async (e) => {
+        console.log(e)
         try {
             const response = await axios.post('http://localhost:8000/admin/auth/login', {
                 userName,
@@ -131,6 +132,13 @@ const Login = () => {
             }
         }
     }
+    const handleEnter = (e)=>{
+        if(e.code === 'Enter'){
+            handleLogin(e)
+        }
+    }
+    
+
     const langChange = (e) => {
         if (e.target.name === "lang") {
             setLang(e.target.value)
@@ -186,7 +194,7 @@ const Login = () => {
                         <h1 className='text-white mx-3 text-xl'>{t('remember_me')}</h1>
                     </div>
                     <div className='flex justify-between mt-10'>
-                        <button type='submit' className='bg-blue-400 text-white text-xl px-2 py-1 mx-2' onClick={handleLogin}> {t('Login')}</button>
+                        <button type='submit' className='bg-blue-400 text-white text-xl px-2 py-1 mx-2' onClick={(e)=>{handleLogin(e)}} onKeyUp={(e)=>{handleEnter(e)}} >{t('Login')}</button>
                         <button className=' text-white text-xl mx-2'> {t('forgot_ur_password')}</button>
                     </div>
                 </div>

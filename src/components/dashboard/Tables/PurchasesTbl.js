@@ -1,6 +1,6 @@
 import React, { useRef, useState, useEffect } from 'react'
 import { AiFillCaretDown } from 'react-icons/ai'
-import {  FaBarcode, FaColumns, FaEdit, FaEnvelope, FaEye, FaFileCsv, FaFileExcel, FaFilePdf, FaMoneyBillAlt, FaPrint, FaSearch, FaTrash, FaUndo } from 'react-icons/fa'
+import { FaBarcode, FaColumns, FaEdit, FaEnvelope, FaEye, FaFileCsv, FaFileExcel, FaFilePdf, FaMoneyBillAlt, FaPrint, FaSearch, FaTrash, FaUndo } from 'react-icons/fa'
 import { useReactToPrint } from 'react-to-print';
 import { CSVLink } from 'react-csv';
 import * as XLSX from 'xlsx'
@@ -14,7 +14,7 @@ import BusinessLocation from './../settings/businesLocation/BusinessLocation';
 
 
 const PurchasesTbl = () => {
-    
+
     const printRef = useRef()
     let xlDatas = []
     //Export to Excel
@@ -63,18 +63,18 @@ const PurchasesTbl = () => {
     const [col8, setCol8] = useState(true)
     const [col9, setCol9] = useState(true)
     const [col10, setCol10] = useState(true)
-    
+
     const [isCliked, setIsCliked] = useState(false)
     const [showId, setShowId] = useState(0)
     const [isshow, setIsshow] = useState(false)
     const [actionList, setActionList] = useState(Array(record.length).fill(false))
 
     const toggleDropdown = (index) => {
-        const dropDownAction =[...actionList];
+        const dropDownAction = [...actionList];
         dropDownAction[index] = !dropDownAction[index];
         setActionList(dropDownAction);
     };
-   
+
     const csvData = [
         ["Username", "Name", "Role", "Email"],
         ...purchasesData.map(({ Username, Name, Role, Email }) => [
@@ -103,13 +103,13 @@ const PurchasesTbl = () => {
             setCrpage(crpage + 1)
         }
     }
-    const displayData = ()=>{
-        if(showId !==0 && isshow === true){
-          return <ViewPurchase id={showId} />
+    const displayData = () => {
+        if (showId !== 0 && isshow === true) {
+            return <ViewPurchase id={showId} />
         }
-      }
+    }
 
-const fetchPurchases = async () => {
+    const fetchPurchases = async () => {
         // let final = "final"
         try {
             const token = localStorage.getItem('token');
@@ -125,7 +125,7 @@ const fetchPurchases = async () => {
             console.error('Error fetching Drafts:', error);
         }
     };
-   
+
 
     const handleDeletePurchase = async (purId) => {
         try {
@@ -147,10 +147,10 @@ const fetchPurchases = async () => {
 
 
     }, []);
-
+   
     return (
         <div>
-            
+
             <div className='flex  flex-col md:flex-row  items-center justify-center mt-3 md:justify-between mx-5'>
 
                 <div className='flex items-center justify-center my-2 md:my-0'>
@@ -199,7 +199,7 @@ const fetchPurchases = async () => {
                                 <li className={` w-full py-1 ${col8 ? "" : "bg-blue-600"} hover:bg-blue-400 `} onClick={() => { setCol8(!col8) }}>Grand Total</li>
                                 <li className={` w-full py-1 ${col9 ? "" : "bg-blue-600"} hover:bg-blue-400 `} onClick={() => { setCol9(!col9) }}>Payment Due</li>
                                 <li className={` w-full py-1 ${col10 ? "" : "bg-blue-600"} hover:bg-blue-400 `} onClick={() => { setCol10(!col10) }}>Added By</li>
-                                
+
                             </ul>
                         </div>}
                     </button>
@@ -229,7 +229,7 @@ const fetchPurchases = async () => {
                             {col8 && <th className=" py-2 title-font  tracking-wider font-medium text-gray-900 text-sm bg-gray-200">Grand Total</th>}
                             {col9 && <th className=" py-2 title-font  tracking-wider font-medium text-gray-900 text-sm bg-gray-200">Payment Due</th>}
                             {col10 && <th className=" py-2 title-font  tracking-wider font-medium text-gray-900 text-sm bg-gray-200">Added By</th>}
-                            
+
                         </tr>
                     </thead>
                     <tbody >
@@ -243,32 +243,32 @@ const fetchPurchases = async () => {
                                         <AiFillCaretDown size={10} />
                                         {actionList[index] &&
                                             <ul className='absolute top-5 left-10 z-20 flex flex-col items-start w-[200px] bg-white text-gray-600 shadow-xl shadow-gray-400 '>
-                                                                                           
+
                                                 <li className='w-full'>
-                                                    <Link  onClick={()=>{setIsCliked(!isCliked); setShowId(value.id); setIsshow(true); }} className='flex px-2 py-1 w-full cursor-pointer hover:bg-gray-400 items-center '>
+                                                    <Link onClick={() => { setIsCliked(!isCliked); setShowId(value.id); setIsshow(true); }} className='flex px-2 py-1 w-full cursor-pointer hover:bg-gray-400 items-center '>
                                                         <FaEye size={15} />
                                                         <h1 className='text-sm'>View</h1>
-                                                    </Link >
+                                                    </Link>
                                                 </li>
                                                 <li className='w-full'>
-                                                    <div onClick={() => {  }} className='flex px-2 py-1 w-full cursor-pointer hover:bg-gray-400 items-center '>
+                                                    <div onClick={() => { }} className='flex px-2 py-1 w-full cursor-pointer hover:bg-gray-400 items-center '>
                                                         <FaPrint size={15} />
                                                         <h1 className='text-sm'>Print</h1>
                                                     </div>
                                                 </li>
                                                 <li className='w-full'>
-                                                    <div onClick={() => {  }} className='flex px-2 py-1 w-full cursor-pointer hover:bg-gray-400 items-center '>
+                                                    <Link to={`/home/purchase/edit/${value._id}`} className='flex px-2 py-1 w-full cursor-pointer hover:bg-gray-400 items-center '>
                                                         <FaEdit size={15} />
                                                         <h1 className='text-sm'>Edit</h1>
-                                                    </div>
+                                                    </Link>
                                                 </li>
                                                 <li className='w-full'>
-                                                    <div onClick={() => {  }} className='flex px-2 py-1 w-full cursor-pointer hover:bg-gray-400 items-center '>
+                                                    <div onClick={() => handleDeletePurchase(value._id)} className='flex px-2 py-1 w-full cursor-pointer hover:bg-gray-400 items-center '>
                                                         <FaTrash size={15} />
                                                         <h1 className='text-sm'>Delete</h1>
                                                     </div>
                                                 </li>
-                                                
+
                                             </ul>
                                         }
                                     </div>
@@ -279,23 +279,23 @@ const fetchPurchases = async () => {
                                 {col5 && <td className=" py-1 px-1">{value.supplier?.firstName}</td>}
                                 {col6 && <td className=" py-1 px-1">{value.status}</td>}
                                 {col7 && (
-                                        <td className="px-1 py-1 text-sm">
-                                            <button
-                                                // onClick={() => {
-                                                //     setIsCliked(true);
-                                                //     setIsShowPayment(true);
-                                                //     setPaymentId(value._id);
-                                                // }}
-                                                className="bg-green-400 text-white px-2 text-xs rounded-xl"
-                                            >
-                                                {(value.amount < value.totalPurchaseAmount || value.paymentMethod === "") ? "Due" : "Paid"}
-                                            </button>
-                                        </td>
-                                    )}                                
-                                    {col8 && <td className="px-1 py-1"> {value.totalPurchaseAmount}</td>}
+                                    <td className="px-1 py-1 text-sm">
+                                        <button
+                                            // onClick={() => {
+                                            //     setIsCliked(true);
+                                            //     setIsShowPayment(true);
+                                            //     setPaymentId(value._id);
+                                            // }}
+                                            className="bg-green-400 text-white px-2 text-xs rounded-xl"
+                                        >
+                                            {(value.amount < value.totalPurchaseAmount || value.paymentMethod === "") ? "Due" : "Paid"}
+                                        </button>
+                                    </td>
+                                )}
+                                {col8 && <td className="px-1 py-1"> {value.totalPurchaseAmount}</td>}
                                 {col9 && <td className="px-1 py-1">{(value.totalPurchaseAmount - value.amount) >= 0 ? value.totalPurchaseAmount - value.amount : ""}</td>}
                                 {col10 && <td className=" py-1 px-1">{value.Email}</td>}
-                                
+
                             </tr>
                         })}
 
@@ -309,7 +309,7 @@ const fetchPurchases = async () => {
             {isCliked &&
                 <div className='absolute top-0 flex flex-col items-center  justify-center right-0 bg-black/70 w-full min-h-screen'>
                     <div className='flex items-end justify-end w-full md:w-[70%]  mt-10 bg-white px-5 pt-2'>
-                        <MdCancel onClick={() => { setIsCliked(!isCliked);  setShowId(0) ;setIsshow(false) }} size={20} />
+                        <MdCancel onClick={() => { setIsCliked(!isCliked); setShowId(0); setIsshow(false) }} size={20} />
 
                     </div>
                     {displayData()}
@@ -336,7 +336,7 @@ const fetchPurchases = async () => {
             {isCliked &&
                 <div className='absolute top-0 flex flex-col items-center  justify-center right-0 bg-black/50 w-full min-h-screen'>
                     <div className='flex items-end justify-end w-full md:w-[80%]  mt-10 bg-white px-5 pt-2'>
-                        <MdCancel onClick={() => { setIsCliked(!isCliked); setShowId(0) ; }} size={20} />
+                        <MdCancel onClick={() => { setIsCliked(!isCliked); setShowId(0); }} size={20} />
 
                     </div>
                     {displayData()}
