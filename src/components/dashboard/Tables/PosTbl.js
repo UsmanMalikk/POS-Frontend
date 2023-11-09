@@ -12,6 +12,8 @@ import ViewSell from '../sell/ViewSell';
 import EditShipping from '../sell/EditShipping';
 import ViewPayment from '../payments/ViewPayment';
 import axios from 'axios';
+import Invoice from "../sell/Invoice";
+import { FcCheckmark } from 'react-icons/fc';
 
 
 const PosTbl = () => {
@@ -45,7 +47,7 @@ const PosTbl = () => {
     }
 
     const [posData, setPosData] = useState([]);
-    const [contactNo, setContactNo] = useState([]);
+    const [print, setPrint] = useState(false)
 
     const [crpage, setCrpage] = useState(1)
     const rcrdprpg = 5
@@ -80,11 +82,23 @@ const PosTbl = () => {
     const [editShipId, setEditShipId] = useState(0)
     const [iseditship, setIseditship] = useState(false)
     const [isCliked, setIsCliked] = useState(false)
-    const [actionList, setActionList] = useState(Array(record.length).fill(false))
-
+    const [actionList, setActionList] = useState(Array(1000).fill(false))
+    const [permission, setPermission] = useState(false)
+    const [isAlert, setIsAlert] = useState(false)
+    const [isdelete, setIsdelete] = useState(false)
+    const [deleteId, setDeleteId] = useState(0)
     const toggleDropdown = (index) => {
         const dropDownAction = [...actionList];
-        dropDownAction[index] = !dropDownAction[index];
+        dropDownAction.map((val, i) => {
+            if (i === index) {
+                dropDownAction[i] = !dropDownAction[i];
+
+            } else {
+                dropDownAction[i] = false
+            }
+            return dropDownAction
+        })
+
         setActionList(dropDownAction);
     };
 
@@ -121,8 +135,10 @@ const PosTbl = () => {
     const [showId, setShowId] = useState(0)
     const displayData = () => {
         if (showId !== 0 && isshow === true) {
-            return <ViewSell id={showId} name={"Pos"}/>
-        } 
+            return <ViewSell id={showId} name={"Pos"} />
+        } else if (print === true) {
+            return <Invoice number={showId} name={"Pos"} />;
+        }
     }
 
 
@@ -145,9 +161,15 @@ const PosTbl = () => {
     useEffect(() => {
 
         fetchSales();
+        const runDelete = () => {
+            if (permission === true) {
 
+                handleDeleteSale(deleteId)
+            }
+        }
+        runDelete()
 
-    }, []);
+    }, [permission]);
     const handleDeleteSale = async (saleId) => {
         try {
             const token = localStorage.getItem('token');
@@ -162,6 +184,19 @@ const PosTbl = () => {
             console.error('Error deleting Sale:', error);
         }
     };
+    const Alert = () => {
+        return (
+            <div className="flex flex-col items-center px-4 justify-center w-[300px] py-5 h-[200px] bg-white rounded-md">
+                <FcCheckmark size={100} className="items-center justify-center" />
+                <h1 className="text-4xl text-gray-500 text-center ">Are you sure!</h1>
+                <div className="flex items-center w-full justify-between mt-5">
+                    <button onClick={() => { setPermission(false); setIsAlert(false); setIsdelete(false) }} className="text-md rounded-md mx-2 px-2 py-1 bg-red-500 text-white">Cancel</button>
+                    <button onClick={() => { setPermission(true); setIsAlert(false); setIsdelete(false) }} className="text-md rounded-md mx-2 px-2 py-1 bg-green-500 text-white">OK</button>
+
+                </div>
+            </div>
+        )
+    }
     return (
         <div>
 
@@ -281,9 +316,9 @@ const PosTbl = () => {
                                                     </Link >
                                                 </li>
                                                 <li className='w-full'>
-                                                    <div onClick={() => { setIsedit(!isedit); setIsCliked(!isCliked) }} className='flex px-2 py-1 w-full cursor-pointer hover:bg-gray-400 items-center '>
+                                                    <div onClick={() => { setPrint(!print); setShowId(value._id); setIsCliked(!isCliked) }} className='flex px-2 py-1 w-full cursor-pointer hover:bg-gray-400 items-center '>
                                                         <FaPrint size={15} />
-                                                        <h1 className='text-sm'>Print</h1>
+                                                        <h1 className='text-sm'>Print Invoice</h1>
                                                     </div>
                                                 </li>
                                                 <li className='w-full'>
@@ -293,7 +328,11 @@ const PosTbl = () => {
                                                     </Link>
                                                 </li>
                                                 <li className='w-full'>
-                                                    <div onClick={() => {handleDeleteSale(value._id)}} className='flex px-2 py-1 w-full cursor-pointer hover:bg-gray-400 items-center '>
+                                                    <div onClick={() => {
+                                                        setIsAlert(!isCliked);
+                                                        setIsdelete(true)
+                                                        setDeleteId(value._id)
+                                                    }} className='flex px-2 py-1 w-full cursor-pointer hover:bg-gray-400 items-center '>
                                                         <FaTrash size={15} />
                                                         <h1 className='text-sm'>Delete</h1>
                                                     </div>
@@ -395,6 +434,11 @@ const PosTbl = () => {
                     </div>
                 </div>
 
+            }
+            {isAlert &&
+                <div className="absolute top-0 flex flex-col items-center  justify-center right-0 bg-black/70 w-full min-h-screen">
+                    {isdelete && <Alert />}
+                </div>
             }
         </div>
     )

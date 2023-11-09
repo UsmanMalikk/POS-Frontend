@@ -10,11 +10,12 @@ import { MdCancel } from 'react-icons/md';
 import { Link } from 'react-router-dom';
 import ViewSell from '../sell/ViewSell';
 import axios from 'axios';
+import { FcCheckmark } from 'react-icons/fc';
 
 
 
 const QuotationTbl = () => {
-    
+
     const printRef = useRef()
     let xlDatas = []
     //Export to Excel
@@ -65,14 +66,27 @@ const QuotationTbl = () => {
     const [col8, setCol8] = useState(true)
 
     const [isedit, setIsedit] = useState(false)
-
+    const [permission, setPermission] = useState(false)
+    const [isAlert, setIsAlert] = useState(false)
+    const [isdelete, setIsdelete] = useState(false)
+    const [deleteId, setDeleteId] = useState(0)
 
     const [isCliked, setIsCliked] = useState(false)
-    const [actionList, setActionList] = useState(Array(record.length).fill(false))
+    const [actionList, setActionList] = useState(Array(1000).fill(false))
 
     const toggleDropdown = (index) => {
         const dropDownAction = [...actionList];
-        dropDownAction[index] = !dropDownAction[index];
+        console.log(actionList);
+        dropDownAction.map((val, i) => {
+            if (i === index) {
+                dropDownAction[i] = !dropDownAction[i];
+
+            } else {
+                dropDownAction[i] = false
+            }
+            return dropDownAction
+        })
+
         setActionList(dropDownAction);
     };
 
@@ -109,24 +123,10 @@ const QuotationTbl = () => {
     const [showId, setShowId] = useState(0)
     const displayData = () => {
         if (showId !== 0 && isshow === true) {
-            return <ViewSell id={showId} />
+            return <ViewSell id={showId} name={"Quotation"} />
         }
     }
 
-
-
-    // const fetchContactById = async () => {
-
-    //     //     try {
-    //     //         // const token = localStorage.getItem('token');
-    //     //         const response = await axios.get(`http://localhost:8000/admin/contact/customer/${salesData.customer}`); //Give the path to get contact by id
-    //     //         // console.log(response)
-    //     //         setContactNo(response.data);
-
-    //     //     } catch (error) {
-    //     //         console.error('Error fetching Contact:', error);
-    //     //     }
-    //     };
     const fetchSales = async () => {
 
         try {
@@ -142,25 +142,47 @@ const QuotationTbl = () => {
             console.error('Error fetching Quotations:', error);
         }
     };
-    // useEffect(() => {
-    //     if(salesData){
-    //         fetchContactById()
-
-    //     }
-    //     else{
-    //         fetchSales();
-
-    //     }
-    // }, []);
-
+    
+    const handleDeleteQuotation = async (draftId) => {
+        try {
+            const token = localStorage.getItem('token');
+            const response = await axios.delete(`http://localhost:8000/admin/sales/quotations/${draftId}`, {
+                headers: {
+                    'Authorization': token
+                }
+            });
+            console.log('SPG deleted:', response.data); // Handle success response
+            fetchSales()
+        } catch (error) {
+            console.error('Error deleting spg:', error);
+        }
+    };
 
     useEffect(() => {
 
         fetchSales();
 
+        const runDelete = () => {
+            if (permission === true) {
 
-    }, []);
+                handleDeleteQuotation(deleteId)
+            }
+        }
+        runDelete()
+    }, [permission]);
+    const Alert = () => {
+        return (
+            <div className="flex flex-col items-center px-4 justify-center w-[300px] py-5 h-[200px] bg-white rounded-md">
+                <FcCheckmark size={100} className="items-center justify-center" />
+                <h1 className="text-4xl text-gray-500 text-center ">Are you sure!</h1>
+                <div className="flex items-center w-full justify-between mt-5">
+                    <button onClick={() => { setPermission(false); setIsAlert(false); setIsdelete(false) }} className="text-md rounded-md mx-2 px-2 py-1 bg-red-500 text-white">Cancel</button>
+                    <button onClick={() => { setPermission(true); setIsAlert(false); setIsdelete(false) }} className="text-md rounded-md mx-2 px-2 py-1 bg-green-500 text-white">OK</button>
 
+                </div>
+            </div>
+        )
+    }
     return (
         <div>
 
@@ -248,11 +270,11 @@ const QuotationTbl = () => {
                             return <tr key={index} className=''>
                                 {col1 && <td className="px-1 py-1 text-sm">{date} </td>}
                                 {col2 && <td className="px-1 py-1 text-sm">{value.invoiceNumber}</td>}
-                                {col3 && <td className="px-1 py-1"> {value.customer}</td>}
-                                {col4 && <td className="px-1 py-1">{contactNo}</td>}
+                                {col3 && <td className="px-1 py-1"> {value.customer?.prefix + " " + value.customer?.firstName}</td>}
+                                {col4 && <td className="px-1 py-1">{value.customer?.mobile}</td>}
                                 {col5 && <td className=" py-1 px-1">{value.businesLocation}</td>}
                                 {col6 && <td className=" py-1 px-1">{value.inputData.length}</td>}
-                                {col7 && <td className="px-1 py-1 text-sm">{value.Role}</td>}
+                                {col7 && <td className="px-1 py-1 text-sm">{value.deliveryPersonUser?.firstName || value.deliveryPersonAdmin?.firstName}</td>}
                                 {col8 &&
                                     <td className='py-1 flex '>
                                         <div onClick={() => { toggleDropdown(index) }} className='flex px-2 py-1 relative cursor-pointer items-center bg-green-600 rounded-xl text-white justify-center'>
@@ -267,20 +289,19 @@ const QuotationTbl = () => {
                                                             <h1 className='text-sm'>View</h1>
                                                         </Link >
                                                     </li>
+
                                                     <li className='w-full'>
-                                                        <div onClick={() => { setIsedit(!isedit); setIsCliked(!isCliked) }} className='flex px-2 py-1 w-full cursor-pointer hover:bg-gray-400 items-center '>
-                                                            <FaPrint size={15} />
-                                                            <h1 className='text-sm'>Print</h1>
-                                                        </div>
-                                                    </li>
-                                                    <li className='w-full'>
-                                                        <Link to={`/home/sells/quotations/edit/${value.id}`} className='flex px-2 py-1 w-full cursor-pointer hover:bg-gray-400 items-center '>
+                                                        <Link to={`/home/sells/quotations/edit/${value._id}`} className='flex px-2 py-1 w-full cursor-pointer hover:bg-gray-400 items-center '>
                                                             <FaEdit size={15} />
                                                             <h1 className='text-sm'>Edit</h1>
                                                         </Link >
                                                     </li>
                                                     <li className='w-full'>
-                                                        <div onClick={() => { setIsedit(!isedit); setIsCliked(!isCliked) }} className='flex px-2 py-1 w-full cursor-pointer hover:bg-gray-400 items-center '>
+                                                        <div onClick={() => {
+                                                            setIsAlert(!isCliked);
+                                                            setIsdelete(true)
+                                                            setDeleteId(value._id)
+                                                        }} className='flex px-2 py-1 w-full cursor-pointer hover:bg-gray-400 items-center '>
                                                             <FaTrash size={15} />
                                                             <h1 className='text-sm'>Delete</h1>
                                                         </div>
@@ -330,6 +351,11 @@ const QuotationTbl = () => {
                     </div>
                 </div>
 
+            }
+            {isAlert &&
+                <div className="absolute top-0 flex flex-col items-center  justify-center right-0 bg-black/70 w-full min-h-screen">
+                    {isdelete && <Alert />}
+                </div>
             }
         </div>
     )

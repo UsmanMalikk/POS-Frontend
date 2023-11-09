@@ -23,6 +23,7 @@ import { Link } from "react-router-dom";
 import ViewSell from "../sell/ViewSell";
 import ViewPayment from "../payments/ViewPayment";
 import axios from 'axios';
+import { FcCheckmark } from 'react-icons/fc';
 
 const Expensestbl = () => {
   // 
@@ -86,12 +87,24 @@ const Expensestbl = () => {
 
   const [isCliked, setIsCliked] = useState(false);
   const [actionList, setActionList] = useState(
-    Array(record.length).fill(false)
+    Array(1000).fill(false)
   );
-
+  const [permission, setPermission] = useState(false)
+  const [isAlert, setIsAlert] = useState(false)
+  const [isdelete, setIsdelete] = useState(false)
+  const [deleteId, setDeleteId] = useState(0)
   const toggleDropdown = (index) => {
     const dropDownAction = [...actionList];
-    dropDownAction[index] = !dropDownAction[index];
+    dropDownAction.map((val, i) => {
+      if (i === index) {
+        dropDownAction[i] = !dropDownAction[i];
+
+      } else {
+        dropDownAction[i] = false
+      }
+      return dropDownAction
+    })
+
     setActionList(dropDownAction);
   };
 
@@ -208,9 +221,22 @@ const Expensestbl = () => {
   useEffect(() => {
 
     fetchExpanses();
+    const runDelete = () => {
+      if (permission === true) {
 
+        handleDeleteExpense(deleteId)
+      }
+    }
+    runDelete()
 
-  }, []);
+  }, [permission]);
+  const findTotalExpense = () => {
+    let total = 0
+    expansesData.map(val => {
+      return total += (parseFloat(val.totalAmount))
+    })
+    return total
+  }
   const handleDeleteExpense = async (expId) => {
     try {
       const token = localStorage.getItem('token');
@@ -225,6 +251,20 @@ const Expensestbl = () => {
       console.error('Error deleting Expense:', error);
     }
   };
+  const Alert = () => {
+    return (
+      <div className="flex flex-col items-center px-4 justify-center w-[300px] py-5 h-[200px] bg-white rounded-md">
+        <FcCheckmark size={100} className="items-center justify-center" />
+        <h1 className="text-4xl text-gray-500 text-center ">Are you sure!</h1>
+        <div className="flex items-center w-full justify-between mt-5">
+          <button onClick={() => { setPermission(false); setIsAlert(false); setIsdelete(false) }} className="text-md rounded-md mx-2 px-2 py-1 bg-red-500 text-white">Cancel</button>
+          <button onClick={() => { setPermission(true); setIsAlert(false); setIsdelete(false) }} className="text-md rounded-md mx-2 px-2 py-1 bg-green-500 text-white">OK</button>
+
+        </div>
+      </div>
+    )
+  }
+
   return (
     <div>
       <div className="flex  flex-col md:flex-row  items-center justify-center mt-3 md:justify-between mx-5">
@@ -555,9 +595,9 @@ const Expensestbl = () => {
                             <li className="w-full">
                               <div
                                 onClick={() => {
-                                  setIsedit(!isedit);
-                                  setIsCliked(!isCliked);
-                                  handleDeleteExpense(value._id)
+                                  setIsAlert(!isCliked);
+                                  setIsdelete(true)
+                                  setDeleteId(value._id)
                                 }}
                                 className="flex px-2 py-1 w-full cursor-pointer hover:bg-gray-400 items-center "
                               >
@@ -614,8 +654,26 @@ const Expensestbl = () => {
             })}
           </tbody>
           <tfoot>
-            <tr></tr>
-          </tfoot>
+            <tr className='h-[100px] bg-gray-400 '>
+              <td colSpan={5}>Total</td>
+              <td></td>
+
+
+              <td>
+                <h1 className='text-xs'> </h1>
+              </td>
+              <td>
+                <h1 className='text-xs'> Rs. {findTotalExpense()}</h1>
+              </td>
+
+
+
+
+
+              <td colSpan={6}>
+
+              </td>
+            </tr>          </tfoot>
         </table>
       </div>
       <nav className="  my-2 w-full">
@@ -677,6 +735,11 @@ const Expensestbl = () => {
           </div>
         </div>
       )}
+      {isAlert &&
+        <div className="absolute top-0 flex flex-col items-center  justify-center right-0 bg-black/70 w-full min-h-screen">
+          {isdelete && <Alert />}
+        </div>
+      }
     </div>
   );
 };

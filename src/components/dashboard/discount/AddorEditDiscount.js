@@ -2,7 +2,8 @@ import React, { useState, useEffect } from 'react'
 import { FaInfoCircle } from 'react-icons/fa'
 
 import axios from 'axios';
-
+import { toast, ToastContainer } from 'react-toastify';
+import "react-toastify/dist/ReactToastify.css";
 const AddorEditDiscount = (props) => {
     // console.log(props)
     const [formData, setFormData] = useState({
@@ -39,7 +40,7 @@ const AddorEditDiscount = (props) => {
 
         try {
             const token = localStorage.getItem('token');
-            const response = await axios.get(`http://localhost:8000/admin/selling-price-groups`,{
+            const response = await axios.get(`http://localhost:8000/admin/selling-price-groups`, {
                 headers: {
                     'Authorization': token
                 }
@@ -56,7 +57,7 @@ const AddorEditDiscount = (props) => {
 
         try {
             const token = localStorage.getItem('token');
-            const response = await axios.get(`http://localhost:8000/admin/products`,{
+            const response = await axios.get(`http://localhost:8000/admin/products`, {
                 headers: {
                     'Authorization': token
                 }
@@ -72,7 +73,7 @@ const AddorEditDiscount = (props) => {
 
         try {
             const token = localStorage.getItem('token');
-            const response = await axios.get(`http://localhost:8000/admin/categories`,{
+            const response = await axios.get(`http://localhost:8000/admin/categories`, {
                 headers: {
                     'Authorization': token
                 }
@@ -90,7 +91,7 @@ const AddorEditDiscount = (props) => {
 
         try {
             const token = localStorage.getItem('token');
-            const response = await axios.get(`http://localhost:8000/admin/brands`,{
+            const response = await axios.get(`http://localhost:8000/admin/brands`, {
                 headers: {
                     'Authorization': token
                 }
@@ -106,7 +107,7 @@ const AddorEditDiscount = (props) => {
 
         try {
             const token = localStorage.getItem('token');
-            const response = await axios.get(`http://localhost:8000/admin/discounts/${props.id}`,{
+            const response = await axios.get(`http://localhost:8000/admin/discounts/${props.id}`, {
                 headers: {
                     'Authorization': token
                 }
@@ -139,19 +140,41 @@ const AddorEditDiscount = (props) => {
         try {
             const token = localStorage.getItem('token');
             // console.log(formData)
-            const response = await axios.post(`http://localhost:8000/admin/discounts`, formData,{
+            const response = await axios.post(`http://localhost:8000/admin/discounts`, formData, {
                 headers: {
                     'Authorization': token
                 }
             });
             // console.log(response)
             if (response.status === 201) {
-                window.location.reload();
+                toast.success('Data Saved', {
+                    position: "top-right",
+                    autoClose: 2000,
+                    hideProgressBar: false,
+                    closeOnClick: true,
+                    pauseOnHover: true,
+                    draggable: true,
+                    progress: undefined,
+                    theme: "light",
+                });
+                setTimeout(() => {
+                    window.location.reload();
+                }, 2000);
 
-                console.log("Success")
+
             }
         } catch (error) {
             console.error('Error Adding Discount:', error);
+            toast.error(error.response.data.message, {
+                position: "top-right",
+                autoClose: 2000,
+                hideProgressBar: false,
+                closeOnClick: true,
+                pauseOnHover: true,
+                draggable: true,
+                progress: undefined,
+                theme: "light",
+            });
         }
     };
 
@@ -160,19 +183,41 @@ const AddorEditDiscount = (props) => {
         try {
             const token = localStorage.getItem('token');
             // console.log(formData)
-            const response = await axios.put(`http://localhost:8000/admin/discounts/${props.id}`, formData,{
+            const response = await axios.put(`http://localhost:8000/admin/discounts/${props.id}`, formData, {
                 headers: {
                     'Authorization': token
                 }
             });
             console.log(response)
             if (response.status === 200) {
-                window.location.reload();
+                toast.success('Data Saved', {
+                    position: "top-right",
+                    autoClose: 2000,
+                    hideProgressBar: false,
+                    closeOnClick: true,
+                    pauseOnHover: true,
+                    draggable: true,
+                    progress: undefined,
+                    theme: "light",
+                });
+                setTimeout(() => {
+                    window.location.reload();
+                }, 2000);
 
-                console.log("Success")
+
             }
         } catch (error) {
             console.error('Error Adding Discount:', error);
+            toast.error(error.response.data.message, {
+                position: "top-right",
+                autoClose: 2000,
+                hideProgressBar: false,
+                closeOnClick: true,
+                pauseOnHover: true,
+                draggable: true,
+                progress: undefined,
+                theme: "light",
+            });
         }
     };
 
@@ -185,6 +230,16 @@ const AddorEditDiscount = (props) => {
             formData.discountType.length === 0 ||
             formData.discountAmount.length === 0) {
             setIsserror(true)
+            toast.error('Some fields are required', {
+                position: "top-right",
+                autoClose: 2000,
+                hideProgressBar: false,
+                closeOnClick: true,
+                pauseOnHover: true,
+                draggable: true,
+                progress: undefined,
+                theme: "light",
+            });
         } else if (props.id) {
             addDiscountById()
             console.log("Handle Update", formData)
@@ -196,6 +251,18 @@ const AddorEditDiscount = (props) => {
 
     return (
         <div className='w-full flex flex-col bg-white p-2 '>
+            <ToastContainer
+                position="top-right"
+                autoClose={2000}
+                hideProgressBar={false}
+                newestOnTop={false}
+                closeOnClick
+                rtl={false}
+                pauseOnFocusLoss
+                draggable
+                pauseOnHover
+                theme="colored"
+            />
             <h1 className='text-start'>{props.id ? "Edit" : "Add"} Discount</h1>
             <div className='flex flex-col'>
                 <div className='flex flex-col'>

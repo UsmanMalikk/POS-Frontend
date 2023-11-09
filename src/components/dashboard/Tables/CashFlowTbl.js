@@ -1,4 +1,4 @@
-import React, { useRef, useState } from 'react'
+import React, { useRef, useState, useEffect } from 'react'
 import { FaColumns, FaFileCsv, FaFileExcel, FaFilePdf, FaInfoCircle, FaPrint, FaSearch } from 'react-icons/fa'
 import { useReactToPrint } from 'react-to-print';
 import { CSVLink } from 'react-csv';
@@ -108,6 +108,7 @@ const CashFlowTbl = () => {
     const [col7, setCol7] = useState(true)
     const [col8, setCol8] = useState(true)
     const [col10, setCol10] = useState(true)
+    
 
     const [isedit, setIsedit] = useState(false)
     const [open1, setOpen1] = useState(false)
@@ -241,24 +242,24 @@ const CashFlowTbl = () => {
                             {col6 && <th className=" py-2 title-font  tracking-wider font-medium text-gray-900 text-sm bg-gray-200">Credit</th>}
                             {col7 && <th className="  py-2 title-font  tracking-wider font-medium text-gray-900 text-sm bg-gray-200">
                                 <h1 className='flex justify-between relative'>Account Balance
-                                <FaInfoCircle onMouseOver={() => { setOpen1(true) }} onMouseLeave={() => { setOpen1(false) }} size={15} style={{ color: "skyblue" }} className='mx-1 mt-1 cursor-help' />
-                                {open1 &&
-                                    <div className=' flex-col w-[120px] rounded-md border-[2px] border-gray-400 absolute top-5 left-5 p-2 z-10 bg-white shadow-md shadow-gray-300'>
-                                        <p className='text-start'>Total Balance of the particular account</p>
+                                    <FaInfoCircle onMouseOver={() => { setOpen1(true) }} onMouseLeave={() => { setOpen1(false) }} size={15} style={{ color: "skyblue" }} className='mx-1 mt-1 cursor-help' />
+                                    {open1 &&
+                                        <div className=' flex-col w-[120px] rounded-md border-[2px] border-gray-400 absolute top-5 left-5 p-2 z-10 bg-white shadow-md shadow-gray-300'>
+                                            <p className='text-start'>Total Balance of the particular account</p>
 
-                                    </div>
-                                }
+                                        </div>
+                                    }
                                 </h1>
                             </th>}
                             {col8 && <th className="  py-2 title-font  tracking-wider font-medium text-gray-900 text-sm bg-gray-200">
                                 <h1 className='flex justify-between relative'>Total Balance
-                                <FaInfoCircle onMouseOver={() => { setOpen2(true) }} onMouseLeave={() => { setOpen2(false) }} size={15} style={{ color: "skyblue" }} className='mx-1 mt-1 cursor-help' />
-                                {open2 &&
-                                    <div className='flex flex-col w-[120px] rounded-md border-[2px] border-gray-400 absolute top-5 right-2 p-2 z-10 bg-white shadow-md shadow-gray-300'>
-                                        <p className='text-start'>Total Balance of all account</p>
+                                    <FaInfoCircle onMouseOver={() => { setOpen2(true) }} onMouseLeave={() => { setOpen2(false) }} size={15} style={{ color: "skyblue" }} className='mx-1 mt-1 cursor-help' />
+                                    {open2 &&
+                                        <div className='flex flex-col w-[120px] rounded-md border-[2px] border-gray-400 absolute top-5 right-2 p-2 z-10 bg-white shadow-md shadow-gray-300'>
+                                            <p className='text-start'>Total Balance of all account</p>
 
-                                    </div>
-                                }
+                                        </div>
+                                    }
                                 </h1>
                             </th>}
 

@@ -5,6 +5,7 @@ import "react-toastify/dist/ReactToastify.css";
 import axios from 'axios';
 import { useNavigate } from "react-router-dom"
 
+
 const AddorEditRoles = () => {
     const Navigate = useNavigate();
 
@@ -26,21 +27,21 @@ const AddorEditRoles = () => {
         { name: "delete_role", lable: "Delete role" }
     ])
     const [supplierPerm, setSupplierPerm] = useState([
-        { name: "view_all_supplier", lable: " View All Supplier", type: "radio" },
-        { name: "view_all_supplier", lable: "View Own Supplier", type: "radio" },
+        { name: "view_all_supplier", lable: " View All Supplier" },
+        { name: "view_all_supplier", lable: "View Own Supplier" },
         { name: "view_supplier", lable: " View supplier" },
         { name: "add_supplier", lable: "Add supplier" },
         { name: "edit_supplier", lable: "Edit supplier" },
         { name: "delete_supplier", lable: "Delete supplier" }
     ])
     const [customerPerm, setCustomerPerm] = useState([
-        { name: "view_all_customer", lable: " View All Customer", type: "radio" },
-        { name: "view_all_customer", lable: "View Own Customer", type: "radio" },
-        { name: "view_sell_customer", lable: "View customers with no sell from one month only", type: "radio" },
-        { name: "view_sell_customer", lable: "View customers with no sell from three months only", type: "radio" },
-        { name: "view_sell_customer", lable: "View customers with no sell from six months only", type: "radio" },
-        { name: "view_sell_customer", lable: "View customers with no sell from one year only", type: "radio" },
-        { name: "view_sell_customer", lable: "View customers with no sell from one year only", type: "radio" },
+        { name: "view_all_customer", lable: " View All Customer" },
+        { name: "view_all_customer", lable: "View Own Customer" },
+        { name: "view_sell_customer", lable: "View customers with no sell from one month only" },
+        { name: "view_sell_customer", lable: "View customers with no sell from three months only" },
+        { name: "view_sell_customer", lable: "View customers with no sell from six months only" },
+        { name: "view_sell_customer", lable: "View customers with no sell from one year only" },
+        { name: "view_sell_customer", lable: "View customers with no sell from one year only" },
         { name: "add_customer", lable: "Add Customer" },
         { name: "edit_customer", lable: "Edit Customer" },
         { name: "delete_customer", lable: "Delete Customer" }
@@ -54,8 +55,8 @@ const AddorEditRoles = () => {
         { name: "view_purchase_price", lable: "View Purchase Price" }
     ])
     const [purStkAdjusPerm, setPurStkAdjusPerm] = useState([
-        { name: "view_all_psd", lable: " View All Purchase & Stock Adjustment", type: "radio" },
-        { name: "view_all_psd", lable: "View Own Purchase & Stock Adjustment", type: "radio" },
+        { name: "view_all_psd", lable: " View All Purchase & Stock Adjustment" },
+        { name: "view_all_psd", lable: "View Own Purchase & Stock Adjustment" },
         { name: "add_psd", lable: "Add purchase & Stock Adjustment" },
         { name: "edit_psd", lable: "Edit purchase & Stock Adjustment" },
         { name: "delete_psd", lable: "Delete purchase & Stock Adjustment" },
@@ -66,8 +67,8 @@ const AddorEditRoles = () => {
 
     ])
     const [purOrderPerm, setPurOrderPerm] = useState([
-        { name: "view_all_purcOrder", lable: " View All Purchase Order", type: "radio" },
-        { name: "view_all_purcOrder", lable: "View Own Purchase Order", type: "radio" },
+        { name: "view_all_purcOrder", lable: " View All Purchase Order" },
+        { name: "view_all_purcOrder", lable: "View Own Purchase Order" },
         { name: "add_purcOrder", lable: "Add Purchase Order" },
         { name: "edit_purcOrder", lable: "Edit Purchase Order" },
         { name: "delete_purcOrder", lable: "Delete Purchase Order" }
@@ -83,8 +84,8 @@ const AddorEditRoles = () => {
         { name: "prnt_Invoice", lable: "Print Invoice" },
     ])
     const [sellPerm, setSellPerm] = useState([
-        { name: "view_all_sell", lable: " View All Sell", type: "radio" },
-        { name: "view_all_sell", lable: "View Own Sell only", type: "radio" },
+        { name: "view_all_sell", lable: " View All Sell" },
+        { name: "view_all_sell", lable: "View Own Sell only" },
         { name: "view_paid_sell_only", lable: "View Paid Sell Only" },
         { name: "view_due_sell_only", lable: "View Due Sell Only" },
         { name: "view_partially_paid_sell_only", lable: "View Partially Paid Sell Only" },
@@ -104,20 +105,20 @@ const AddorEditRoles = () => {
         { name: "ad_edt_Invoice_number", lable: "Add/Edit Invoice Number" }
     ])
     const [draftPerm, setDraftPerm] = useState([
-        { name: "view_draft", lable: " View All Draft", type: "radio" },
-        { name: "view_draft", lable: "View Own Draft", type: "radio" },
+        { name: "view_draft", lable: " View All Draft" },
+        { name: "view_draft", lable: "View Own Draft" },
         { name: "edit_draft", lable: "Edit Draft" },
         { name: "delete_draft", lable: "Delete Draft" }
     ])
     const [quotationPerm, setQuotationPerm] = useState([
-        { name: "view_quotation", lable: " View All Quotation", type: "radio" },
-        { name: "view_quotation", lable: "View Own Quotation", type: "radio" },
+        { name: "view_quotation", lable: " View All Quotation" },
+        { name: "view_quotation", lable: "View Own Quotation" },
         { name: "edit_quotation", lable: "Edit Quotation" },
         { name: "delete_quotation", lable: "Delete Quotation" }
     ])
     const [shipmentPerm, setShipmentPerm] = useState([
-        { name: "view_shipmet", lable: " View All Shipment", type: "radio" },
-        { name: "view_shipmet", lable: "View Own Shipment", type: "radio" },
+        { name: "view_shipmet", lable: " View All Shipment" },
+        { name: "view_shipmet", lable: "View Own Shipment" },
         { name: "edit_shipmet", lable: "Edit Shipment" },
         { name: "delete_shipmet", lable: "Delete Shipment" }
     ])
@@ -193,31 +194,139 @@ const AddorEditRoles = () => {
 
     const [formData, setFormData] = useState({
         roleName: "",
+        // accessAccounts: false,
+        // accessAllSellReturn: false,
+        // accessAllShipments: false,
+        // accessAlleEpenses: false,
+        // accessBusinessSettings: false,
+        // accessInvoiceSettings: false,
+        // accessOwnSellReturn: false,
+        // accessOwnShipments: false,
+        // accessProduction: false,
+        // accessTypesOfService: false,
+        // addBrand: false,
+        // addCategory: false,
+        // addCustomer: false,
+        // addEditDeleteDiscount: false,
+        // addEditInvoiceNumber: false,
+        // addExpense: false,
+        // addOpeningStock: false,
+        // addPossell: false,
+        // addProduct: false,
+        // addPurchasePayment: false,
+        // addPurchaseStockAdjustment: false,
+        // addRecipe: false,
+        // addRole: false,
+        // addSell: false,
+        // addSellPayment: false,
+        // addSupplier: false,
+        // addTaxRate: false,
+        // addUnit: false,
+        // addUser: false,
+        // addeditPayment: false,
+        // closeCashRegister: false,
+        // createPurchaseOrder: false,
+        // defaultSellingPrice: false,
+        // deleteAccountTransaction: false,
+        // deleteBrand: false,
+        // deleteCategory: false,
+        // deleteCustomer: false,
+        // deleteDraft: false,
+        // deleteExpense: false,
+        // deletePossell: false,
+        // deleteProduct: false,
+        // deletePurchaseOrder: false,
+        // deletePurchasePayment: false,
+        // deletePurchaseStockAdjustment: false,
+        // deleteQuotation: false,
+        // deleteRole: false,
+        // deleteSell: false,
+        // deleteSellPayment: false,
+        // deleteSupplier: false,
+        // deleteTaxRate: false,
+        // deleteUnit: false,
+        // deleteUser: false,
+        // editAccountTransaction: false,
+        // editBrand: false,
+        // editCategory: false,
+        // editCustomer: false,
+        // editDraft: false,
+        // editExpense: false,
+        // editPossell: false,
+        // editProduct: false,
+        // editProductDiscountFromSalesScreen: false,
+        // editProductPriceFromSalesScreen: false,
+        // editProductdiscountfromposscreen: false,
+        // editProductpricefromposscreen: false,
+        // editPurchaseOrder: false,
+        // editPurchasePayment: false,
+        // editPurchaseStockAdjustment: false,
+        // editQuotation: false,
+        // editRecipe: false,
+        // editRole: false,
+        // editSellPayment: false,
+        // editSupplier: false,
+        // editTaxRate: false,
+        // editUnit: false,
+        // editUser: false,
+        // localSale: false,
+        // minimumPrice: false,
+        // printinvoice: false,
+        // retail: false,
+
+        // saleMan: false,
+        // salePoint: false,
+        // updateSell: false,
+        // updateStatus: false,
+        // viewAllCustomer: false,
+        // viewAllDrafts: false,
+        // viewAllPurchaseStockAdjustment: false,
+        // viewAllQuotations: false,
+        // viewAllSell: false,
+        // viewAllSupplier: false,
+        // viewBrand: false,
+        // viewCategory: false,
+        // viewHomeData: false,
+        // viewOverDueSellsOnly: false,
+        // viewOwnCutomer: false,
+        // viewOwnDrafts: false,
+        // viewOwnExpenseOnly: false,
+        // viewOwnPurchaseStockAdjustment: false,
+        // viewOwnQuotations: false,
+        // viewOwnSellOnly: false,
+        // viewOwnSupplier: false,
+        // viewPaidSellOnly: false,
+        // viewPossell: false,
+        // viewProduct: false,
+        // viewPurchasePrice: false,
+        // viewRole: false,
+        // viewUnit: false,
+        // viewUser: false,
+        // viewdueSellOnly: false
     })
     const [iserror, setIserror] = useState(false)
 
     const fetchRoleById = async () => {
 
-    try {
-      const token = localStorage.getItem('token');
-      const response = await axios.get(`http://localhost:8000/admin/roles/${id}`,{
-        headers: {
-            'Authorization': token
-        }
-    });
-    //   console.log(response.data)
+        try {
+            const token = localStorage.getItem('token');
+            const response = await axios.get(`http://localhost:8000/admin/roles/${id}`, {
+                headers: {
+                    'Authorization': token
+                }
+            });
 
-      setFormData(response.data);
-    } catch (error) {
-      console.error('Error fetching roles:', error);
-    }
-  };
+            setFormData(response.data);
+        } catch (error) {
+            console.error('Error fetching roles:', error);
+        }
+    };
     const addRole = async () => {
 
         try {
             const token = localStorage.getItem('token');
             // console.log(finalFormData)
-            const response = await axios.post(`http://localhost:8000/admin/roles`, formData,{
+            const response = await axios.post(`http://localhost:8000/admin/roles`, formData, {
                 headers: {
                     'Authorization': token
                 }
@@ -230,24 +339,24 @@ const AddorEditRoles = () => {
             console.error('Error Adding roles:', error);
         }
     };
-const addRoleById = async () => {
+    const addRoleById = async () => {
 
-    try {
-      const token = localStorage.getItem('token');
-      // console.log(formData)
-      const response = await axios.put(`http://localhost:8000/admin/roles/${id}`, formData,{
-        headers: {
-            'Authorization': token
+        try {
+            const token = localStorage.getItem('token');
+            // console.log(formData)
+            const response = await axios.put(`http://localhost:8000/admin/roles/${id}`, formData, {
+                headers: {
+                    'Authorization': token
+                }
+            });
+            //   console.log(response.data)
+            if (response.status === 200) {
+                Navigate("/home/roles");
+            }
+        } catch (error) {
+            console.error('Error Adding roles:', error);
         }
-    });
-    //   console.log(response.data)
-      if (response.status === 200) {
-        Navigate("/home/roles");
-      }
-    } catch (error) {
-      console.error('Error Adding roles:', error);
-    }
-  };
+    };
     const handleClick = (e) => {
         e.preventDefault()
         if (formData.roleName.length === 0) {
@@ -313,9 +422,9 @@ const addRoleById = async () => {
             fetchRoleById()
 
         }
-        
+
     }, [])
- 
+
     return (
         <div className='w-full min-h-screen bg-gray-200 p-2'>
             <ToastContainer
@@ -452,7 +561,7 @@ const addRoleById = async () => {
                     <div className='w-full md:w-3/4 grid grid-cols-1 md:grid-cols-2'>
                         {supplierPerm.map((data, index) => {
                             return <div key={index} className='flex  items-center justify-start'>
-                                <input type={data.type || "checkbox"}
+                                <input type='checkbox'
                                     checked={data?.isChecked || false}
                                     onChange={(e) => { handleChange(e, supplierPerm, setSupplierPerm) }}
                                     name={data.name}
@@ -481,7 +590,7 @@ const addRoleById = async () => {
                     <div className='w-full md:w-3/4 grid grid-cols-1 md:grid-cols-2'>
                         {customerPerm.map((data, index) => {
                             return <div key={index} className='flex  items-center justify-start'>
-                                <input type={data.type || "checkbox"}
+                                <input type='checkbox'
                                     checked={data?.isChecked || false}
                                     onChange={(e) => { handleChange(e, customerPerm, setCustomerPerm) }}
                                     name={data.name}
@@ -511,7 +620,7 @@ const addRoleById = async () => {
                     <div className='w-full md:w-3/4 grid grid-cols-1 md:grid-cols-2'>
                         {productPerm.map((data, index) => {
                             return <div key={index} className='flex  items-center justify-start'>
-                                <input type={data.type || "checkbox"}
+                                <input type='checkbox'
                                     checked={data?.isChecked || false}
                                     onChange={(e) => { handleChange(e, productPerm, setProductPerm) }}
                                     name={data.name}
@@ -541,7 +650,7 @@ const addRoleById = async () => {
                     <div className='w-full md:w-3/4 grid grid-cols-1 md:grid-cols-2'>
                         {purStkAdjusPerm.map((data, index) => {
                             return <div key={index} className='flex  items-center justify-start'>
-                                <input type={data.type || "checkbox"}
+                                <input type='checkbox'
                                     checked={data?.isChecked || false}
                                     onChange={(e) => { handleChange(e, purStkAdjusPerm, setPurStkAdjusPerm) }}
                                     name={data.name}
@@ -571,7 +680,7 @@ const addRoleById = async () => {
                     <div className='w-full md:w-3/4 grid grid-cols-1 md:grid-cols-2'>
                         {purOrderPerm.map((data, index) => {
                             return <div key={index} className='flex  items-center justify-start'>
-                                <input type={data.type || "checkbox"}
+                                <input type='checkbox'
                                     checked={data?.isChecked || false}
                                     onChange={(e) => { handleChange(e, purOrderPerm, setPurOrderPerm) }}
                                     name={data.name}
@@ -602,7 +711,7 @@ const addRoleById = async () => {
                     <div className='w-full md:w-3/4 grid grid-cols-1 md:grid-cols-2'>
                         {posPerm.map((data, index) => {
                             return <div key={index} className='flex  items-center justify-start'>
-                                <input type={data.type || "checkbox"}
+                                <input type='checkbox'
                                     checked={data?.isChecked || false}
                                     onChange={(e) => { handleChange(e, posPerm, setPosPerm) }}
                                     name={data.name}
@@ -634,7 +743,7 @@ const addRoleById = async () => {
                     <div className='w-full md:w-3/4 grid grid-cols-1 md:grid-cols-2'>
                         {sellPerm.map((data, index) => {
                             return <div key={index} className='flex  items-center justify-start'>
-                                <input type={data.type || "checkbox"}
+                                <input type='checkbox'
                                     checked={data?.isChecked || false}
                                     onChange={(e) => { handleChange(e, sellPerm, setSellPerm) }}
                                     name={data.name}
@@ -664,7 +773,7 @@ const addRoleById = async () => {
                     <div className='w-full md:w-3/4 grid grid-cols-1 md:grid-cols-2'>
                         {draftPerm.map((data, index) => {
                             return <div key={index} className='flex  items-center justify-start'>
-                                <input type={data.type || "checkbox"}
+                                <input type='checkbox'
                                     checked={data?.isChecked || false}
                                     onChange={(e) => { handleChange(e, draftPerm, setDraftPerm) }}
                                     name={data.name}
@@ -694,7 +803,7 @@ const addRoleById = async () => {
                     <div className='w-full md:w-3/4 grid grid-cols-1 md:grid-cols-2'>
                         {quotationPerm.map((data, index) => {
                             return <div key={index} className='flex  items-center justify-start'>
-                                <input type={data.type || "checkbox"}
+                                <input type='checkbox'
                                     checked={data?.isChecked || false}
                                     onChange={(e) => { handleChange(e, quotationPerm, setQuotationPerm) }}
                                     name={data.name}
@@ -724,7 +833,7 @@ const addRoleById = async () => {
                     <div className='w-full md:w-3/4 grid grid-cols-1 md:grid-cols-2'>
                         {shipmentPerm.map((data, index) => {
                             return <div key={index} className='flex  items-center justify-start'>
-                                <input type={data.type || "checkbox"}
+                                <input type='checkbox'
                                     checked={data?.isChecked || false}
                                     onChange={(e) => { handleChange(e, shipmentPerm, setShipmentPerm) }}
                                     name={data.name}
@@ -755,7 +864,7 @@ const addRoleById = async () => {
                     <div className='w-full md:w-3/4 grid grid-cols-1 md:grid-cols-2'>
                         {brandPerm.map((data, index) => {
                             return <div key={index} className='flex  items-center justify-start'>
-                                <input type={data.type || "checkbox"}
+                                <input type='checkbox'
                                     checked={data?.isChecked || false}
                                     onChange={(e) => { handleChange(e, brandPerm, setBrandPerm) }}
                                     name={data.name}
@@ -786,7 +895,7 @@ const addRoleById = async () => {
                     <div className='w-full md:w-3/4 grid grid-cols-1 md:grid-cols-2'>
                         {unitPerm.map((data, index) => {
                             return <div key={index} className='flex  items-center justify-start'>
-                                <input type={data.type || "checkbox"}
+                                <input type='checkbox'
                                     checked={data?.isChecked || false}
                                     onChange={(e) => { handleChange(e, unitPerm, setUnitPerm) }}
                                     name={data.name}
@@ -816,7 +925,7 @@ const addRoleById = async () => {
                     <div className='w-full md:w-3/4 grid grid-cols-1 md:grid-cols-2'>
                         {categoryPerm.map((data, index) => {
                             return <div key={index} className='flex  items-center justify-start'>
-                                <input type={data.type || "checkbox"}
+                                <input type='checkbox'
                                     checked={data?.isChecked || false}
                                     onChange={(e) => { handleChange(e, categoryPerm, setCategoryPerm) }}
                                     name={data.name}
@@ -846,7 +955,7 @@ const addRoleById = async () => {
                     <div className='w-full md:w-3/4 grid grid-cols-1 md:grid-cols-2'>
                         {reportPerm.map((data, index) => {
                             return <div key={index} className='flex  items-center justify-start'>
-                                <input type={data.type || "checkbox"}
+                                <input type='checkbox'
                                     checked={data?.isChecked || false}
                                     onChange={(e) => { handleChange(e, reportPerm, setReportPerm) }}
                                     name={data.name}
@@ -876,7 +985,7 @@ const addRoleById = async () => {
                     <div className='w-full md:w-3/4 grid grid-cols-1 md:grid-cols-2'>
                         {settingPerm.map((data, index) => {
                             return <div key={index} className='flex  items-center justify-start'>
-                                <input type={data.type || "checkbox"}
+                                <input type='checkbox'
                                     checked={data?.isChecked || false}
                                     onChange={(e) => { handleChange(e, settingPerm, setSettingPerm) }}
                                     name={data.name}
@@ -906,7 +1015,7 @@ const addRoleById = async () => {
                     <div className='w-full md:w-3/4 grid grid-cols-1 md:grid-cols-2'>
                         {expensePerm.map((data, index) => {
                             return <div key={index} className='flex  items-center justify-start'>
-                                <input type={data.type || "checkbox"}
+                                <input type='checkbox'
                                     checked={data?.isChecked || false}
                                     onChange={(e) => { handleChange(e, expensePerm, setExpensePerm) }}
                                     name={data.name}
@@ -929,7 +1038,7 @@ const addRoleById = async () => {
                     <div className='w-full md:w-3/4 grid grid-cols-1 md:grid-cols-2'>
                         {homePerm.map((data, index) => {
                             return <div key={index} className='flex  items-center justify-start'>
-                                <input type={data.type || "checkbox"}
+                                <input type='checkbox'
                                     checked={data?.isChecked || false}
                                     onChange={(e) => { handleChange(e, homePerm, setHomePerm) }}
                                     name={data.name}
@@ -952,7 +1061,7 @@ const addRoleById = async () => {
                     <div className='w-full md:w-3/4 grid grid-cols-1 md:grid-cols-2'>
                         {accountPerm.map((data, index) => {
                             return <div key={index} className='flex  items-center justify-start'>
-                                <input type={data.type || "checkbox"}
+                                <input type='checkbox'
                                     checked={data?.isChecked || false}
                                     onChange={(e) => { handleChange(e, accountPerm, setAccountPerm) }}
                                     name={data.name}

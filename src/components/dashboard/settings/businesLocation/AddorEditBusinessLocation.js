@@ -2,7 +2,8 @@ import React, { useState, useEffect } from 'react'
 import { FaInfoCircle } from 'react-icons/fa';
 import axios from 'axios';
 import { useNavigate } from 'react-router-dom';
-
+import { toast, ToastContainer } from 'react-toastify';
+import "react-toastify/dist/ReactToastify.css";
 const AddorEditBusinessLocation = ({ id }) => {
     const navigate = useNavigate()
 
@@ -77,13 +78,19 @@ const AddorEditBusinessLocation = ({ id }) => {
         if (
             formData.name.length === 0 ||
             formData.city.length === 0 ||
-            formData.zipCode.length === 0 ||
-            formData.country.length === 0 ||
-            formData.state.length === 0
+            formData.country.length === 0
         ) {
             setIsserror(true);
-            console.log(isserror);
-        } else if (id) {
+            toast.error('Some fields are required', {
+                position: "top-right",
+                autoClose: 2000,
+                hideProgressBar: false,
+                closeOnClick: true,
+                pauseOnHover: true,
+                draggable: true,
+                progress: undefined,
+                theme: "light",
+            });        } else if (id) {
             addLocationById()
             console.log("Handle Update", formData);
         } else {
@@ -95,7 +102,7 @@ const AddorEditBusinessLocation = ({ id }) => {
 
         try {
             const token = localStorage.getItem('token');
-            const response = await axios.get(`http://localhost:8000/admin/add-accounts`,{
+            const response = await axios.get(`http://localhost:8000/admin/add-accounts`, {
                 headers: {
                     'Authorization': token
                 }
@@ -111,7 +118,7 @@ const AddorEditBusinessLocation = ({ id }) => {
 
         try {
             const token = localStorage.getItem('token');
-            const response = await axios.get("http://localhost:8000/admin/business-locations",{
+            const response = await axios.get("http://localhost:8000/admin/business-locations", {
                 headers: {
                     'Authorization': token
                 }
@@ -126,7 +133,7 @@ const AddorEditBusinessLocation = ({ id }) => {
 
         try {
             const token = localStorage.getItem('token');
-            const response = await axios.get(`http://localhost:8000/admin/selling-price-groups`,{
+            const response = await axios.get(`http://localhost:8000/admin/selling-price-groups`, {
                 headers: {
                     'Authorization': token
                 }
@@ -144,18 +151,40 @@ const AddorEditBusinessLocation = ({ id }) => {
         try {
             const token = localStorage.getItem('token');
             // console.log(formData)
-            const response = await axios.post(`http://localhost:8000/admin/business-locations`, formData,{
+            const response = await axios.post(`http://localhost:8000/admin/business-locations`, formData, {
                 headers: {
                     'Authorization': token
                 }
             });
             console.log(response)
             if (response.status === 201) {
-                navigate("/home/business-location")
-                console.log("Success")
+                toast.success('Data Saved', {
+                    position: "top-right",
+                    autoClose: 2000,
+                    hideProgressBar: false,
+                    closeOnClick: true,
+                    pauseOnHover: true,
+                    draggable: true,
+                    progress: undefined,
+                    theme: "light",
+                });
+                setTimeout(() => {
+                    navigate("/home/business-location")
+                }, 2000);
+
             }
         } catch (error) {
             console.error('Error Adding Accounnt:', error);
+            toast.error(error.response.data.message, {
+                position: "top-right",
+                autoClose: 2000,
+                hideProgressBar: false,
+                closeOnClick: true,
+                pauseOnHover: true,
+                draggable: true,
+                progress: undefined,
+                theme: "light",
+            });
         }
     };
 
@@ -164,19 +193,41 @@ const AddorEditBusinessLocation = ({ id }) => {
         try {
             const token = localStorage.getItem('token');
             // console.log(formData)
-            const response = await axios.put(`http://localhost:8000/admin/business-locations/${id}`, formData,{
+            const response = await axios.put(`http://localhost:8000/admin/business-locations/${id}`, formData, {
                 headers: {
                     'Authorization': token
                 }
             });
             console.log(response)
             if (response.status === 200) {
-                navigate("/home/business-location")
+                toast.success('Data Saved', {
+                    position: "top-right",
+                    autoClose: 2000,
+                    hideProgressBar: false,
+                    closeOnClick: true,
+                    pauseOnHover: true,
+                    draggable: true,
+                    progress: undefined,
+                    theme: "light",
+                });
+                setTimeout(() => {
+                    navigate("/home/business-location")
+                }, 2000);
 
-                console.log("Success")
+
             }
         } catch (error) {
             console.error('Error Adding Accounnt:', error);
+            toast.error(error.response.data.message, {
+                position: "top-right",
+                autoClose: 2000,
+                hideProgressBar: false,
+                closeOnClick: true,
+                pauseOnHover: true,
+                draggable: true,
+                progress: undefined,
+                theme: "light",
+            });
         }
     };
     useEffect(() => {
@@ -193,6 +244,18 @@ const AddorEditBusinessLocation = ({ id }) => {
     }, [])
     return (
         <div className='flex flex-col w-full bg-white p-3'>
+            <ToastContainer
+                position="top-right"
+                autoClose={2000}
+                hideProgressBar={false}
+                newestOnTop={false}
+                closeOnClick
+                rtl={false}
+                pauseOnFocusLoss
+                draggable
+                pauseOnHover
+                theme="colored"
+            />
             <h1 className="text-2xl text-start font-semibold ">{id ? "Edit" : "Add a new"} business location</h1>
 
             <div className='flex flex-col mt-5'>

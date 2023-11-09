@@ -8,58 +8,10 @@ import { jsPDF } from 'jspdf';
 import * as htmlToImage from 'html-to-image';
 
 
-const SlspmntDueTbl = () => {
-    const dummyData = [
-        {
-            id: 1,
-            Username: "username",
-            Name: "User",
-            Role: "Admin",
-            Email: "username@gmail.com"
-        },
-        {
-            id: 2,
-            Username: "username1",
-            Name: "User1",
-            Role: "Admin",
-            Email: "username@gmail.com"
-        },
-        {
-            id: 3,
-            Username: "username2",
-            Name: "User2",
-            Role: "Admin",
-            Email: "username2@gmail.com"
-        },
-        {
-            id: 4,
-            Username: "username3",
-            Name: "User3",
-            Role: "Admin",
-            Email: "username3@gmail.com"
-        },
-        {
-            id: 5,
-            Username: "username4",
-            Name: "User4",
-            Role: "Admin",
-            Email: "username4@gmail.com"
-        },
-        {
-            id: 6,
-            Username: "username5",
-            Name: "User5",
-            Role: "Admin",
-            Email: "username5@gmail.com"
-        },
-        {
-            id: 7,
-            Username: "username6",
-            Name: "User6",
-            Role: "Admin",
-            Email: "username6@gmail.com"
-        }
-    ]
+const SlspmntDueTbl = (props) => {
+    const saleDuesData = props.saleDuesData
+
+    
     const printRef = useRef()
     let xlDatas = []
     //Export to Excel
@@ -92,8 +44,8 @@ const SlspmntDueTbl = () => {
     const rcrdprpg = 5
     const lasIndex = crpage * rcrdprpg
     const frstIndex = lasIndex - rcrdprpg
-    const record = dummyData.slice(frstIndex, lasIndex)
-    const npage = Math.ceil(dummyData.length / rcrdprpg)
+    const record = saleDuesData.slice(frstIndex, lasIndex)
+    const npage = Math.ceil(saleDuesData.length / rcrdprpg)
     const numbers = [...Array(npage + 1).keys()].slice(1)
 
     const [colvis, setColvis] = useState(false)
@@ -104,7 +56,7 @@ const SlspmntDueTbl = () => {
 
     const csvData = [
         ["Username", "Name", "Role", "Email"],
-        ...dummyData.map(({ Username, Name, Role, Email }) => [
+        ...saleDuesData.map(({ Username, Name, Role, Email }) => [
             Username,
             Name,
             Role,
@@ -145,7 +97,7 @@ const SlspmntDueTbl = () => {
 
                         </CSVLink>
                     </button>
-                    <button onClick={() => { handleExportExcl(dummyData) }} className='flex border-[1px] px-2 py-1 hover:bg-gray-400 border-gray-600 bg-gray-200 '>
+                    <button onClick={() => { handleExportExcl(saleDuesData) }} className='flex border-[1px] px-2 py-1 hover:bg-gray-400 border-gray-600 bg-gray-200 '>
                         <FaFileExcel size={15} className=' mt-1 pr-[2px]' />
                         <h1 className='text-sm'>Export to Excle</h1>
                     </button>
@@ -189,9 +141,9 @@ const SlspmntDueTbl = () => {
                     <tbody >
                         {record.map((value, index) => {
                             return <tr key={index} className=''>
-                                {col1 && <td className="px-1 py-1 text-sm">{value.Username}</td>}
-                                {col2 && <td className="px-1 py-1"> {value.Name}</td>}
-                                {col3 && <td className="px-1 py-1">{value.Role}</td>}
+                                {col1 && <td className="px-1 py-1 text-sm">{value.customer?.prefix + " " + value.customer?.firstName}</td>}
+                                {col2 && <td className="px-1 py-1"> {value.invoiceNumber}</td>}
+                                {col3 && <td className="px-1 py-1">{value.totalSaleDue}</td>}
                                 {col5 && <td className='py-1 flex '>
                                     <div className='flex mx-1 p-1 items-center bg-blue-600 text-white justify-center'>
                                         <FaEdit size={15} />

@@ -10,65 +10,17 @@ import ImportProduct from "../Product/ImportProduct";
 import axios from 'axios';
 
 import { useNavigate } from "react-router-dom"
-
+import { toast, ToastContainer } from 'react-toastify';
+import "react-toastify/dist/ReactToastify.css";
 const ExpenseAdd = () => {
   const Navigate = useNavigate();
 
-  const dummyData = [
-    {
-      id: 1,
-      Username: "username",
-      Name: "User",
-      Role: "Admin",
-      Email: "username@gmail.com",
-    },
-    {
-      id: 2,
-      Username: "username1",
-      Name: "User1",
-      Role: "Admin",
-      Email: "username@gmail.com",
-    },
-    {
-      id: 3,
-      Username: "username2",
-      Name: "User2",
-      Role: "Admin",
-      Email: "username2@gmail.com",
-    },
-    {
-      id: 4,
-      Username: "username3",
-      Name: "User3",
-      Role: "Admin",
-      Email: "username3@gmail.com",
-    },
-    {
-      id: 5,
-      Username: "username4",
-      Name: "User4",
-      Role: "Admin",
-      Email: "username4@gmail.com",
-    },
-    {
-      id: 6,
-      Username: "username5",
-      Name: "User5",
-      Role: "Admin",
-      Email: "username5@gmail.com",
-    },
-    {
-      id: 7,
-      Username: "username6",
-      Name: "User6",
-      Role: "Admin",
-      Email: "username6@gmail.com",
-    },
-  ];
+
   const [businessLocationsData, setBusinessLocationsData] = useState([]);
   const [expanseCategoryData, setExpanseCategoryData] = useState([]);
   const [expanseSubCategoryData, setExpanseSubCategoryData] = useState([]);
   const [usersData, setUsersData] = useState([]);
+  const [allContactsData, setAllContactsData] = useState([]); //update dropdown py use hogi
 
 
   // useStates for suppliers and Customers
@@ -90,7 +42,6 @@ const ExpenseAdd = () => {
     date: "",
     expenseFor: "",
     expenseForContact: "",
-    applicableTax: "",
     totalAmount: "",
     expenseNote: "",
     isRefund: null,
@@ -145,18 +96,32 @@ const ExpenseAdd = () => {
 
 
 
-  //Fetch all suppliers and Customers
+  const fetchAllContact = async () => {
 
+    try {
+      const token = localStorage.getItem('token');
+      const response = await axios.get(`http://localhost:8000/admin/contacts`, {
+        headers: {
+          'Authorization': token
+        }
+      });
+
+      // console.log(response)
+      setAllContactsData(response.data);
+    } catch (error) {
+      console.error('Error fetching Contacts:', error);
+    }
+  };
 
   const fetchUsers = async () => {
 
     try {
       const token = localStorage.getItem('token');
-      const response = await axios.get(`http://localhost:8000/admin/users`,{
-                headers: {
-                    'Authorization': token
-                }
-            });
+      const response = await axios.get(`http://localhost:8000/admin/users`, {
+        headers: {
+          'Authorization': token
+        }
+      });
       // console.log(response)
       setUsersData(response.data);
     } catch (error) {
@@ -167,11 +132,11 @@ const ExpenseAdd = () => {
 
     try {
       const token = localStorage.getItem('token');
-      const response = await axios.get(`http://localhost:8000/admin/business-locations`,{
-                headers: {
-                    'Authorization': token
-                }
-            });
+      const response = await axios.get(`http://localhost:8000/admin/business-locations`, {
+        headers: {
+          'Authorization': token
+        }
+      });
 
       // console.log(response)
       setBusinessLocationsData(response.data);
@@ -183,11 +148,11 @@ const ExpenseAdd = () => {
 
     try {
       const token = localStorage.getItem('token');
-      const response = await axios.get(`http://localhost:8000/admin/expense-categories`,{
-                headers: {
-                    'Authorization': token
-                }
-            });
+      const response = await axios.get(`http://localhost:8000/admin/expense-categories`, {
+        headers: {
+          'Authorization': token
+        }
+      });
       // console.log(response)
       setExpanseCategoryData(response.data);
     } catch (error) {
@@ -198,11 +163,11 @@ const ExpenseAdd = () => {
 
     try {
       const token = localStorage.getItem('token');
-      const response = await axios.get(`http://localhost:8000/admin/expense-categories/subs`,{
-                headers: {
-                    'Authorization': token
-                }
-            });
+      const response = await axios.get(`http://localhost:8000/admin/expense-categories/subs`, {
+        headers: {
+          'Authorization': token
+        }
+      });
       // console.log(response)
       setExpanseSubCategoryData(response.data);
     } catch (error) {
@@ -213,11 +178,11 @@ const ExpenseAdd = () => {
 
     try {
       const token = localStorage.getItem('token');
-      const response = await axios.get(`http://localhost:8000/admin/add-expenses/${id}`,{
-                headers: {
-                    'Authorization': token
-                }
-            });
+      const response = await axios.get(`http://localhost:8000/admin/add-expenses/${id}`, {
+        headers: {
+          'Authorization': token
+        }
+      });
       // console.log(response)
       setFormData(response.data);
     } catch (error) {
@@ -230,17 +195,40 @@ const ExpenseAdd = () => {
     try {
       const token = localStorage.getItem('token');
       // console.log(formData)
-      const response = await axios.post(`http://localhost:8000/admin/add-expenses`, formData,{
-                headers: {
-                    'Authorization': token
-                }
-            });
+      const response = await axios.post(`http://localhost:8000/admin/add-expenses`, formData, {
+        headers: {
+          'Authorization': token
+        }
+      });
       // console.log(response)
       if (response.status === 201) {
-        console.log("Success")
+        toast.success('Data Saved', {
+          position: "top-right",
+          autoClose: 2000,
+          hideProgressBar: false,
+          closeOnClick: true,
+          pauseOnHover: true,
+          draggable: true,
+          progress: undefined,
+          theme: "light",
+        });
+        setTimeout(() => {
+          window.location.reload();
+        }, 2000);
+
       }
     } catch (error) {
       console.error('Error Adding Product:', error);
+      toast.error(error.response.data.message, {
+        position: "top-right",
+        autoClose: 2000,
+        hideProgressBar: false,
+        closeOnClick: true,
+        pauseOnHover: true,
+        draggable: true,
+        progress: undefined,
+        theme: "light",
+      });
     }
   };
 
@@ -249,15 +237,41 @@ const ExpenseAdd = () => {
     try {
       const token = localStorage.getItem('token');
       // console.log(formData)
-      const response = await axios.put(`http://localhost:8000/admin/add-expenses/${id}`, formData,{
+      const response = await axios.put(`http://localhost:8000/admin/add-expenses/${id}`, formData, {
         headers: {
-            'Authorization': token
+          'Authorization': token
         }
-    });
-      console.log(response)
+      });
+      if (response.status === 200) {
 
-    } catch (error) {
+        toast.success('Data Saved', {
+          position: "top-right",
+          autoClose: 2000,
+          hideProgressBar: false,
+          closeOnClick: true,
+          pauseOnHover: true,
+          draggable: true,
+          progress: undefined,
+          theme: "light",
+        });
+        setTimeout(() => {
+          window.location.reload();
+        }, 2000);
+
+      }
+    }
+    catch (error) {
       console.error('Error Adding Product:', error);
+      toast.error(error.response.data.message, {
+        position: "top-right",
+        autoClose: 2000,
+        hideProgressBar: false,
+        closeOnClick: true,
+        pauseOnHover: true,
+        draggable: true,
+        progress: undefined,
+        theme: "light",
+      });
     }
   };
   useEffect(() => {
@@ -268,16 +282,30 @@ const ExpenseAdd = () => {
       fetchExpanseSubCategories()
       fetchUsers()
       fetchExpanseById();
+      fetchAllContact()
     }
     else {
       fetchBusinessLocations()
       fetchExpanseCategories()
       fetchExpanseSubCategories()
       fetchUsers()
+      fetchAllContact()
     }
   }, [])
   return (
     <div className="w-full p-5 bg-gray-100">
+      <ToastContainer
+        position="top-right"
+        autoClose={2000}
+        hideProgressBar={false}
+        newestOnTop={false}
+        closeOnClick
+        rtl={false}
+        pauseOnFocusLoss
+        draggable
+        pauseOnHover
+        theme="colored"
+      />
       <h1 className="text-xl text-start font-bold ">{id ? "Edit" : "Add"} Expense</h1>
 
       <div className="flex w-full  min-h-[300px] flex-col p-5 mt-5 bg-white border-t-[3px] rounded-md border-blue-600">
@@ -336,7 +364,7 @@ const ExpenseAdd = () => {
               className="px-2 py-1 w-full border-[1px] border-gray-600 focus:outline-none"
             >
               <option value={""}>Please Select</option>
-              
+
               {expanseSubCategoryData.map((sub) => (
                 <option key={sub._id} value={sub._id}>
                   {sub.categoryName}
@@ -442,64 +470,16 @@ const ExpenseAdd = () => {
               type="text"
               className="px-2 py-1 w-full border-[1px] border-gray-600 focus:outline-none"
             >
-              {dummyData.map((data) => (
-                <option key={data.Name} value={data.Name}>
-                  {data.Name}
+              <option value={""}>None</option>
+              {allContactsData.map((data) => (
+                <option key={data._id} value={data._id}>
+                  {data.firstName}
                 </option>
               ))}
             </select>
           </div>
         </div>
-        {/* 
 
-        <div className="grid grid-cols-1 md:grid-cols-3 mt-3 gap-4">
-          <div className=" flex flex-col ">
-            <h2 className="text-start font-bold "> Attatch Document:</h2>
-            <div className="flex">
-              <input
-                type="text"
-                className="px-3  border-[1px] border-gray-700  focus:outline-none w-[60%]"
-              />
-              <input
-                className="px-3   focus:outline-none w-[60%] hidden"
-                type="file"
-                ref={inpuRef}
-                accept="application/pdf,text/csv,application/zip,application/msword,application/vnd.openxmlformats-officedocument.wordprocessingml.document,image/jpeg,image/jpg,image/png"
-              />
-              <div
-                onClick={() => {
-                  inpuRef.current?.click();
-                }}
-                className="flex cursor-pointersu bg-blue-600 text-white w-[40%] items-center justify-center"
-              >
-                <AiTwotoneFolderOpen size={32} />
-                Browse
-              </div>
-            </div>
-            <p className="text-start  flex ">
-              Max File size: 5MB:
-              <br />
-              Allowed File: .pdf, .csv, .zip, .doc, .docx, .jpeg, .jpg, .png
-            </p>
-          </div>
-          <div className="flex flex-col ">
-            <div className="flex mx-2">
-              <h1 className="text-start font-bold">Application Tax:*</h1>
-            </div>
-            <select
-              value={formData.applicableTax}
-              onChange={(e) => {
-                setFormData({ ...formData, applicableTax: e.target.value });
-              }}
-              type="text"
-              className="px-2 py-1 w-full border-[1px] border-gray-600 focus:outline-none"
-            >
-              <option value={""}>None</option>
-              <option value={"sss"}>sss</option>
-              <option value={"Test tax"}>Test tax</option>
-              <option value={"pepsi"}>pepsi</option>
-            </select>
-          </div> */}
 
 
         <div className="flex flex-col">

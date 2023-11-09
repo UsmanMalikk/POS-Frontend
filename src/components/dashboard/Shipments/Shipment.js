@@ -89,7 +89,7 @@ const Shipment = () => {
                 <h1 className='text-xl font-semibold'>Sales</h1>
 
             </div>
-            <div className='flex flex-col mt-4 w-full bg-white rounded-md p-3 items-start justify-start'>
+            {/* <div className='flex flex-col mt-4 w-full bg-white rounded-md p-3 items-start justify-start'>
                 <div className='flex cursor-pointer' onClick={() => { setIsFilter(!isFilter) }}>
                     <FaFilter size={20} style={{ color: 'blue' }} />
                     <h1 className='text-xl text-blue-600 font-semibold'>Filters</h1>
@@ -270,7 +270,7 @@ const Shipment = () => {
 
                     </div>}
 
-            </div>
+            </div> */}
 
             <div className='flex flex-col bg-white border-t-[3px] rounded-md w-full mt-5 border-blue-500'>
                 

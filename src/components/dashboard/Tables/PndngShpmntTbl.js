@@ -1,64 +1,15 @@
-import React, { useRef, useState } from 'react'
+import React, { useRef, useState, useEffect } from 'react'
 import { FaColumns, FaEdit, FaFileCsv, FaFileExcel, FaFilePdf, FaPrint, FaSearch } from 'react-icons/fa'
 import { useReactToPrint } from 'react-to-print';
 import { CSVLink } from 'react-csv';
 import * as XLSX from 'xlsx'
 import { jsPDF } from 'jspdf';
 import * as htmlToImage from 'html-to-image';
+import axios from 'axios';
 
 
 const PndngShpmntTbl = () => {
-    const dummyData = [
-        {
-            id: 1,
-            Username: "username",
-            Name: "User",
-            Role: "Admin",
-            Email: "username@gmail.com"
-        },
-        {
-            id: 2,
-            Username: "username1",
-            Name: "User1",
-            Role: "Admin",
-            Email: "username@gmail.com"
-        },
-        {
-            id: 3,
-            Username: "username2",
-            Name: "User2",
-            Role: "Admin",
-            Email: "username2@gmail.com"
-        },
-        {
-            id: 4,
-            Username: "username3",
-            Name: "User3",
-            Role: "Admin",
-            Email: "username3@gmail.com"
-        },
-        {
-            id: 5,
-            Username: "username4",
-            Name: "User4",
-            Role: "Admin",
-            Email: "username4@gmail.com"
-        },
-        {
-            id: 6,
-            Username: "username5",
-            Name: "User5",
-            Role: "Admin",
-            Email: "username5@gmail.com"
-        },
-        {
-            id: 7,
-            Username: "username6",
-            Name: "User6",
-            Role: "Admin",
-            Email: "username6@gmail.com"
-        }
-    ]
+    
     const printRef = useRef()
     let xlDatas = []
     //Export to Excel
@@ -86,13 +37,14 @@ const PndngShpmntTbl = () => {
             });
 
     }
+    const [shipmentsData, setShipmentsData] = useState([]);
 
     const [crpage, setCrpage] = useState(1)
     const rcrdprpg = 5
     const lasIndex = crpage * rcrdprpg
     const frstIndex = lasIndex - rcrdprpg
-    const record = dummyData.slice(frstIndex, lasIndex)
-    const npage = Math.ceil(dummyData.length / rcrdprpg)
+    const record = shipmentsData.slice(frstIndex, lasIndex)
+    const npage = Math.ceil(shipmentsData.length / rcrdprpg)
     const numbers = [...Array(npage + 1).keys()].slice(1)
 
     const [colvis, setColvis] = useState(false)
@@ -109,7 +61,7 @@ const PndngShpmntTbl = () => {
 
     const csvData = [
         ["Username", "Name", "Role", "Email"],
-        ...dummyData.map(({ Username, Name, Role, Email }) => [
+        ...shipmentsData.map(({ Username, Name, Role, Email }) => [
             Username,
             Name,
             Role,
@@ -136,7 +88,27 @@ const PndngShpmntTbl = () => {
         }
     }
 
+   const fetchShipments = async () => {
+        // let final = "final"
+        try {
+            const token = localStorage.getItem('token');
+            const response = await axios.get("http://localhost:8000/admin/sales/shipments", {
+                headers: {
+                    'Authorization': token
+                }
+            });
+            // console.log(response)
+            setShipmentsData(response.data);
+        } catch (error) {
+            console.error('Error fetching Shipments:', error);
+        }
+    };
+    useEffect(() => {
 
+        fetchShipments();
+
+
+    }, []);
     return (
         <div className=' w-[96%] mx-[2%] shadow-md my-5 shadow-gray-400 min-h-[300px] border-t-[2px] border-yellow-600 rounded-xl'>
             <h1 className=' text-2xl font-semibold text-start mx-5 mt-3'>Pending Shipment</h1>
@@ -165,7 +137,7 @@ const PndngShpmntTbl = () => {
 
                         </CSVLink>
                     </button>
-                    <button onClick={() => { handleExportExcl(dummyData) }} className='flex border-[1px] px-2 py-1 hover:bg-gray-400 border-gray-600 bg-gray-200 '>
+                    <button onClick={() => { handleExportExcl(shipmentsData) }} className='flex border-[1px] px-2 py-1 hover:bg-gray-400 border-gray-600 bg-gray-200 '>
                         <FaFileExcel size={15} className=' mt-1 pr-[2px]' />
                         <h1 className='text-sm'>Export to Excle</h1>
                     </button>
@@ -215,7 +187,6 @@ const PndngShpmntTbl = () => {
                             {col5 && <th className=" py-2 title-font  tracking-wider font-medium text-gray-900 text-sm bg-gray-200">Contact Number</th>}
                             {col6 && <th className=" py-2 title-font  tracking-wider font-medium text-gray-900 text-sm bg-gray-200">Location</th>}
                             {col7 && <th className=" py-2 title-font  tracking-wider font-medium text-gray-900 text-sm bg-gray-200">Status</th>}
-                            {col8 && <th className=" py-2 title-font  tracking-wider font-medium text-gray-900 text-sm bg-gray-200">Quantity Remaining</th>}
                             {col9 && <th className=" py-2 title-font  tracking-wider font-medium text-gray-900 text-sm bg-gray-200">Shipping Status</th>}
                             {col10 && <th className=" py-2 title-font  tracking-wider font-medium text-gray-900 text-sm bg-gray-200">Added By</th>}
 
@@ -231,16 +202,14 @@ const PndngShpmntTbl = () => {
                                     </div>
 
                                 </td>}
-                                {col2 && <td className="px-1 py-1 text-sm">{value.Username}</td>}
-                                {col3 && <td className="px-1 py-1"> {value.Name}</td>}
-                                {col4 && <td className="px-1 py-1">{value.Role}</td>}
-                                {col5 && <td className=" py-1 px-1">{value.Email}</td>}
-                                {col5 && <td className="px-1 py-1 text-sm">{value.Username}</td>}
-                                {col6 && <td className="px-1 py-1"> {value.Name}</td>}
-                                {col7 && <td className="px-1 py-1">{value.Role}</td>}
-                                {col8 && <td className=" py-1 px-1">{value.Email}</td>}
-                                {col9 && <td className="px-1 py-1 text-sm">{value.Username}</td>}
-                                {col10 && <td className="px-1 py-1"> {value.Name}</td>}
+                                {col2 && <td className="px-1 py-1 text-sm">{}</td>}
+                                {col3 && <td className="px-1 py-1"> {value.invoiceNumber}</td>}
+                                {col4 && <td className="px-1 py-1">{value.customer?.firstName}</td>}
+                                {col5 && <td className=" py-1 px-1">{value.customer?.mobile}</td>}
+                                {col6 && <td className="px-1 py-1 text-sm">{value.businesLocation?.name}</td>}
+                                {col7 && <td className="px-1 py-1">{(value.amount < value.totalSaleAmount || value.paymentMethod === "") ? "Due" : "Paid"} </td>}
+                                {col9 && <td className=" py-1 px-1">{value.shippingStatus}</td>}
+                                {col10 && <td className="px-1 py-1 text-sm">{value.deliveryPersonUser?.firstName || value.deliveryPersonAdmin?.firstName}</td>}
 
 
                             </tr>

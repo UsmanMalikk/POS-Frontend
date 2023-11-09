@@ -9,7 +9,8 @@ import AddorEditContact from "../contacts/AddorEditContact"
 import ImportProduct from '../Product/ImportProduct'
 import axios from 'axios'
 import { useNavigate } from "react-router-dom"
-
+import { toast, ToastContainer } from 'react-toastify';
+import "react-toastify/dist/ReactToastify.css";
 const AddorEditPurchase = () => {
     const Navigate = useNavigate();
 
@@ -185,11 +186,7 @@ const AddorEditPurchase = () => {
 
 
     const displayData = () => {
-        if (newProduct === true) {
-            return <AddProduct />
-        } else if (isProductUpload === true) {
-            return <ImportProduct />
-        } else if (isAddSupplier === true) {
+        if (isAddSupplier === true) {
             return <AddorEditContact id={0} />
         }
     }
@@ -267,7 +264,6 @@ const AddorEditPurchase = () => {
                     'Authorization': token
                 }
             });
-            console.log(response.data);
             setPurchaseCustomData(response.data);
 
         } catch (e) {
@@ -278,22 +274,23 @@ const AddorEditPurchase = () => {
     const fetchPurchaseById = async () => {
 
         try {
-          const token = localStorage.getItem('token');
-          const response = await axios.get(`http://localhost:8000/admin/purchases/${id}`,{
-            headers: {
-                'Authorization': token
-            }
-        });
-          // console.log(response)
-          response.data.purchaseDate = new Date(response.data.purchaseDate).toLocaleDateString("fr-CA")
-          response.data.paymentDate = new Date(response.data.paymentDate).toLocaleDateString("fr-CA")
+            const token = localStorage.getItem('token');
+            const response = await axios.get(`http://localhost:8000/admin/purchases/${id}`, {
+                headers: {
+                    'Authorization': token
+                }
+            });
+            // console.log(response)
+            response.data.purchaseDate = new Date(response.data.purchaseDate).toLocaleDateString("fr-CA")
+            response.data.paymentDate = new Date(response.data.paymentDate).toLocaleDateString("fr-CA")
+            const supplierName = `${response.data.supplier?.prefix} ${response.data.supplier?.firstName}`
 
-          setFormData(response.data);
+            setFormData({...response.data, supplierName: supplierName});
         } catch (error) {
-          console.error('Error fetching Stock Tranfers:', error);
+            console.error('Error fetching Stock Tranfers:', error);
         }
-      };
-    
+    };
+
     useEffect(() => {
 
         if (id) {
@@ -321,36 +318,91 @@ const AddorEditPurchase = () => {
                 }
             });
             if (response.status === 201) {
-                Navigate("/home/purchase");
-                console.log(response)
+                toast.success('Data Saved', {
+                    position: "top-right",
+                    autoClose: 2000,
+                    hideProgressBar: false,
+                    closeOnClick: true,
+                    pauseOnHover: true,
+                    draggable: true,
+                    progress: undefined,
+                    theme: "light",
+                });
+                setTimeout(() => {
+                    Navigate("/home/purchase");
+                }, 2000);
 
             }
         } catch (error) {
             console.error('Error creating Purchase:', error);
-            // Handle errors here
+            toast.error(error.response.data.message, {
+                position: "top-right",
+                autoClose: 2000,
+                hideProgressBar: false,
+                closeOnClick: true,
+                pauseOnHover: true,
+                draggable: true,
+                progress: undefined,
+                theme: "light",
+            });
         }
 
     };
-      const addPurchaseById = async () => {
+    const addPurchaseById = async () => {
 
         try {
-          const token = localStorage.getItem('token');
-          // console.log(formData)
-          const response = await axios.put(`http://localhost:8000/admin/purchases/${id}`, formData,{
-            headers: {
-                'Authorization': token
+            const token = localStorage.getItem('token');
+            // console.log(formData)
+            const response = await axios.put(`http://localhost:8000/admin/purchases/${id}`, formData, {
+                headers: {
+                    'Authorization': token
+                }
+            });
+            // console.log(response)
+            if (response.status === 200) {
+                toast.success('Data Saved', {
+                    position: "top-right",
+                    autoClose: 2000,
+                    hideProgressBar: false,
+                    closeOnClick: true,
+                    pauseOnHover: true,
+                    draggable: true,
+                    progress: undefined,
+                    theme: "light",
+                });
+                setTimeout(() => {
+                    Navigate("/home/purchase");
+                }, 2000);
+
             }
-        });
-          // console.log(response)
-          if (response.status === 200) {
-            Navigate("/home/purchase");
-          }
         } catch (error) {
-          console.error('Error Adding Purchase:', error);
+            console.error('Error Adding Purchase:', error);
+            toast.error(error.response.data.message, {
+                position: "top-right",
+                autoClose: 2000,
+                hideProgressBar: false,
+                closeOnClick: true,
+                pauseOnHover: true,
+                draggable: true,
+                progress: undefined,
+                theme: "light",
+            });
         }
-      };
+    };
     return (
         <div className='w-full p-5 bg-gray-100'>
+            <ToastContainer
+                position="top-right"
+                autoClose={2000}
+                hideProgressBar={false}
+                newestOnTop={false}
+                closeOnClick
+                rtl={false}
+                pauseOnFocusLoss
+                draggable
+                pauseOnHover
+                theme="colored"
+            />
             <h1 className='text-xl text-start font-bold '>{id ? "Edit Purchase" : "Add Purchase"}</h1>
             <div className='flex w-full  min-h-[300px] flex-col p-5 mt-5 bg-white border-t-[3px] rounded-md border-blue-600'>
                 <div className='grid grid-cols-1 md:grid-cols-3 gap-4'>
@@ -365,7 +417,7 @@ const AddorEditPurchase = () => {
                                 <input
                                     onClick={() => setOpen(!open)}
                                     className='bg-white w-full  flex items-center  focus:outline-none justify-between px-2  border-[1px] border-gray-600'
-                                    value={(id) ? (formData.supplier?.firstName) : formData.supplierName}
+                                    value={formData.supplierName}
                                     onChange={(e) => { setFormData({ ...formData, supplier: e.target.value }) }}
 
                                     placeholder='Select Value'
@@ -378,7 +430,7 @@ const AddorEditPurchase = () => {
                             {open &&
                                 <ul
 
-                                    className={`bg-white  w-[278px] mx-[30px] border-[1px] absolute top-8 border-gray-600 overflow-y-auto ${open ? "max-h-60" : "max-h-0"} `}
+                                    className={`bg-white  w-full  border-[1px] absolute z-10 top-8 border-gray-600 overflow-y-auto ${open ? "max-h-28" : "max-h-0"} `}
                                 >
                                     <div className="flex items-center px-2 sticky top-0 bg-white">
                                         <AiOutlineSearch size={18} className="text-gray-700" />
@@ -386,7 +438,7 @@ const AddorEditPurchase = () => {
                                             type="text"
                                             value={inputValue}
                                             onChange={(e) => setInputValue(e.target.value.toLowerCase())}
-                                            className="placeholder:text-gray-700 p-1 outline-none border-[1px] border-gray-500"
+                                            className="placeholder:text-gray-700 w-full p-1 outline-none border-[1px] border-gray-500"
                                         />
                                     </div>
                                     {supplierData?.map((data) => (
@@ -402,7 +454,7 @@ const AddorEditPurchase = () => {
                                                 }`}
                                             onClick={() => {
                                                 if (data?.firstName?.toLowerCase() !== formData.supplierName?.toLowerCase()) {
-                                                    setFormData({ ...formData, supplier: data?._id, supplierName: data?.firstName })
+                                                    setFormData({ ...formData, supplier: data?._id, supplierName: `${data?.prefix} ${data?.firstName}` })
                                                     setOpen(false);
                                                     setInputValue("");
                                                 }
@@ -522,18 +574,18 @@ const AddorEditPurchase = () => {
 
 
                 </div>
-                <div className='grid grid-cols-1 md:grid-cols-3 mt-3 gap-4'>
+                {/* <div className='grid grid-cols-1 md:grid-cols-3 mt-3 gap-4'>
                     <div className='flex flex-col'>
                         <h1 className='flex text-sm text-start font-bold'>Purchase Order:</h1>
                         <input value={formData.contact_id} onChange={(e) => { setFormData({ ...formData, contact_id: e.target.value }) }} type='Text' className='px-2 py-[2px] w-full border-[1px] border-gray-600 focus:outline-none' />
 
                     </div>
 
-                </div>
+                </div> */}
             </div>
             <div className='flex  w-full   flex-col  p-5 mt-5 bg-white border-t-[3px] rounded-md border-blue-600'>
                 <div className='flex flex-col md:flex-row mt-5 w-full items-center justify-center'>
-                    <button onClick={() => { setIsCliked(true); setIsProductUpload(true) }} className='bg-blue-600 mt-4 md:mt-0 md:w-[15%] mx-[2.5%] text-white px-2 py-1' >Import Products</button>
+                    {/* <button onClick={() => { setIsCliked(true); setIsProductUpload(true) }} className='bg-blue-600 mt-4 md:mt-0 md:w-[15%] mx-[2.5%] text-white px-2 py-1' >Import Products</button> */}
                     <div className='flex flex-col   w-[50%] items-center justify-center'>
                         <div className='flex w-full   md:mt-0 relative'>
                             <div className='flex w-full'>
@@ -543,7 +595,7 @@ const AddorEditPurchase = () => {
                             {isClicked &&
                                 <ul
 
-                                    className={`bg-white w-full    border-[1px]   z-10 absolute top-8 border-gray-600  ${isClicked ? "overflow-y-auto max-h-60" : "max-h-0"} `}
+                                    className={`bg-white w-full    border-[1px]   z-10 absolute top-8 border-gray-600  ${isClicked ? "overflow-y-auto max-h-32" : "max-h-0"} `}
                                 >
 
                                     {productsData?.map((data) => (
@@ -553,7 +605,7 @@ const AddorEditPurchase = () => {
                                 ${data?.productName?.toLowerCase() === inputValue1?.toLowerCase() &&
                                                 "bg-sky-600 text-white"
                                                 }
-                                 ${data?.productName?.toLowerCase().startsWith(inputValue)
+                                 ${data?.productName?.toLowerCase().startsWith(inputValue1)
                                                     ? "block"
                                                     : "hidden"
                                                 }`}
@@ -578,10 +630,10 @@ const AddorEditPurchase = () => {
 
 
                     </div>
-                    <button onClick={() => { setIsCliked(true); setNewProduct(true) }} className='flex mt-4 md:mt-0 md:w-[17%] mx-[1.5%] text-blue-600 underline'>
+                    {/* <button onClick={() => { setIsCliked(true); setNewProduct(true) }} className='flex mt-4 md:mt-0 md:w-[17%] mx-[1.5%] text-blue-600 underline'>
                         < FaPlus size={15} className='w-8 h-8 p-2 ' />
                         <p className='mx-1'> Add new Product</p>
-                    </button>
+                    </button> */}
                 </div>
 
 
@@ -744,6 +796,33 @@ const AddorEditPurchase = () => {
                     </div>
                 </div>
 
+            </div>
+            <div className='grid grid-cols-1 md:grid-cols-3 gap-5 mt-5 bg-white '>
+
+
+                {purchaseCustomData.customLable1 !== "" ?
+                    <div className='flex flex-col'>
+                        <h1 className='text-start font-bold my-1'>{purchaseCustomData.customLable1}</h1>
+                        <input type={"text"} required={purchaseCustomData.isRequired1 ? true : false} value={formData.customLable1} onChange={(e) => { setFormData({ ...formData, customLable1: e.target.value }) }} placeholder={`Custom Lable 1`} className='px-2 py-[2px] w-full border-[1px] border-gray-600 focus:outline-none' />
+                    </div>
+                    : ""}
+                {purchaseCustomData.customLable2 !== "" ?
+                    <div className='flex flex-col'>
+                        <h1 className='text-start font-bold my-1'>{purchaseCustomData.customLable2}</h1>
+                        <input type={"text"} required={purchaseCustomData.isRequired2 ? true : false} value={formData.customLable2} onChange={(e) => { setFormData({ ...formData, customLable2: e.target.value }) }} placeholder={`Custom Lable 2`} className='px-2 py-[2px] w-full border-[1px] border-gray-600 focus:outline-none' />
+                    </div>
+                    : ""}
+
+                {purchaseCustomData.customLable3 !== "" ? <div className='flex flex-col'>
+                    <h1 className='text-start font-bold my-1'>{purchaseCustomData.customLable3}</h1>
+                    <input type={"text"} required={purchaseCustomData.isRequired3 ? true : false} value={formData.customLable3} onChange={(e) => { setFormData({ ...formData, customLable3: e.target.value }) }} placeholder={`Custom Lable 3`} className='px-2 py-[2px] w-full border-[1px] border-gray-600 focus:outline-none' />
+                </div>
+                    : ""}
+                {purchaseCustomData.customLable4 !== "" ? <div className='flex flex-col'>
+                    <h1 className='text-start font-bold my-1'>{purchaseCustomData.customLable4}</h1>
+                    <input type={"text"} required={purchaseCustomData.isRequired4 ? true : false} value={formData.customLable4} onChange={(e) => { setFormData({ ...formData, customLable4: e.target.value }) }} placeholder={`Custom Lable 4`} className='px-2 py-[2px] w-full border-[1px] border-gray-600 focus:outline-none' />
+                </div>
+                    : ""}
             </div>
             {!id &&
                 <div className='flex  w-full   flex-col  p-5 mt-5 bg-white border-t-[3px] rounded-md border-blue-600'>

@@ -1,7 +1,9 @@
 import React, { useState, useEffect } from 'react'
 import { useParams } from 'react-router-dom'
-import axios from 'axios';
+import axios, { AxiosError } from 'axios';
 import { useNavigate } from "react-router-dom"
+import { toast, ToastContainer } from 'react-toastify';
+import "react-toastify/dist/ReactToastify.css";
 
 const AddorEditUsers = () => {
     const Navigate = useNavigate();
@@ -17,7 +19,6 @@ const AddorEditUsers = () => {
         lastName: "",
         email: "",
         // isActive: false,
-        allowLogin: false,
         userName: "",
         password: "",
         cPassword: "",
@@ -25,7 +26,6 @@ const AddorEditUsers = () => {
         allLocations: "",
         salesCommissionPercentage: "",
         maxSaleDiscountPercentage: "",
-        // isAllowSelectedContacts: "",
         dateOfBirth: "",
         gender: "",
         maritalStatus: "",
@@ -52,12 +52,7 @@ const AddorEditUsers = () => {
         bankIdentifierCode: "",
         branch: "",
         taxPayerId: "",
-        // department: "",
-        // designation: "",
-        // primaryWorkLocation: "",
-        // basicSalary: "",
-        // basicSalary2: "",
-        // payComponent: ""
+
 
 
     })
@@ -88,7 +83,8 @@ const AddorEditUsers = () => {
                     'Authorization': token
                 }
             });
-            // console.log(response)
+            console.log(response.data)
+
             setUserData(response.data);
         } catch (error) {
             console.error('Error fetching user:', error);
@@ -116,12 +112,35 @@ const AddorEditUsers = () => {
                     'Authorization': token
                 }
             });
-            console.log(response)
+            // console.log(response)
             if (response.status === 201) {
-                Navigate("/home/users");
+                toast.success('Your data has been saved', {
+                    position: "top-right",
+                    autoClose: 2000,
+                    hideProgressBar: false,
+                    closeOnClick: true,
+                    pauseOnHover: true,
+                    draggable: true,
+                    progress: undefined,
+                    theme: "light",
+                });
+                setTimeout(() => {
+                    Navigate("/home/users");
+                }, 2000);
+
             }
         } catch (error) {
             console.error('Error Adding User:', error);
+            toast.error(error.response.data.message, {
+                position: "top-right",
+                autoClose: 2000,
+                hideProgressBar: false,
+                closeOnClick: true,
+                pauseOnHover: true,
+                draggable: true,
+                progress: undefined,
+                theme: "light",
+            });
         }
     };
 
@@ -135,22 +154,54 @@ const AddorEditUsers = () => {
                     'Authorization': token
                 }
             });
-            console.log(response)
+            // console.log(response.data)
             if (response.status === 200) {
-                Navigate("/home/users");
+                toast.success('Your data has been saved', {
+                    position: "top-right",
+                    autoClose: 2000,
+                    hideProgressBar: false,
+                    closeOnClick: true,
+                    pauseOnHover: true,
+                    draggable: true,
+                    progress: undefined,
+                    theme: "light",
+                });
+                setTimeout(() => {
+                    Navigate("/home/users");
+                }, 2000);
+
             }
         } catch (error) {
             console.error('Error Adding User:', error);
+            toast.error(error.response.data.message, {
+                position: "top-right",
+                autoClose: 2000,
+                hideProgressBar: false,
+                closeOnClick: true,
+                pauseOnHover: true,
+                draggable: true,
+                progress: undefined,
+                theme: "light",
+            });
         }
     };
     const handleClick = (e) => {
         e.preventDefault()
-        if (userData.firstName.length === 0 ||
-            userData.email.length === 0 ||
-            userData.password.length === 0 ||
-            userData.cPassword.length === 0 ||
-            userData.role.length === 0) {
+        if (userData.firstName?.length === 0 ||
+            userData.email?.length === 0 ||
+            userData.password?.length === 0 ||
+            userData.cPassword?.length === 0) {
             setIserror(true)
+            toast.error('Some fields are required', {
+                position: "top-right",
+                autoClose: 2000,
+                hideProgressBar: false,
+                closeOnClick: true,
+                pauseOnHover: true,
+                draggable: true,
+                progress: undefined,
+                theme: "light",
+            });
         } else if (_id) {
             addUserById()
             console.log("Handle Update")
@@ -163,14 +214,30 @@ const AddorEditUsers = () => {
     return (
 
         <div className='flex flex-col   py-5 bg-gray-200 min-h-screen' >
+            <ToastContainer
+                position="top-right"
+                autoClose={2000}
+                hideProgressBar={false}
+                newestOnTop={false}
+                closeOnClick
+                rtl={false}
+                pauseOnFocusLoss
+                draggable
+                pauseOnHover
+                theme="colored"
+            />
             <form>
                 <h1 className='text-2xl items-start flex mx-6 justify-start  font-semibold'>{_id ? "Edit User" : "Add User"}</h1>
                 {/* Add User */}
                 <div className='grid grid-cols-1 md:grid-cols-3 gap-10 mt-3 w-[96%] mx-[2%] bg-white shadow-sm p-5 shadow-gray-400'>
                     <div className='flex flex-col items-start w-full md:w-[300px]'>
                         <h1 className='text-lg'>Prefix:</h1>
-                        <input value={userData.prefix} onChange={(e) => setUserData({ ...userData, prefix: e.target.value })} type='text' placeholder='Mr / Mrs / Miss' className='focus:outline-none w-full md:w-[300px]  border-[1px] border-gray-300 px-2  rounded-sm p-1' />
-                    </div>
+                        <select value={userData.prefix} onChange={(e) => { setUserData({ ...userData, prefix: e.target.value }) }} type='text' className='px-2 py-[3px] w-full border-[1px] border-gray-600 focus:outline-none' >
+                            <option value={"Mr"}>Mr</option>
+                            <option value={"Mrs"}>Mrs</option>
+                            <option value={"Miss"}>Miss</option>
+
+                        </select>                    </div>
                     <div className='flex flex-col items-start w-full'>
                         <h1 className='text-lg flex'>First Name: * <span className='text-red-500 mx-2 mt-1 text-sm'> {iserror && userData.firstName.length === 0 ? "Required Field" : ""} </span></h1>
                         <input value={userData.firstName} onChange={(e) => setUserData({ ...userData, firstName: e.target.value })} type='text' placeholder='First Name' className='focus:outline-none w-full border-[1px] border-gray-300 px-2  rounded-sm p-1' />
@@ -192,10 +259,7 @@ const AddorEditUsers = () => {
                 <div className='flex flex-col mt-5 w-[96%] mx-[2%] bg-white shadow-sm p-5 shadow-gray-400'>
                     <h1 className='text-2xl items-start flex mx-2 justify-start  font-semibold'>Roles and Permissions</h1>
 
-                    <div className='flex  items-start mt-8'>
-                        <input value={userData.allowLogin} onChange={(e) => setUserData({ ...userData, allowLogin: e.target.value })} type='checkbox' className='focus:outline-none rounded-md mt-1 w-5 h-5' />
-                        <h1 className='text-lg mx-2'>Allow Login</h1>
-                    </div>
+
                     <div className='grid grid-cols-1 md:grid-cols-3 gap-10 mt-5 '>
 
                         <div className='flex flex-col items-start w-full '>
@@ -215,62 +279,35 @@ const AddorEditUsers = () => {
 
 
                     </div>
-                    <div className='flex flex-col items-start w-full mt-5'>
-                        <h1 className='text-lg flex'>Role:* <span className='text-red-500 mx-2 mt-1 text-sm'> {iserror && userData.role.length === 0 ? "Required Field" : ""}</span></h1>
-                        <select value={userData.role} onChange={(e) => setUserData({ ...userData, role: e.target.value })} type='text' className='focus:outline-none w-full md:w-1/2 border-[1px] border-gray-300 px-2  rounded-sm p-1' >
-                            <option value={""}>--Select Role --</option>
-                            {/* <option value={userData.role?.roleName}>{(_id && userData.role)?userData.role.roleName:"--Select Role --"}</option> */}
-
-                            {rolesData.map((role) => (
-                                <option key={role._id} value={role._id}>
-                                    {role.roleName}
-                                </option>
-                            ))}
-
-                        </select>
-                    </div>
-
-                    {/* <div className='flex items-start w-full mt-5'>
-                        <div className='flex'>
-                            <h1 className='text-lg'>Access Locations</h1>
-
+                    {userData.role !== 'Admin' && (
+                        <div className='flex flex-col items-start w-full mt-5'>
+                            <h1 className='text-lg flex'>
+                                Role:*
+                                <span className='text-red-500 mx-2 mt-1 text-sm'>
+                                    {iserror && userData.role.length === 0 ? 'Required Field' : ''}
+                                </span>
+                            </h1>
+                            <select
+                                value={userData.role}
+                                onChange={(e) => setUserData({ ...userData, role: e.target.value })}
+                                type='text'
+                                className='focus:outline-none w-full md:w-1/2 border-[1px] border-gray-300 px-2 rounded-sm p-1'
+                            >
+                                <option value={''}>--Select Role --</option>
+                                {rolesData.map((role) => (
+                                    <option key={role._id} value={role._id}>
+                                        {role.roleName}
+                                    </option>
+                                ))}
+                            </select>
                         </div>
-                        <div className='flex flex-col mx-5'>
-                            <div className='flex  items-start '>
-                                <input name='allLocations' value={userData.allLocations} onChange={(e) => setUserData({ ...userData, allLocations: e.target.value })} type='checkbox' className='focus:outline-none rounded-md mt-1 w-5 h-5' />
-                                <h1 className='text-lg mx-2'>All Locations</h1>
-                            </div><div className='flex  items-start mt-2'>
-                                <input name='allLocations' value={userData.allLocations} onChange={(e) => setUserData({ ...userData, allLocations: e.target.value })} type='checkbox' className='focus:outline-none rounded-md mt-1 w-5 h-5' />
-                                <h1 className='text-lg mx-2'>Eziline Software House (Pvt.) Ltd (BL0001)</h1>
-                            </div>
-                        </div>
+                    )}
 
-                    </div> */}
+
 
 
                 </div>
-                {/* Sales */}
-                {/* <div className='flex flex-col mt-5 w-[96%] mx-[2%] bg-white shadow-sm p-5 shadow-gray-400'>
-                    <h1 className='text-2xl items-start flex mx-2 justify-start  font-semibold'>Sales</h1>
-                    <div className='grid grid-cols-1 md:grid-cols-3 gap-10 mt-5 '>
 
-                        <div className='flex flex-col items-start w-full '>
-                            <h1 className='text-lg'>Sales Commission Percentage (%):</h1>
-                            <input value={userData.salesCommissionPercentage} onChange={(e) => setUserData({ ...userData, salesCommissionPercentage: e.target.value })} type='text' placeholder='Sales Commission Percentage (%)' className='focus:outline-none w-full   border-[1px] border-gray-300 px-2  rounded-sm p-1' />
-                        </div>
-
-                        <div className='flex flex-col items-start w-full'>
-                            <h1 className='text-lg'>Max sales discount percent:</h1>
-                            <input value={userData.maxSaleDiscountPercentage} onChange={(e) => setUserData({ ...userData, maxSaleDiscountPercentage: e.target.value })} type='text' placeholder='Max sales discount percent:' className='focus:outline-none w-full border-[1px] border-gray-300 px-2  rounded-sm p-1' />
-                        </div>
-                    </div>
-                    {/* <div className='flex  items-start mt-5'>
-                        <input value={userData.isAllowSelectedContacts} onChange={(e) => setUserData({ ...userData, isAllowSelectedContacts: e.target.value })} type='checkbox' className='focus:outline-none rounded-md mt-1 w-5 h-5' />
-                        <h1 className='text-lg mx-2'>Allow Selected Contacts</h1>
-                    </div> */}
-
-
-                {/* </div> */}
                 {/* More Information */}
                 <div className='flex flex-col mt-5 w-[96%] mx-[2%] bg-white my-5 shadow-sm p-5 shadow-gray-400'>
                     <h1 className='text-2xl items-start flex mx-2 justify-start  font-semibold'>More Information</h1>

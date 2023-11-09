@@ -1,7 +1,8 @@
 import React, { useRef, useState } from 'react'
 import { AiTwotoneFolderOpen } from 'react-icons/ai'
 import axios from 'axios';
-
+import { toast, ToastContainer } from 'react-toastify';
+import "react-toastify/dist/ReactToastify.css";
 const AddFundTransfer = (props) => {
     // const [fundsTranferData, setFundsTransferData] = useState([]);
     const data = props.data
@@ -35,22 +36,60 @@ const AddFundTransfer = (props) => {
         try {
             const token = localStorage.getItem('token');
             // console.log(formData)
-            const response = await axios.post(`http://localhost:8000/admin/account/funds-transfer`, formData,{
+            const response = await axios.post(`http://localhost:8000/admin/account/funds-transfer`, formData, {
                 headers: {
                     'Authorization': token
                 }
             });
             console.log(response)
             if (response.status === 201) {
-                console.log("Success")
+                toast.success('Data Saved', {
+                    position: "top-right",
+                    autoClose: 2000,
+                    hideProgressBar: false,
+                    closeOnClick: true,
+                    pauseOnHover: true,
+                    draggable: true,
+                    progress: undefined,
+                    theme: "light",
+                });
+                setTimeout(() => {
+
+                    console.log("Success")
+                }, 2000);
+
+
             }
         } catch (error) {
             console.error('Error Transfering:', error);
+            toast.error(error.response.data.message, {
+                position: "top-right",
+                autoClose: 2000,
+                hideProgressBar: false,
+                closeOnClick: true,
+                pauseOnHover: true,
+                draggable: true,
+                progress: undefined,
+                theme: "light",
+            });
+
         }
     };
 
     return (
         <div className='flex flex-col w-full px-3 bg-white '>
+            <ToastContainer
+                position="top-right"
+                autoClose={2000}
+                hideProgressBar={false}
+                newestOnTop={false}
+                closeOnClick
+                rtl={false}
+                pauseOnFocusLoss
+                draggable
+                pauseOnHover
+                theme="colored"
+            />
             <div className='flex'>
                 <h1 className='text-2xl font-semibold text-start '>Fund Transfer</h1>
             </div>

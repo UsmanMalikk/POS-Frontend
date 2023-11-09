@@ -6,7 +6,7 @@ const InvoiceStng = () => {
     const [invoiceSchema, setInvoiceSchema] = useState(true)
     // const [invcLout, setInvcLout] = useState(false)
     return (
-        <div className='flex flex-col bg-gray-100 p-3 '>
+        <div className='flex flex-col bg-gray-100 p-3 min-h-[90vh]'>
             <div className='flex'>
                 <h1 className='text-2xl text-start'>Invoice Settings</h1>
                 <h1 className='text-sm text-start mt-3 mx-2'>Manage Your Invoice Settings</h1>

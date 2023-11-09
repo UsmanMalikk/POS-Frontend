@@ -101,18 +101,7 @@ const EditShipping = (props) => {
                     </div>
 
                 </div>
-                <div className=' flex flex-col mt-5 '>
-                    <h2 className='text-start font-bold '> Shipping Documents:</h2>
-                    <div className='flex'>
-                        {/* value={formData.img_data} onChange={ (e)=>setFormData({...formData,  img_data: e.target.value})} */}
-                        <input className=' hidden' type='file' ref={inpuRef1} accept='application/pdf,text/csv,application/zip,application/msword,application/vnd.openxmlformats-officedocument.wordprocessingml.document,image/jpeg,image/jpg,image/png' />
-                        <div onClick={() => { inpuRef1.current?.click(); }} className='flex cursor-pointersu  cursor-pointer w-full border-[2px] border-gray-600 h-[200px] items-center justify-center'>
-                            Drop files here to upload
-                        </div>
-                    </div>
-
-
-                </div>
+                
 
 
 

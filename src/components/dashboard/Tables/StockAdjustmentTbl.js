@@ -26,6 +26,7 @@ import ViewStock from "../StockAdjustment/ViewStock";
 import EditShipping from "../sell/EditShipping";
 import ViewPayment from "../payments/ViewPayment";
 import axios from 'axios';
+import { FcCheckmark } from 'react-icons/fc';
 
 const StockAdjustmentTbl = () => {
 
@@ -80,6 +81,7 @@ const StockAdjustmentTbl = () => {
   const [col7, setCol7] = useState(true);
   const [col8, setCol8] = useState(true);
   const [col9, setCol9] = useState(true);
+  const [stockADJPrefixData, setStockADJPrefixData] = useState([]);
 
   const [isedit, setIsedit] = useState(false);
   const [isShowPayment, setIsShowPayment] = useState(false);
@@ -150,7 +152,10 @@ const StockAdjustmentTbl = () => {
       setCrpage(crpage + 1);
     }
   };
-
+  const [permission, setPermission] = useState(false)
+  const [isAlert, setIsAlert] = useState(false)
+  const [isdelete, setIsdelete] = useState(false)
+  const [deleteId, setDeleteId] = useState(0)
   const [isshow, setIsshow] = useState(false);
   const [showId, setShowId] = useState(0);
   const displayData = () => {
@@ -162,7 +167,23 @@ const StockAdjustmentTbl = () => {
   };
 
 
+  const fetchPrefixes = async () => {
 
+    try {
+      const token = localStorage.getItem('token');
+      const response = await axios.get(`http://localhost:8000/admin/prefix`, {
+        headers: {
+          'Authorization': token
+        }
+      });
+      // console.log(response.data)
+      setStockADJPrefixData(response.data);
+      // console.log(variationData)
+
+    } catch (error) {
+      console.error('Error fetching Prefixes:', error);
+    }
+  };
 
   const fetchSTK = async () => {
 
@@ -180,9 +201,16 @@ const StockAdjustmentTbl = () => {
     }
   };
   useEffect(() => {
-    // Make an API call to fetch user's user records
+    fetchPrefixes()
     fetchSTK();
-  }, []);
+    const runDelete = () => {
+      if (permission === true) {
+
+        handleDeleteAdjustment(deleteId)
+      }
+    }
+    runDelete()
+  }, [permission]);
   const handleDeleteAdjustment = async (stkId) => {
     try {
       const token = localStorage.getItem('token');
@@ -197,6 +225,19 @@ const StockAdjustmentTbl = () => {
       console.error('Error deleting Stoct Adjustment:', error);
     }
   };
+  const Alert = () => {
+    return (
+      <div className="flex flex-col items-center px-4 justify-center w-[300px] py-5 h-[200px] bg-white rounded-md">
+        <FcCheckmark size={100} className="items-center justify-center" />
+        <h1 className="text-4xl text-gray-500 text-center ">Are you sure!</h1>
+        <div className="flex items-center w-full justify-between mt-5">
+          <button onClick={() => { setPermission(false); setIsAlert(false); setIsdelete(false) }} className="text-md rounded-md mx-2 px-2 py-1 bg-red-500 text-white">Cancel</button>
+          <button onClick={() => { setPermission(true); setIsAlert(false); setIsdelete(false) }} className="text-md rounded-md mx-2 px-2 py-1 bg-green-500 text-white">OK</button>
+
+        </div>
+      </div>
+    )
+  }
   return (
     <div>
       <div className="flex  flex-col md:flex-row  items-center justify-center mt-3 md:justify-between mx-5">
@@ -437,7 +478,7 @@ const StockAdjustmentTbl = () => {
                                 <h1 className="text-sm">View</h1>
                               </Link>
                             </li>
-                            <li className="w-full">
+                            {/* <li className="w-full">
                               <div
                                 onClick={() => {
                                   setIsedit(!isedit);
@@ -448,7 +489,7 @@ const StockAdjustmentTbl = () => {
                                 <FaPrint size={15} />
                                 <h1 className="text-sm">Print</h1>
                               </div>
-                            </li>
+                            </li> */}
                             <li className="w-full">
                               <Link
                                 to={`/home/stock-adjustments/edit/${value._id}`}
@@ -466,7 +507,9 @@ const StockAdjustmentTbl = () => {
                               <div
                                 onClick={() => {
 
-                                  handleDeleteAdjustment(value._id)
+                                  setIsAlert(!isCliked);
+                                  setIsdelete(true)
+                                  setDeleteId(value._id)
 
                                 }}
                                 className="flex px-2 py-1 w-full cursor-pointer hover:bg-gray-400 items-center "
@@ -495,7 +538,7 @@ const StockAdjustmentTbl = () => {
                     </td>
                   )}
                   {col2 && <td className="px-1 py-1 text-sm">{date}</td>}
-                  {col3 && <td className="px-1 py-1"> {value.referenceNumber}</td>}
+                  {col3 && <td className="px-1 py-1"> {stockADJPrefixData.stockAdjustment + "" + value.referenceNumber}</td>}
                   {col4 && <td className="px-1 py-1">{value.businesLocation?.name}</td>}
                   {col5 && (
                     <td className=" py-1 px-1">{value.adjustmentType}</td>
@@ -575,6 +618,11 @@ const StockAdjustmentTbl = () => {
           </div>
         </div>
       )}
+      {isAlert &&
+        <div className="absolute top-0 flex flex-col items-center  justify-center right-0 bg-black/70 w-full min-h-screen">
+          {isdelete && <Alert />}
+        </div>
+      }
     </div>
   );
 };

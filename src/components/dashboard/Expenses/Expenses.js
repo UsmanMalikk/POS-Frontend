@@ -102,7 +102,7 @@ const Expenses = () => {
       <div className="flex justify-start items-start w-full">
         <h1 className="text-xl font-semibold">Expenses</h1>
       </div>
-      <div className="flex flex-col mt-4 w-full bg-white rounded-md p-3 items-start justify-start">
+      {/* <div className="flex flex-col mt-4 w-full bg-white rounded-md p-3 items-start justify-start">
         <div
           className="flex cursor-pointer"
           onClick={() => {
@@ -295,7 +295,7 @@ const Expenses = () => {
             </div>
           </div>
         )}
-      </div>
+      </div> */}
 
       <div className="flex flex-col bg-white border-t-[3px] rounded-md w-full mt-5 border-blue-500">
         <div className="flex justify-between mt-2 text-sm mx-5">

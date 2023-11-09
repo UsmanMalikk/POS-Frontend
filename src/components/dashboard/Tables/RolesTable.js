@@ -27,6 +27,7 @@ const RolesTable = () => {
     useEffect(() => {
         // Make an API call to fetch user's roles records
         fetchRoles();
+
     }, []);
     const [crpage, setCrpage] = useState(1)
     const rcrdprpg = 5
@@ -97,7 +98,7 @@ const RolesTable = () => {
                                         <h1 className='text-sm'>Edit</h1>
                                     </Button>
                                     
-                                    <div className='flex mx-1 p-1 items-center bg-red-500 text-white justify-center'>
+                                    <div onClick = {() => {}}className='flex mx-1 p-1 items-center bg-red-500 text-white justify-center'>
                                         <AiOutlineDelete size={15} />
                                         <h1 className='text-sm'>Delete</h1>
                                     </div>
@@ -125,6 +126,7 @@ const RolesTable = () => {
                         </li>
                     </ul>
                 </nav>
+                
             </div>
         </div>
     )

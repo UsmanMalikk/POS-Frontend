@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react'
 import axios from 'axios';
-
+import { toast, ToastContainer } from 'react-toastify';
+import "react-toastify/dist/ReactToastify.css";
 const AddorEditWarranties = (props) => {
     const _id = props.id
 
@@ -17,12 +18,11 @@ const AddorEditWarranties = (props) => {
 
         try {
             const token = localStorage.getItem('token');
-            const response = await axios.get(`http://localhost:8000/admin/warranties/${_id}`,{
+            const response = await axios.get(`http://localhost:8000/admin/warranties/${_id}`, {
                 headers: {
                     'Authorization': token
                 }
             });
-            // console.log(response)
             setFormData(response.data);
 
         } catch (error) {
@@ -43,19 +43,40 @@ const AddorEditWarranties = (props) => {
         try {
             const token = localStorage.getItem('token');
             // console.log(formData)
-            const response = await axios.post(`http://localhost:8000/admin/warranties`, formData,{
+            const response = await axios.post(`http://localhost:8000/admin/warranties`, formData, {
                 headers: {
                     'Authorization': token
                 }
             });
-            // console.log(response)
             if (response.status === 201) {
-                window.location.reload();
+                toast.success('Data Saved', {
+                    position: "top-right",
+                    autoClose: 2000,
+                    hideProgressBar: false,
+                    closeOnClick: true,
+                    pauseOnHover: true,
+                    draggable: true,
+                    progress: undefined,
+                    theme: "light",
+                });
+                setTimeout(() => {
+                    window.location.reload();
+                }, 2000);
 
-                console.log("Success")
+
             }
         } catch (error) {
             console.error('Error Adding Warranty:', error);
+            toast.error(error.response.data.message, {
+                position: "top-right",
+                autoClose: 2000,
+                hideProgressBar: false,
+                closeOnClick: true,
+                pauseOnHover: true,
+                draggable: true,
+                progress: undefined,
+                theme: "light",
+            });
         }
     };
 
@@ -64,19 +85,40 @@ const AddorEditWarranties = (props) => {
         try {
             const token = localStorage.getItem('token');
             // console.log(formData)
-            const response = await axios.put(`http://localhost:8000/admin/warranties/${_id}`, formData,{
+            const response = await axios.put(`http://localhost:8000/admin/warranties/${_id}`, formData, {
                 headers: {
                     'Authorization': token
                 }
             });
-            console.log(response)
             if (response.status === 200) {
-                window.location.reload();
+                toast.success('Data Saved', {
+                    position: "top-right",
+                    autoClose: 2000,
+                    hideProgressBar: false,
+                    closeOnClick: true,
+                    pauseOnHover: true,
+                    draggable: true,
+                    progress: undefined,
+                    theme: "light",
+                });
+                setTimeout(() => {
+                    window.location.reload();
+                }, 2000);
 
-                console.log("Success")
+
             }
         } catch (error) {
             console.error('Error Adding Warranty:', error);
+            toast.error(error.response.data.message, {
+                position: "top-right",
+                autoClose: 2000,
+                hideProgressBar: false,
+                closeOnClick: true,
+                pauseOnHover: true,
+                draggable: true,
+                progress: undefined,
+                theme: "light",
+            });
         }
     };
 
@@ -96,6 +138,18 @@ const AddorEditWarranties = (props) => {
 
     return (
         <div className='flex flex-col w-full px-5 bg-white '>
+            <ToastContainer
+                position="top-right"
+                autoClose={2000}
+                hideProgressBar={false}
+                newestOnTop={false}
+                closeOnClick
+                rtl={false}
+                pauseOnFocusLoss
+                draggable
+                pauseOnHover
+                theme="colored"
+            />
             <div className='flex'>
                 <h1 className='text-2xl font-semibold text-start '>{props.id ? "Edit Warranties" : "Add Warranties"}</h1>
             </div>

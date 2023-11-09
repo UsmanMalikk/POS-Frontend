@@ -41,7 +41,7 @@ const AddorEditCustomerGrp = (props) => {
                 setCalcType(response.data.calculationType);
                 setPercentage(response.data.calculationPercentage);
                 sellingPriceGroup(response.data.sellingPriceGroup);
-
+                // setSPG(response.data.sellingPriceGroup)
             console.log("single data",response.data);
 
         }

@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react'
 import axios from 'axios';
-
+import { toast, ToastContainer } from 'react-toastify';
+import "react-toastify/dist/ReactToastify.css";
 const AddorEditCategories = (props) => {
     const _id = props.id
 
@@ -21,7 +22,7 @@ const AddorEditCategories = (props) => {
 
         try {
             const token = localStorage.getItem('token');
-            const response = await axios.get(`http://localhost:8000/admin/categories`,{
+            const response = await axios.get(`http://localhost:8000/admin/categories`, {
                 headers: {
                     'Authorization': token
                 }
@@ -37,7 +38,7 @@ const AddorEditCategories = (props) => {
 
         try {
             const token = localStorage.getItem('token');
-            const response = await axios.get(`http://localhost:8000/admin/categories/${_id}`,{
+            const response = await axios.get(`http://localhost:8000/admin/categories/${_id}`, {
                 headers: {
                     'Authorization': token
                 }
@@ -67,19 +68,41 @@ const AddorEditCategories = (props) => {
         try {
             const token = localStorage.getItem('token');
             // console.log(formData)
-            const response = await axios.post(`http://localhost:8000/admin/categories`, formData,{
+            const response = await axios.post(`http://localhost:8000/admin/categories`, formData, {
                 headers: {
                     'Authorization': token
                 }
             });
             // console.log(response)
             if (response.status === 201) {
-                window.location.reload();
+                toast.success('Data Saved', {
+                    position: "top-right",
+                    autoClose: 2000,
+                    hideProgressBar: false,
+                    closeOnClick: true,
+                    pauseOnHover: true,
+                    draggable: true,
+                    progress: undefined,
+                    theme: "light",
+                });
+                setTimeout(() => {
+                    window.location.reload();
+                }, 2000);
 
-                console.log("Success")
+
             }
         } catch (error) {
             console.error('Error Adding Unit:', error);
+            toast.error(error.response.data.message, {
+                position: "top-right",
+                autoClose: 2000,
+                hideProgressBar: false,
+                closeOnClick: true,
+                pauseOnHover: true,
+                draggable: true,
+                progress: undefined,
+                theme: "light",
+            });
         }
     };
 
@@ -88,17 +111,40 @@ const AddorEditCategories = (props) => {
         try {
             const token = localStorage.getItem('token');
             // console.log(formData)
-            const response = await axios.put(`http://localhost:8000/admin/categories/${_id}`, formData,{
+            const response = await axios.put(`http://localhost:8000/admin/categories/${_id}`, formData, {
                 headers: {
                     'Authorization': token
                 }
             });
             console.log(response)
             if (response.status === 200) {
-                window.location.reload();
+                toast.success('Data Saved', {
+                    position: "top-right",
+                    autoClose: 2000,
+                    hideProgressBar: false,
+                    closeOnClick: true,
+                    pauseOnHover: true,
+                    draggable: true,
+                    progress: undefined,
+                    theme: "light",
+                });
+                setTimeout(() => {
+                    window.location.reload();
+                }, 2000);
+
             }
         } catch (error) {
             console.error('Error Adding Units:', error);
+            toast.error(error.response.data.message, {
+                position: "top-right",
+                autoClose: 2000,
+                hideProgressBar: false,
+                closeOnClick: true,
+                pauseOnHover: true,
+                draggable: true,
+                progress: undefined,
+                theme: "light",
+            });
         }
     };
 
@@ -118,6 +164,18 @@ const AddorEditCategories = (props) => {
 
     return (
         <div className='flex flex-col w-full px-5 bg-white '>
+            <ToastContainer
+                position="top-right"
+                autoClose={2000}
+                hideProgressBar={false}
+                newestOnTop={false}
+                closeOnClick
+                rtl={false}
+                pauseOnFocusLoss
+                draggable
+                pauseOnHover
+                theme="colored"
+            />
             <div className='flex'>
                 <h1 className='text-2xl font-semibold text-start '>{props.id ? "Edit Categories" : "Add Categories"}</h1>
             </div>

@@ -5,6 +5,7 @@ import { AiOutlinePlus } from 'react-icons/ai';
 import { MdCancel } from 'react-icons/md';
 import AddorEditInvoiceScheme from '../settings/invoiceStng/AddorEditInvoiceScheme';
 import axios from 'axios';
+import { FcCheckmark } from 'react-icons/fc';
 
 
 const InvoiceSchemaTbl = () => {
@@ -19,7 +20,10 @@ const InvoiceSchemaTbl = () => {
     const [col6, setCol6] = useState(false)
 
 
-
+    const [permission, setPermission] = useState(false)
+    const [isAlert, setIsAlert] = useState(false)
+    const [isdelete, setIsdelete] = useState(false)
+    const [deleteId, setDeleteId] = useState(0)
 
     const [invoicesData, setInvoicesData] = useState([]);
 
@@ -61,9 +65,9 @@ const InvoiceSchemaTbl = () => {
             const token = localStorage.getItem('token');
             const response = await axios.get(`http://localhost:8000/admin/invoices`, {
                 headers: {
-                  'Authorization': token
+                    'Authorization': token
                 }
-              });
+            });
             console.log(response)
             setInvoicesData(response.data);
         } catch (error) {
@@ -73,9 +77,15 @@ const InvoiceSchemaTbl = () => {
     useEffect(() => {
 
         fetchInvoices();
+        const runDelete = () => {
+            if (permission === true) {
 
+                handleDeleteInvoice(deleteId)
+            }
+        }
+        runDelete()
 
-    }, []);
+    }, [permission]);
     const handleDeleteInvoice = async (expId) => {
         try {
             // Make an API call to delete attendance for a specific record
@@ -86,7 +96,19 @@ const InvoiceSchemaTbl = () => {
             console.error('Error deleting Expense:', error);
         }
     };
+    const Alert = () => {
+        return (
+            <div className="flex flex-col items-center px-4 justify-center w-[300px] py-5 h-[200px] bg-white rounded-md">
+                <FcCheckmark size={100} className="items-center justify-center" />
+                <h1 className="text-4xl text-gray-500 text-center ">Are you sure!</h1>
+                <div className="flex items-center w-full justify-between mt-5">
+                    <button onClick={() => { setPermission(false); setIsAlert(false); setIsdelete(false) }} className="text-md rounded-md mx-2 px-2 py-1 bg-red-500 text-white">Cancel</button>
+                    <button onClick={() => { setPermission(true); setIsAlert(false); setIsdelete(false) }} className="text-md rounded-md mx-2 px-2 py-1 bg-green-500 text-white">OK</button>
 
+                </div>
+            </div>
+        )
+    }
     return (
         <div className='bg-white w-full '>
             <div className='flex justify-between mt-2 text-sm mx-5'>
@@ -206,12 +228,14 @@ const InvoiceSchemaTbl = () => {
                                             }`}
                                         onClick={() => {
                                             if (!value.isDefault) {
-                                                handleDeleteInvoice(value._id);
+                                                setIsAlert(!isClicked);
+                                                setIsdelete(true)
+                                                setDeleteId(value._id)
                                             }
                                         }}
                                         disabled={value.isDefault}
                                     >
-                                         {value.isDefault ? 'Default' : 'Delete'}
+                                        {value.isDefault ? 'Default' : 'Delete'}
                                     </button>
 
                                 </td>
@@ -251,6 +275,11 @@ const InvoiceSchemaTbl = () => {
 
                     </div>
 
+                }
+                {isAlert &&
+                    <div className="absolute top-0 flex flex-col items-center  justify-center right-0 bg-black/70 w-full min-h-screen">
+                        {isdelete && <Alert />}
+                    </div>
                 }
             </div>
         </div>

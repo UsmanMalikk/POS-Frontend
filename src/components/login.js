@@ -118,6 +118,16 @@ const Login = () => {
             // Handle login error
         }
     };
+    const handleKeyPress = (event) => {
+        if (event.key === 'Enter') {
+            console.log("I am Enter Key Event")
+            window.removeEventListener('keypress', handleKeyPress)
+
+            handleLogin();
+        }
+    }
+    window.addEventListener('keypress', handleKeyPress)
+   
 
     const handleChange = (e) => {
         if (e.target.name === "username") {
@@ -132,11 +142,11 @@ const Login = () => {
             }
         }
     }
-    const handleEnter = (e)=>{
-        if(e.code === 'Enter'){
-            handleLogin(e)
-        }
-    }
+    // const handleEnter = (e)=>{
+    //     if(e.code === 'Enter'){
+    //         handleLogin(e)
+    //     }
+    // }
     
 
     const langChange = (e) => {
@@ -194,7 +204,7 @@ const Login = () => {
                         <h1 className='text-white mx-3 text-xl'>{t('remember_me')}</h1>
                     </div>
                     <div className='flex justify-between mt-10'>
-                        <button type='submit' className='bg-blue-400 text-white text-xl px-2 py-1 mx-2' onClick={(e)=>{handleLogin(e)}} onKeyUp={(e)=>{handleEnter(e)}} >{t('Login')}</button>
+                        <button type='submit' className='bg-blue-400 text-white text-xl px-2 py-1 mx-2' onClick={handleLogin} >{t('Login')}</button>
                         <button className=' text-white text-xl mx-2'> {t('forgot_ur_password')}</button>
                     </div>
                 </div>

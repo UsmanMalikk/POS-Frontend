@@ -1,7 +1,8 @@
 import React, { useState, useEffect } from 'react'
 import { FaInfoCircle } from 'react-icons/fa'
 import axios from 'axios';
-
+import { toast, ToastContainer } from 'react-toastify';
+import "react-toastify/dist/ReactToastify.css";
 const AddorEditUnits = (props) => {
     const _id = props.id
 
@@ -11,8 +12,8 @@ const AddorEditUnits = (props) => {
         shortName: "",
         allowDecimal: "",
         multipleOfOtherUnits: false,
-        timesBaseUnit:'',
-        baseUnit:""
+        timesBaseUnit: '',
+        baseUnit: null
     })
     const [info, setInfo] = useState(false)
 
@@ -22,12 +23,12 @@ const AddorEditUnits = (props) => {
 
         try {
             const token = localStorage.getItem('token');
-            const response = await axios.get(`http://localhost:8000/admin/units`,{
+            const response = await axios.get(`http://localhost:8000/admin/units`, {
                 headers: {
                     'Authorization': token
                 }
             });
-            // console.log(response)
+            console.log(response)
             setUnitsData(response.data);
         } catch (error) {
             console.error('Error fetching units:', error);
@@ -38,7 +39,7 @@ const AddorEditUnits = (props) => {
 
         try {
             const token = localStorage.getItem('token');
-            const response = await axios.get(`http://localhost:8000/admin/units/${_id}`,{
+            const response = await axios.get(`http://localhost:8000/admin/units/${_id}`, {
                 headers: {
                     'Authorization': token
                 }
@@ -68,19 +69,41 @@ const AddorEditUnits = (props) => {
         try {
             const token = localStorage.getItem('token');
             // console.log(formData)
-            const response = await axios.post(`http://localhost:8000/admin/units`, formData,{
+            const response = await axios.post(`http://localhost:8000/admin/units`, formData, {
                 headers: {
                     'Authorization': token
                 }
             });
             // console.log(response)
             if (response.status === 201) {
-                window.location.reload();
+                toast.success('Data Saved', {
+                    position: "top-right",
+                    autoClose: 2000,
+                    hideProgressBar: false,
+                    closeOnClick: true,
+                    pauseOnHover: true,
+                    draggable: true,
+                    progress: undefined,
+                    theme: "light",
+                });
+                setTimeout(() => {
+                    window.location.reload();
+                }, 2000);
 
-                console.log("Success")
+
             }
         } catch (error) {
             console.error('Error Adding Unit:', error);
+            toast.error(error.response.data.message, {
+                position: "top-right",
+                autoClose: 2000,
+                hideProgressBar: false,
+                closeOnClick: true,
+                pauseOnHover: true,
+                draggable: true,
+                progress: undefined,
+                theme: "light",
+            });
         }
     };
 
@@ -89,18 +112,39 @@ const AddorEditUnits = (props) => {
         try {
             const token = localStorage.getItem('token');
             // console.log(formData)
-            const response = await axios.put(`http://localhost:8000/admin/units/${_id}`, formData,{
+            const response = await axios.put(`http://localhost:8000/admin/units/${_id}`, formData, {
                 headers: {
                     'Authorization': token
                 }
             });
-            console.log(response)
             if (response.status === 200) {
-                window.location.reload();
+                toast.success('Data Saved', {
+                    position: "top-right",
+                    autoClose: 2000,
+                    hideProgressBar: false,
+                    closeOnClick: true,
+                    pauseOnHover: true,
+                    draggable: true,
+                    progress: undefined,
+                    theme: "light",
+                });
+                setTimeout(() => {
+                    window.location.reload();
+                }, 2000);
 
             }
         } catch (error) {
             console.error('Error Adding Units:', error);
+            toast.error(error.response.data.message, {
+                position: "top-right",
+                autoClose: 2000,
+                hideProgressBar: false,
+                closeOnClick: true,
+                pauseOnHover: true,
+                draggable: true,
+                progress: undefined,
+                theme: "light",
+            });
         }
     };
     const handleSaveorEdit = () => {
@@ -117,6 +161,18 @@ const AddorEditUnits = (props) => {
     }
     return (
         <div className='flex flex-col w-full px-5 bg-white '>
+            <ToastContainer
+                position="top-right"
+                autoClose={2000}
+                hideProgressBar={false}
+                newestOnTop={false}
+                closeOnClick
+                rtl={false}
+                pauseOnFocusLoss
+                draggable
+                pauseOnHover
+                theme="colored"
+            />
             <div className='flex'>
                 <h1 className='text-2xl font-semibold text-start '>{props.id ? "Edit Units" : "Add Units"}</h1>
             </div>
@@ -171,9 +227,9 @@ const AddorEditUnits = (props) => {
                             <h1 className='font-bold mx-5'> = </h1>
                         </div>
 
-                        
-                        <input  value={formData.timesBaseUnit} onChange={(e) => { setFormData({ ...formData, timesBaseUnit: e.target.value }) }} type='text' className='border-[1px] border-gray-400 px-2 py-1 col-span-2 focus:outline-none' />                        <select className='border-[1px] border-gray-400 px-2 py-1 focus:outline-none mx-2' >
-                        <select value={formData.baseUnit} onChange={(e) => { setFormData({ ...formData, baseUnit: e.target.value }) }}  className='border-[1px] border-gray-400 px-2 py-1 focus:outline-none mx-2' />
+
+                        <input value={formData.timesBaseUnit} onChange={(e) => { setFormData({ ...formData, timesBaseUnit: e.target.value }) }} type='text' className='border-[1px] border-gray-400 px-2 py-1 col-span-2 focus:outline-none' />
+                        <select value={formData.baseUnit} onChange={(e) => { setFormData({ ...formData, baseUnit: e.target.value }) }} className='border-[1px] border-gray-400 px-2 py-1 focus:outline-none mx-2' >
                             <option value={""}>Select Base Unit</option>
                             {unitsData.map((unit) => (
                                 <option key={unit._id} value={unit._id}>

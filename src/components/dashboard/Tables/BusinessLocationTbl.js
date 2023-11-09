@@ -99,7 +99,9 @@ const BusinessLocationTbl = () => {
     useEffect(() => {
         // Make an API call to fetch user's user records
         fetchLocations();
+
     }, []);
+    
     return (
         <div className='bg-white w-full border-t-[3px] border-blue-600 rounded-md py-5 px-2'>
             <div className='flex justify-between mt-2 text-sm mx-5'>

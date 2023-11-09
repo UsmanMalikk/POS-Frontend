@@ -1,6 +1,6 @@
 import React, { useRef, useState, useEffect } from 'react'
 import { AiFillCaretDown } from 'react-icons/ai'
-import { FaBook, FaColumns, FaEdit,   FaFileCsv, FaFileExcel, FaFilePdf,  FaMoneyBillAlt,  FaPrint, FaSearch,  FaWindowClose} from 'react-icons/fa'
+import { FaBook, FaColumns, FaEdit, FaFileCsv, FaFileExcel, FaFilePdf, FaMoneyBillAlt, FaPrint, FaSearch, FaWindowClose } from 'react-icons/fa'
 import { useReactToPrint } from 'react-to-print';
 import { CSVLink } from 'react-csv';
 import * as XLSX from 'xlsx'
@@ -11,12 +11,13 @@ import AddorEditAccount from '../PaymentsAccounts/AddorEditAccount';
 import { Link } from 'react-router-dom';
 import AddFundTransfer from '../PaymentsAccounts/AddFundTransfer';
 import Deposit from '../PaymentsAccounts/Deposit';
+import { FcCheckmark } from 'react-icons/fc';
 
 import axios from 'axios';
 
 
 const AccountTbl = () => {
-    
+
     const printRef = useRef()
     let xlDatas = []
     //Export to Excel
@@ -66,8 +67,11 @@ const AccountTbl = () => {
     const [col9, setCol9] = useState(true)
 
     const [isedit, setIsedit] = useState(false)
-    
-    
+    const [permission, setPermission] = useState(false)
+    const [isAlert, setIsAlert] = useState(false)
+    const [isdelete, setIsdelete] = useState(false)
+    const [deleteId, setDeleteId] = useState(0)
+
     const [isCliked, setIsCliked] = useState(false)
     const [actionList, setActionList] = useState(Array(record.length).fill(false))
 
@@ -113,10 +117,10 @@ const AccountTbl = () => {
     const displayData = () => {
         if (editid !== 0 && isedit === true) {
             return <AddorEditAccount id={editid} />
-        }else if(fundTransfer){
-            return <AddFundTransfer data = {AccountsData}/>
-        }else if(deposit){
-            return <Deposit name ={depname} data = {AccountsData}/>
+        } else if (fundTransfer) {
+            return <AddFundTransfer data={AccountsData} />
+        } else if (deposit) {
+            return <Deposit name={depname} data={AccountsData} />
         }
     }
 
@@ -130,11 +134,11 @@ const AccountTbl = () => {
     }
     const total = findTotal()
 
-const fetchAccounts = async () => {
+    const fetchAccounts = async () => {
 
         try {
             const token = localStorage.getItem('token');
-            const response = await axios.get(`http://localhost:8000/admin/add-accounts`,{
+            const response = await axios.get(`http://localhost:8000/admin/add-accounts`, {
                 headers: {
                     'Authorization': token
                 }
@@ -146,29 +150,48 @@ const fetchAccounts = async () => {
             console.error('Error fetching Accounnt:', error);
         }
     };
-useEffect(() => {
+    useEffect(() => {
         // Make an API call to fetch SPG's records
-        
-            fetchAccounts()
 
-        
-    }, [])
+        fetchAccounts()
+        const runDelete = () => {
+            if (permission === true) {
+
+                handleClose(deleteId)
+            }
+        }
+        runDelete()
+
+    }, [permission])
     const handleClose = async (accId) => {
         try {
             const token = localStorage.getItem('token');
-          const response = await axios.put(`http://localhost:8000/admin/add-accounts/${accId}`,{
-            isClosed : true
-          },{
-            headers: {
-                'Authorization': token
-            }
-        });
-          console.log(response.data); 
-          fetchAccounts()
+            const response = await axios.put(`http://localhost:8000/admin/add-accounts/${accId}`, {
+                isClosed: true
+            }, {
+                headers: {
+                    'Authorization': token
+                }
+            });
+            console.log(response.data);
+            fetchAccounts()
         } catch (error) {
-          console.error('Error Closing Acc:', error);
+            console.error('Error Closing Acc:', error);
         }
-      };
+    };
+    const Alert = () => {
+        return (
+            <div className="flex flex-col items-center px-4 justify-center w-[300px] py-5 h-[200px] bg-white rounded-md">
+                <FcCheckmark size={100} className="items-center justify-center" />
+                <h1 className="text-4xl text-gray-500 text-center ">Are you sure!</h1>
+                <div className="flex items-center w-full justify-between mt-5">
+                    <button onClick={() => { setPermission(false); setIsAlert(false); setIsdelete(false) }} className="text-md rounded-md mx-2 px-2 py-1 bg-red-500 text-white">Cancel</button>
+                    <button onClick={() => { setPermission(true); setIsAlert(false); setIsdelete(false) }} className="text-md rounded-md mx-2 px-2 py-1 bg-green-500 text-white">OK</button>
+
+                </div>
+            </div>
+        )
+    }
     return (
         <div>
 
@@ -256,13 +279,13 @@ useEffect(() => {
                             return <tr key={index} className=''>
                                 {col1 && <td className="px-1 py-1 text-sm">{value.name} </td>}
                                 {col2 && <td className="px-1 py-1 text-sm">{(value.accountType.parentAccountType) ? value.accountType.parentAccountType.name : value.accountType.name}</td>}
-                                {col3 && <td className="px-1 py-1"> {(value.accountType.parentAccountType)?value.accountType.name : "" }</td>}
+                                {col3 && <td className="px-1 py-1"> {(value.accountType.parentAccountType) ? value.accountType.name : ""}</td>}
                                 {col4 && <td className="px-1 py-1">{value.accountNumber}</td>}
                                 {col5 && <td className=" py-1 px-1">{value.note}</td>}
                                 {col6 && <td className=" py-1 px-1">{value.openingBalance}</td>}
-                                {col7 && <td className="px-1 py-1 text-sm">{value.accountDetails}</td>}       
+                                {col7 && <td className="px-1 py-1 text-sm">{value.accountDetails}</td>}
                                 {/* {col8 && <td className="px-1 py-1 text-sm">{value.Role}</td>}      Added By */}
-                                
+
                                 {col9 &&
                                     <td className='py-1 flex '>
                                         <div onClick={() => { toggleDropdown(index) }} className='flex px-2 py-1 relative cursor-pointer items-center bg-blue-400 rounded-md text-white justify-center'>
@@ -284,7 +307,7 @@ useEffect(() => {
                                                         </Link>
                                                     </li>
                                                     <li className='w-full'>
-                                                        <div onClick={()=>{setIsCliked(true); setFundTransfer(true);}} className='flex px-2 py-1 w-full cursor-pointer hover:bg-gray-400 items-center '>
+                                                        <div onClick={() => { setIsCliked(true); setFundTransfer(true); }} className='flex px-2 py-1 w-full cursor-pointer hover:bg-gray-400 items-center '>
                                                             <h1 className='text-sm'>Fund Transfer</h1>
                                                         </div>
                                                     </li>
@@ -295,7 +318,11 @@ useEffect(() => {
                                                         </div>
                                                     </li>
                                                     <li className='w-full'>
-                                                        <div onClick={ ()=> handleClose(value._id)} className='flex px-2 py-1 w-full cursor-pointer hover:bg-gray-400 items-center '>
+                                                        <div onClick={() => {
+                                                            setIsAlert(!isCliked);
+                                                            setIsdelete(true)
+                                                            setDeleteId(value._id)
+                                                        }} className='flex px-2 py-1 w-full cursor-pointer hover:bg-gray-400 items-center '>
                                                             <FaWindowClose size={15} />
                                                             <h1 className='text-sm'>Close</h1>
                                                         </div>
@@ -340,7 +367,7 @@ useEffect(() => {
                 <div className='absolute top-0 flex flex-col items-center  justify-center right-0 bg-black/70 w-full min-h-screen'>
                     <div className='flex flex-col   w-full md:w-[50%]  mt-10 bg-white px-5 pt-2'>
                         <div className='flex items-end justify-end '>
-                            <MdCancel onClick={() => { setIsCliked(!isCliked);setFundTransfer(false);setDeposit(false); setIsedit(false);  setEditId(0); }} size={20} />
+                            <MdCancel onClick={() => { setIsCliked(!isCliked); setFundTransfer(false); setDeposit(false); setIsedit(false); setEditId(0); }} size={20} />
 
                         </div>
                         <div className='flex items-start justify-center'>
@@ -349,6 +376,11 @@ useEffect(() => {
                     </div>
                 </div>
 
+            }
+            {isAlert &&
+                <div className="absolute top-0 flex flex-col items-center  justify-center right-0 bg-black/70 w-full min-h-screen">
+                    {isdelete && <Alert />}
+                </div>
             }
         </div>
     )

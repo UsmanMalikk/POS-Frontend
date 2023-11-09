@@ -2,7 +2,8 @@ import React, { useState, useEffect } from 'react'
 import { FaBriefcase, FaCalendar, FaChevronCircleDown, FaEnvelope, FaGlobe, FaIdBadge, FaInfo, FaMapMarker, FaMobile, FaMoneyBillAlt, FaPhone, FaUser, FaUsers } from 'react-icons/fa'
 import { useParams } from 'react-router-dom'
 import axios from 'axios'
-
+import { toast, ToastContainer } from 'react-toastify';
+import "react-toastify/dist/ReactToastify.css";
 const AddorEditContact = (props) => {
     const params = useParams()
     const type = params.type
@@ -38,16 +39,7 @@ const AddorEditContact = (props) => {
         state: "",
         country: "",
         zipCode: "",
-        customField1: "",
-        customField2: "",
-        customField3: "",
-        customField4: "",
-        customField5: "",
-        customField6: "",
-        customField7: "",
-        customField8: "",
-        customField9: "",
-        customField10: "",
+
         shippingAddress: ""
 
     })
@@ -60,20 +52,87 @@ const AddorEditContact = (props) => {
             formData.prefix.length === 0
         ) {
             setIsError(true);
-            console.log(iserror)
-        } else {
-            
+            toast.error('Some fields are required', {
+                position: "top-right",
+                autoClose: 2000,
+                hideProgressBar: false,
+                closeOnClick: true,
+                pauseOnHover: true,
+                draggable: true,
+                progress: undefined,
+                theme: "light",
+            });        
+        } else if(props.id){
+            try {
+                const response = await axios.put(`http://localhost:8000/admin/contacts/${type}/${props.id}`, formData);
+                // console.log('Contact created successfully:', response.data);
+                if (response.status === 200) {
+                    toast.success('Data Saved', {
+                        position: "top-right",
+                        autoClose: 2000,
+                        hideProgressBar: false,
+                        closeOnClick: true,
+                        pauseOnHover: true,
+                        draggable: true,
+                        progress: undefined,
+                        theme: "light",
+                    });
+                    setTimeout(() => {
+                        window.location.reload();
+                    }, 1000);
+
+
+                }
+            } catch (error) {
+                console.error('Error creating contact:', error);
+                toast.error(error.response.data.message, {
+                    position: "top-right",
+                    autoClose: 2000,
+                    hideProgressBar: false,
+                    closeOnClick: true,
+                    pauseOnHover: true,
+                    draggable: true,
+                    progress: undefined,
+                    theme: "light",
+                });
+                // Handle errors here
+            }
+        
+        }else {
+
 
             try {
                 const response = await axios.post(`http://localhost:8000/admin/contacts/${type}`, formData);
                 // console.log('Contact created successfully:', response.data);
                 if (response.status === 201) {
-                    window.location.reload();
+                    toast.success('Data Saved', {
+                        position: "top-right",
+                        autoClose: 2000,
+                        hideProgressBar: false,
+                        closeOnClick: true,
+                        pauseOnHover: true,
+                        draggable: true,
+                        progress: undefined,
+                        theme: "light",
+                    });
+                    setTimeout(() => {
+                        window.location.reload();
+                    }, 2000);
 
-                    console.log("Success")
+
                 }
             } catch (error) {
                 console.error('Error creating contact:', error);
+                toast.error(error.response.data.message, {
+                    position: "top-right",
+                    autoClose: 2000,
+                    hideProgressBar: false,
+                    closeOnClick: true,
+                    pauseOnHover: true,
+                    draggable: true,
+                    progress: undefined,
+                    theme: "light",
+                });
                 // Handle errors here
             }
         }
@@ -104,7 +163,9 @@ const AddorEditContact = (props) => {
                     'Authorization': token
                 }
             });
+
             console.log(response);
+
             setCustomerGrpData(response.data);
 
         } catch (e) {
@@ -112,27 +173,28 @@ const AddorEditContact = (props) => {
         }
 
     }
-    const fetchContactById=async()=>{
-            
-        try{
+    const fetchContactById = async () => {
+
+        try {
             const token = localStorage.getItem('token');
 
-            const response=await axios.get(`http://localhost:8000/admin/contacts/${type}/${props.id}` , {
+            const response = await axios.get(`http://localhost:8000/admin/contacts/${type}/${props.id}`, {
                 headers: {
                     'Authorization': token
                 }
             });
-          
+
             setFormData(response.data);
             // console.log("single data",response);
 
         }
-        catch(error){
+        catch (error) {
             console.log('view is not fetched', error)
+
         }
-        
+
     }
-    
+
     useEffect(() => {
 
         if (props.id) {
@@ -146,6 +208,18 @@ const AddorEditContact = (props) => {
 
     return (
         <div className='flex w-full  flex-col justify-center items-center bg-white p-5'>
+            <ToastContainer
+                position="top-right"
+                autoClose={2000}
+                hideProgressBar={false}
+                newestOnTop={false}
+                closeOnClick
+                rtl={false}
+                pauseOnFocusLoss
+                draggable
+                pauseOnHover
+                theme="colored"
+            />
             <h1 className=' text-xl font-bold flex justify-start w-full'>{props.id !== 0 ? "Edit a contact" : "Add a new contact"}</h1>
             <div className=' w-full flex flex-col'>
                 <div className='grid grid-cols-1 mt-2 md:grid-cols-3 gap-2'>
@@ -211,10 +285,14 @@ const AddorEditContact = (props) => {
                 }
                 {radioVal === "individual" &&
                     <div className='grid grid-cols-1 md:grid-cols-4 mt-2 gap-2'>
-                        <div className='flex flex-col'>
-                            <h1 className='flex text-sm text-start'>Prefix: <p className='text-red-400'>{iserror && formData.prefix.length === 0 && radioVal === "individual" ? "Required Field" : ""}</p></h1>
-                            <input value={formData.prefix} onChange={(e) => { setFormData({ ...formData, prefix: e.target.value }) }} type='text' placeholder='Mr / Mrs / Miss' className='px-2 py-[3px] w-full border-[1px] border-gray-600 focus:outline-none' />
-                        </div>
+                        <select value={formData.prefix} onChange={(e) => { setFormData({ ...formData, prefix: e.target.value }) }} type='text' className='px-2 py-[3px] w-full border-[1px] border-gray-600 focus:outline-none' >
+                            <option value={""}>Please Select</option>
+
+                            <option value={"Mr"}>Mr</option>
+                            <option value={"Mrs"}>Mrs</option>
+                            <option value={"Miss"}>Miss</option>
+
+                        </select>
                         <div className='flex flex-col'>
                             <h1 className='flex text-sm text-start'> First Name:* <p className='text-red-400'>{iserror && formData.firstName.length === 0 && radioVal === "individual" ? "Required Field" : ""}</p></h1>
                             <input value={formData.firstName} onChange={(e) => { setFormData({ ...formData, firstName: e.target.value }) }} type='text' placeholder='First Name' className='px-2 py-[3px] w-full border-[1px] border-gray-600 focus:outline-none' />
@@ -281,7 +359,7 @@ const AddorEditContact = (props) => {
                             <h1 className='flex text-sm text-start'>Date of Birth:</h1>
                             <div className='flex'>
                                 < FaCalendar size={15} className='w-8 h-8 p-2 border-[1px] border-gray-600' />
-                                <input value={formData.dateOfBirth} onChange={(e) => { setFormData({ ...formData, dateOfBirth: e.target.value }) }} type='text' placeholder='Date of Birth' className='px-2 py-[3px] w-full border-[1px] border-gray-600 focus:outline-none' />
+                                <input value={formData.dateOfBirth} onChange={(e) => { setFormData({ ...formData, dateOfBirth: e.target.value }) }} type='date' placeholder='Date of Birth' className='px-2 py-[3px] w-full border-[1px] border-gray-600 focus:outline-none' />
                             </div>
                         </div>
 
@@ -393,50 +471,72 @@ const AddorEditContact = (props) => {
 
                         </div>
                         <div className='w-[96%] mx-[2%] mt-10 h-[1px]  bg-black'></div>
-                        <div className='grid grid-cols-1 md:grid-cols-4 my-5  gap-2'>
-                            <div className='flex flex-col'>
-                                <h1 className='flex text-sm text-start'>Custom Field 1:</h1>
-                                <input value={formData.customField1} onChange={(e) => { setFormData({ ...formData, customField1: e.target.value }) }} type='text' placeholder='Custom Field 1' className='px-2 py-[3px] w-full border-[1px] border-gray-600 focus:outline-none' />
-                            </div>
-                            <div className='flex flex-col'>
-                                <h1 className='flex text-sm text-start'>Custom Field 2:</h1>
-                                <input value={formData.customField2} onChange={(e) => { setFormData({ ...formData, customField2: e.target.value }) }} type='text' placeholder='Custom Field 2' className='px-2 py-[3px] w-full border-[1px] border-gray-600 focus:outline-none' />
-                            </div>
-                            <div className='flex flex-col'>
-                                <h1 className='flex text-sm text-start'>Custom Field 3:</h1>
-                                <input value={formData.customField3} onChange={(e) => { setFormData({ ...formData, customField3: e.target.value }) }} type='text' placeholder='Custom Field 3' className='px-2 py-[3px] w-full border-[1px] border-gray-600 focus:outline-none' />
-                            </div>
-                            <div className='flex flex-col'>
-                                <h1 className='flex text-sm text-start'>Custom Field 4:</h1>
-                                <input value={formData.customField4} onChange={(e) => { setFormData({ ...formData, customField4: e.target.value }) }} type='text' placeholder='Custom Field 4' className='px-2 py-[3px] w-full border-[1px] border-gray-600 focus:outline-none' />
-                            </div>
-                            <div className='flex flex-col'>
-                                <h1 className='flex text-sm text-start'>Custom Field 5:</h1>
-                                <input value={formData.customField5} onChange={(e) => { setFormData({ ...formData, customField5: e.target.value }) }} type='text' placeholder='Custom Field 5' className='px-2 py-[3px] w-full border-[1px] border-gray-600 focus:outline-none' />
-                            </div>
-                            <div className='flex flex-col'>
-                                <h1 className='flex text-sm text-start'>Custom Field 6:</h1>
-                                <input value={formData.customField6} onChange={(e) => { setFormData({ ...formData, customField6: e.target.value }) }} type='text' placeholder='Custom Field 6' className='px-2 py-[3px] w-full border-[1px] border-gray-600 focus:outline-none' />
-                            </div>
-                            <div className='flex flex-col'>
-                                <h1 className='flex text-sm text-start'>Custom Field 7:</h1>
-                                <input value={formData.customField7} onChange={(e) => { setFormData({ ...formData, customField7: e.target.value }) }} type='text' placeholder='Custom Field 7' className='px-2 py-[3px] w-full border-[1px] border-gray-600 focus:outline-none' />
-                            </div>
-                            <div className='flex flex-col'>
-                                <h1 className='flex text-sm text-start'>Custom Field 8:</h1>
-                                <input value={formData.customField8} onChange={(e) => { setFormData({ ...formData, customField8: e.target.value }) }} type='text' placeholder='Custom Field 8' className='px-2 py-[3px] w-full border-[1px] border-gray-600 focus:outline-none' />
-                            </div>
-                            <div className='flex flex-col'>
-                                <h1 className='flex text-sm text-start'>Custom Field 9:</h1>
-                                <input value={formData.customField9} onChange={(e) => { setFormData({ ...formData, customField9: e.target.value }) }} type='text' placeholder='Custom Field 9' className='px-2 py-[3px] w-full border-[1px] border-gray-600 focus:outline-none' />
-                            </div>
-                            <div className='flex flex-col'>
-                                <h1 className='flex text-sm text-start'>Custom Field 10:</h1>
-                                <input value={formData.customField10} onChange={(e) => { setFormData({ ...formData, customField10: e.target.value }) }} type='text' placeholder='Custom Field 10' className='px-2 py-[3px] w-full border-[1px] border-gray-600 focus:outline-none' />
-                            </div>
+                        <div className='grid grid-cols-1 md:grid-cols-3 gap-5 mt-5 bg-white '>
 
+                            {contactCustomData.customLable1 !== "" ?
+                                <div className='flex flex-col'>
+                                    <h1 className='text-start font-bold my-1'>{contactCustomData.customLable1}</h1>
+                                    <input type={"text"} value={formData.customLable1} onChange={(e) => { setFormData({ ...formData, customLable1: e.target.value }) }} placeholder={`Custom Lable 1`} className='px-2 py-[2px] w-full border-[1px] border-gray-600 focus:outline-none' />
+                                </div>
+                                : ""}
+                            {contactCustomData.customLable2 !== "" ?
+                                <div className='flex flex-col'>
+                                    <h1 className='text-start font-bold my-1'>{contactCustomData.customLable2}</h1>
+                                    <input type={"text"} value={formData.customLable2} onChange={(e) => { setFormData({ ...formData, customLable2: e.target.value }) }} placeholder={`Custom Lable 2`} className='px-2 py-[2px] w-full border-[1px] border-gray-600 focus:outline-none' />
+                                </div>
+                                : ""}
 
+                            {contactCustomData.customLable3 !== "" ? <div className='flex flex-col'>
+                                <h1 className='text-start font-bold my-1'>{contactCustomData.customLable3}</h1>
+                                <input type={"text"} value={formData.customLable3} onChange={(e) => { setFormData({ ...formData, customLable3: e.target.value }) }} placeholder={`Custom Lable 3`} className='px-2 py-[2px] w-full border-[1px] border-gray-600 focus:outline-none' />
+                            </div>
+                                : ""}
+                            {contactCustomData.customLable4 !== "" ? <div className='flex flex-col'>
+                                <h1 className='text-start font-bold my-1'>{contactCustomData.customLable4}</h1>
+                                <input type={"text"} value={formData.customLable4} onChange={(e) => { setFormData({ ...formData, customLable4: e.target.value }) }} placeholder={`Custom Lable 4`} className='px-2 py-[2px] w-full border-[1px] border-gray-600 focus:outline-none' />
+                            </div>
+                                : ""}
+
+                            {contactCustomData.customLable5 !== "" ? <div className='flex flex-col'>
+                                <h1 className='text-start font-bold my-1'>{contactCustomData.customLable5}</h1>
+                                <input type={"text"} value={formData.customLable5} onChange={(e) => { setFormData({ ...formData, customLable5: e.target.value }) }} placeholder={`Custom Lable 5`} className='px-2 py-[2px] w-full border-[1px] border-gray-600 focus:outline-none' />
+                            </div>
+                                : ""}
+
+                            {contactCustomData.customLable6 !== "" ? <div className='flex flex-col'>
+                                <h1 className='text-start font-bold my-1'>{contactCustomData.customLable6}</h1>
+                                <input type={"text"} value={formData.customLable6} onChange={(e) => { setFormData({ ...formData, customLable6: e.target.value }) }} placeholder={`Custom Lable 6`} className='px-2 py-[2px] w-full border-[1px] border-gray-600 focus:outline-none' />
+                            </div>
+                                : ""}
+
+                            {contactCustomData.customLable7 !== "" ? <div className='flex flex-col'>
+                                <h1 className='text-start font-bold my-1'>{contactCustomData.customLable7}</h1>
+                                <input type={"text"} value={formData.customLable7} onChange={(e) => { setFormData({ ...formData, customLable7: e.target.value }) }} placeholder={`Custom Lable 7`} className='px-2 py-[2px] w-full border-[1px] border-gray-600 focus:outline-none' />
+                            </div>
+                                : ""}
+
+                            {contactCustomData.customLable8 !== "" ? <div className='flex flex-col'>
+                                <h1 className='text-start font-bold my-1'>{contactCustomData.customLable8}</h1>
+                                <input type={"text"} value={formData.customLable8} onChange={(e) => { setFormData({ ...formData, customLable8: e.target.value }) }} placeholder={`Custom Lable 8`} className='px-2 py-[2px] w-full border-[1px] border-gray-600 focus:outline-none' />
+                            </div>
+                                : ""}
+
+                            {contactCustomData.customLable9 !== "" ? <div className='flex flex-col'>
+                                <h1 className='text-start font-bold my-1'>{contactCustomData.customLable9}</h1>
+
+                                <input type={"text"} value={formData.customLable9} onChange={(e) => { setFormData({ ...formData, customLable9: e.target.value }) }} placeholder={`Custom Lable 9`} className='px-2 py-[2px] w-full border-[1px] border-gray-600 focus:outline-none' />
+                            </div>
+                                : ""}
+
+                            {contactCustomData.customLable10 !== "" ? <div className='flex flex-col'>
+                                <h1 className='text-start font-bold my-1'>{contactCustomData.customLable10}</h1>
+                                <input type={"text"} value={formData.customLable10} onChange={(e) => { setFormData({ ...formData, customLable10: e.target.value }) }} placeholder={`Custom Lable 10`} className='px-2 py-[2px] w-full border-[1px] border-gray-600 focus:outline-none' />
+                            </div>
+                                : ""}
                         </div>
+
+
+
                         <div className='w-[96%] mx-[2%] mt-10 h-[1px]  bg-black'></div>
                         <div className='flex items-center justify-center w-full my-5'>
                             <div className='flex flex-col w-1/2'>

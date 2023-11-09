@@ -12,10 +12,11 @@ import ViewSell from '../sell/ViewSell';
 import EditShipping from '../Shipments/EditShipping';
 import ViewPayment from '../payments/ViewPayment';
 import axios from 'axios';
+import Invoice from "../sell/Invoice";
 
 
 const ShipmentsTbl = () => {
-   
+
     const printRef = useRef()
     let xlDatas = []
     //Export to Excel
@@ -44,7 +45,7 @@ const ShipmentsTbl = () => {
 
     }
     const [shipmentsData, setShipmentsData] = useState([]);
-    const [contactNo, setContactNo] = useState([]);
+    const [print, setPrint] = useState(false)
 
     const [crpage, setCrpage] = useState(1)
     const rcrdprpg = 5
@@ -113,11 +114,9 @@ const ShipmentsTbl = () => {
     const [showId, setShowId] = useState(0)
     const displayData = () => {
         if (showId !== 0 && isshow === true) {
-            return <ViewSell id={showId} />
-        } else if (iseditship === true && editShipId !== 0) {
-            return <EditShipping id={editShipId} />
-        } else if (isShowPayment === true) {
-            return <ViewPayment id={paymentId} />
+            return <ViewSell id={showId} name={"Shipment"} />
+        }else if (print === true) {
+            return <Invoice number={showId} name={"Shipment"}/>;
         }
 
     }
@@ -244,33 +243,22 @@ const ShipmentsTbl = () => {
                                             <ul className='absolute top-5 left-10 z-20 flex flex-col items-start w-[200px] bg-white text-gray-600 shadow-xl shadow-gray-400 '>
 
                                                 <li className='w-full'>
-                                                    <Link onClick={() => { setIsCliked(true); setIsshow(true); setShowId(value.id) }} className='flex px-2 py-1 w-full cursor-pointer hover:bg-gray-400 items-center '>
+                                                    <Link onClick={() => { setIsCliked(true); setIsshow(true); setShowId(value._id) }} className='flex px-2 py-1 w-full cursor-pointer hover:bg-gray-400 items-center '>
                                                         <FaEye size={15} />
                                                         <h1 className='text-sm'>View</h1>
                                                     </Link >
                                                 </li>
                                                 <li className='w-full'>
-                                                    <div onClick={() => { }} className='flex px-2 py-1 w-full cursor-pointer hover:bg-gray-400 items-center '>
+                                                    <div onClick={() => {
+                                                        setPrint(!print);
+                                                        setShowId(value._id)
+                                                        setIsCliked(!isCliked);
+                                                    }} className='flex px-2 py-1 w-full cursor-pointer hover:bg-gray-400 items-center '>
                                                         <FaPrint size={15} />
-                                                        <h1 className='text-sm'>Print</h1>
+                                                        <h1 className='text-sm'>Print Invoice</h1>
                                                     </div>
                                                 </li>
 
-
-                                                <li className='w-full'>
-                                                    <div onClick={() => { setEditShipId(value.id); setIseditship(!iseditship); setIsCliked(!isCliked); setDynWidth("50%"); }} className='flex px-2 py-1 w-full cursor-pointer hover:bg-gray-400 items-center '>
-                                                        <FaTruck size={15} />
-                                                        <h1 className='text-sm'>Edit Shipping</h1>
-                                                    </div>
-                                                </li>
-
-
-                                                <li className='w-full'>
-                                                    <Link className='flex px-2 py-1 w-full cursor-pointer hover:bg-gray-400 items-center '>
-                                                        <FaEnvelope size={15} />
-                                                        <h1 className='text-sm'>Item Received Notification</h1>
-                                                    </Link>
-                                                </li>
                                             </ul>
                                         }
                                     </div>

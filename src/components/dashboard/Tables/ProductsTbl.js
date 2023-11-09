@@ -13,87 +13,11 @@ import { Link } from 'react-router-dom';
 import ViewProduct from '../Product/ViewProduct';
 
 import axios from 'axios';
+import { FcCheckmark } from 'react-icons/fc';
 
 
 const ProductsTbl = () => {
-    const [dummyData, setDummyData] = useState([
-        {
-            id: 1,
-            Username: "username",
-            Name: "User",
-            Role: "Admin",
-            Email: "username@gmail.com"
-        },
-        {
-            id: 2,
-            Username: "username1",
-            Name: "User1",
-            Role: "Admin",
-            Email: "username@gmail.com"
-        },
-        {
-            id: 3,
-            Username: "username2",
-            Name: "User2",
-            Role: "Admin",
-            Email: "username2@gmail.com"
-        },
-        {
-            id: 4,
-            Username: "username3",
-            Name: "User3",
-            Role: "Admin",
-            Email: "username3@gmail.com"
-        },
-        {
-            id: 5,
-            Username: "username4",
-            Name: "User4",
-            Role: "Admin",
-            Email: "username4@gmail.com"
-        },
-        {
-            id: 6,
-            Username: "username5",
-            Name: "User5",
-            Role: "Admin",
-            Email: "username5@gmail.com"
-        },
-        {
-            id: 7,
-            Username: "username6",
-            Name: "User6",
-            Role: "Admin",
-            Email: "username6@gmail.com"
-        }
-    ])
 
-    const handleChange = (e) => {
-        const { name, checked } = e.target
-        if (name === "allSelect") {
-            const checkedValue = dummyData.map((val) => {
-                return {
-                    ...val, isChecked: checked
-                }
-            })
-            setDummyData(checkedValue)
-        }
-    }
-
-    const handleSingle = (e, index) => {
-        const { checked } = e.target
-
-        const checkedValue = dummyData.map((val, ind) => {
-            if (ind === index) {
-                return {
-                    ...val, isChecked: checked
-                }
-            }
-            return val
-        })
-        setDummyData(checkedValue)
-
-    }
     const printRef = useRef()
     let xlDatas = []
     //Export to Excel
@@ -153,20 +77,24 @@ const ProductsTbl = () => {
     const [shipid, setShipid] = useState(0)
     const [showId, setShowId] = useState(0)
     const [isshow, setIsshow] = useState(false)
-    const [actionList, setActionList] = useState(Array(record.length).fill(false))
 
+    const [actionList, setActionList] = useState(Array(1000).fill(false))
+    const [permission, setPermission] = useState(false)
+    const [isAlert, setIsAlert] = useState(false)
+    const [isdelete, setIsdelete] = useState(false)
+    const [deleteId, setDeleteId] = useState(0)
     const toggleDropdown = (index) => {
         const dropDownAction = [...actionList];
-        dropDownAction[index] = !dropDownAction[index];
-        // dropDownAction.map((val, i) => {
-        //     if (i === index) {
-        //         dropDownAction[i] = !dropDownAction[i];
+        dropDownAction.map((val, i) => {
+            if (i === index) {
+                dropDownAction[i] = !dropDownAction[i];
 
-        //     } else {
-        //         dropDownAction[i] = false
-        //     }
-        //     return dropDownAction
-        // })
+            } else {
+                dropDownAction[i] = false
+            }
+            return dropDownAction
+        })
+
         setActionList(dropDownAction);
     };
 
@@ -213,7 +141,8 @@ const ProductsTbl = () => {
                     'Authorization': token
                 }
             });
-            console.log(response)
+
+
             setProductsData(response.data);
         } catch (error) {
             console.error('Error fetching units:', error);
@@ -236,8 +165,27 @@ const ProductsTbl = () => {
     useEffect(() => {
         // Make an API call to fetch user's user records
         fetchProducts();
-    }, []);
+        const runDelete = () => {
+            if (permission === true) {
 
+                handleDeleteProduct(deleteId)
+            }
+        }
+        runDelete()
+    }, [permission]);
+    const Alert = () => {
+        return (
+            <div className="flex flex-col items-center px-4 justify-center w-[300px] py-5 h-[200px] bg-white rounded-md">
+                <FcCheckmark size={100} className="items-center justify-center" />
+                <h1 className="text-4xl text-gray-500 text-center ">Are you sure!</h1>
+                <div className="flex items-center w-full justify-between mt-5">
+                    <button onClick={() => { setPermission(false); setIsAlert(false); setIsdelete(false) }} className="text-md rounded-md mx-2 px-2 py-1 bg-red-500 text-white">Cancel</button>
+                    <button onClick={() => { setPermission(true); setIsAlert(false); setIsdelete(false) }} className="text-md rounded-md mx-2 px-2 py-1 bg-green-500 text-white">OK</button>
+
+                </div>
+            </div>
+        )
+    }
     return (
         <div>
 
@@ -245,7 +193,7 @@ const ProductsTbl = () => {
 
                 <div className='flex items-center justify-center my-2 md:my-0'>
                     <h1 className='text-sm mx-1'>Show</h1>
-                    <select value={recordPerpage} onChange={(e)=>{setRecordPerpage(e.target.value)}} className='w-[100px] border-[1px] border-black focus:outline-none text-center' >
+                    <select value={recordPerpage} onChange={(e) => { setRecordPerpage(e.target.value) }} className='w-[100px] border-[1px] border-black focus:outline-none text-center' >
                         <option value={"25"}> 25</option>
                         <option value={"50"}> 50</option>
                         <option value={"100"}> 100</option>
@@ -279,7 +227,6 @@ const ProductsTbl = () => {
                         <h1 className='text-sm'>Column Visibility</h1>
                         {colvis && <div className='absolute top-7 shadow-md shadow-gray-400 bg-white w-[150px]'>
                             <ul className='flex flex-col items-center justify-center'>
-                                <li className={` w-full py-1 ${col1 ? "" : "bg-blue-600"} hover:bg-blue-400 `} onClick={() => { setCol1(!col1) }}>Product Image</li>
                                 <li className={` w-full py-1 ${col2 ? "" : "bg-blue-600"} hover:bg-blue-400 `} onClick={() => { setCol2(!col2) }}>Action</li>
                                 <li className={` w-full py-1 ${col3 ? "" : "bg-blue-600"} hover:bg-blue-400 `} onClick={() => { setCol3(!col3) }}>Porduct</li>
                                 <li className={` w-full py-1 ${col4 ? "" : "bg-blue-600"} hover:bg-blue-400 `} onClick={() => { setCol4(!col4) }}>Business Location</li>
@@ -302,7 +249,7 @@ const ProductsTbl = () => {
                 </div>
                 <div className='flex items-center justify-center  w-[250px] md:w-auto my-2 md:my-0 border-[1px] border-black'>
                     <FaSearch size={15} className=' mt-1 mx-1' />
-                    <input value={search} onChange={(e)=>{setSearch(e.target.value)}} className=' focus:outline-none px-2 py-1' type='search' id="search" name='serch' placeholder='Search' />
+                    <input value={search} onChange={(e) => { setSearch(e.target.value) }} className=' focus:outline-none px-2 py-1' type='search' id="search" name='serch' placeholder='Search' />
                 </div>
 
 
@@ -312,8 +259,7 @@ const ProductsTbl = () => {
                 <table id='usertbl' className="table-auto w-full mb-10 px-5 ">
                     <thead>
                         <tr className='h-[50px] bg-gray-100'>
-                            <th className='text-center'><input type='checkbox' name='allSelect' onChange={(e) => { handleChange(e) }} /> </th>
-                            {col1 && <th className=" py-2 title-font   tracking-wider font-medium text-gray-900 text-sm"></th>}
+                            {/* <th className='text-center'><input type='checkbox' name='allSelect' onChange={(e) => { handleChange(e) }} /> </th> */}
                             {col2 && <th className=" py-2 title-font   tracking-wider font-medium text-gray-900 text-sm">Action</th>}
                             {col3 && <th className=" py-2 title-font   tracking-wider font-medium text-gray-900 text-sm">Product</th>}
                             {col4 && <th className=" py-2 title-font   tracking-wider font-medium text-gray-900 text-sm">Business Location</th>}
@@ -330,15 +276,15 @@ const ProductsTbl = () => {
                     </thead>
                     <tbody >
                         {record.map((value, index) => {
-                            let baseURL = 'http://localhost:8000/'
+                            {/* let baseURL = 'http://localhost:8000/' */ }
                             return <tr key={index} className={`${(index + 1) % 2 === 0 ? "bg-gray-200" : ""} ${value.isChecked ? "bg-blue-800/60" : ""}`}>
-                                <td className='text-center'><input type='checkbox' name={index} checked={value?.isChecked || false} onChange={(e) => { handleSingle(e, index) }} /> </td>
+                                {/* <td className='text-center'><input type='checkbox' name={index} checked={value?.isChecked || false} onChange={(e) => { handleSingle(e, index) }} /> </td>
                                 {/* {col1 && <td className="px-1 py-1 text-sm mx-1">
                                     <div className='flex items-center justify-center'>
                                         <img src='' alt='imagee' />
                                     </div>
                                 </td>} */}
-                                {col1 && (
+                                {/* {col1 && (
                                     <td className="px-1 py-1 text-sm mx-1">
                                         <div className="flex items-center justify-center">
                                             <img
@@ -348,7 +294,7 @@ const ProductsTbl = () => {
                                             />
                                         </div>
                                     </td>
-                                )}
+                                )}  */}
                                 {col2 && <td className='py-1 flex '>
                                     <div onClick={() => { toggleDropdown(index) }} className='flex px-2 py-1 relative cursor-pointer items-center bg-green-600 rounded-xl text-white justify-center'>
                                         <h1 className='text-sm'>Action</h1>
@@ -370,7 +316,11 @@ const ProductsTbl = () => {
                                                     </Link>
                                                 </li>
                                                 <li className='w-full'>
-                                                    <div onClick={() => handleDeleteProduct(value._id)} className='flex px-2 py-1 w-full cursor-pointer hover:bg-gray-400 items-center '>
+                                                    <div onClick={() => {
+                                                        setIsAlert(!isCliked);
+                                                        setIsdelete(true)
+                                                        setDeleteId(value._id)
+                                                    }} className='flex px-2 py-1 w-full cursor-pointer hover:bg-gray-400 items-center '>
                                                         <FaTrash size={15} />
                                                         <h1 className='text-sm'>Delete</h1>
                                                     </div>
@@ -451,6 +401,11 @@ const ProductsTbl = () => {
 
                 </div>
 
+            }
+            {isAlert &&
+                <div className="absolute top-0 flex flex-col items-center  justify-center right-0 bg-black/70 w-full min-h-screen">
+                    {isdelete && <Alert />}
+                </div>
             }
         </div>
     )

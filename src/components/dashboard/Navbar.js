@@ -39,11 +39,7 @@ const Navbra = () => {
     }
     const [isCliked, setIsCliked] = useState(false)
     const [isshow, setIsshow] = useState(false);
-    const displayData = () => {
-        if (isshow) {
-            return < TodaysProfit />;
-        }
-    };
+    
 const fetchLoggedInUser = async () => {
 
         try {
@@ -59,13 +55,82 @@ const fetchLoggedInUser = async () => {
             console.error('Error fetching Profile:', error);
         }
     };
+    const fetchTheme = async () => {
+
+        try {
+          const token = localStorage.getItem('token');
+          const response = await axios.get(`http://localhost:8000/admin/system-color`, {
+            headers: {
+              'Authorization': token
+            }
+          });
+          // console.log(response.data)
+          setSelectedTheme(response.data.themeColor);
+      
+        } catch (error) {
+          console.error('Error fetching Prefixes:', error);
+        }
+      };
     useEffect(() => {
         // Make an API call to fetch user's roles records
         
         fetchLoggedInUser()
-
+        fetchTheme()
         
     }, []);
+    const [selectedTheme, setSelectedTheme] = useState("")
+    const getColor = () => {
+        if (selectedTheme === "black-light") {
+            return 'bg-[#3c3c4e]'
+        }else if(selectedTheme === "blue"){
+            return 'bg-[#2b80ec]'
+        }else if(selectedTheme === "black"){
+            return 'bg-[#3c3c4e]'
+        }else if(selectedTheme === 'purple'){
+            return 'bg-[#605ca8]' 
+        }else if(selectedTheme === 'green'){
+            return 'bg-[#2dce89]' 
+        }else if(selectedTheme === "red"){
+            return 'bg-[#f5365c]'
+        }else if(selectedTheme === "yellow"){
+            return 'bg-[#ffad46]'
+        }else if(selectedTheme === 'blue-light'){
+            return 'bg-[#1572e8]' 
+        }else if(selectedTheme === 'green-light'){
+            return 'bg-[#2dce89]' 
+        }else if(selectedTheme === 'red-light'){
+            return 'bg-[#f5365c]' 
+        }else if(selectedTheme === 'purple-light'){
+            return 'bg-[#605ca8]' 
+        }
+    }
+    const themeColor = () => {
+        if (selectedTheme === "black-light") {
+            return 'bg-gradient-to-r from-[#3c3c4e] to-[#245b80]'
+        }else if(selectedTheme === "blue"){
+            return 'bg-gradient-to-r from-[#2b80ec] to-[#1d1f33]'
+        }else if(selectedTheme === "black"){
+            return 'bg-gradient-to-r from-[#3c3c4e] to-[#245b80]'
+        }else if(selectedTheme === "purple"){
+            return 'bg-gradient-to-r from-[#706db1] to-[#245b80]'
+        }else if(selectedTheme === "green"){
+            return 'bg-gradient-to-r from-[#3fd595] to-[#1b9aaa]'
+        }else if(selectedTheme === "red"){
+            return 'bg-gradient-to-r from-[#f64e70] to-[#245b80]'
+        }else if(selectedTheme === "yellow"){
+            return 'bg-gradient-to-r from-[#ffb860] to-[#245b80]'
+        }else if(selectedTheme === "blue-light"){
+            return 'bg-gradient-to-r from-[#2b80ec] to-[#1d1f33]'
+        }else if(selectedTheme === "purple-light"){
+            return 'bg-gradient-to-r from-[#706db1] to-[#245b80]'
+        }else if(selectedTheme === "green-light"){
+            return 'bg-gradient-to-r from-[#3fd595] to-[#1b9aaa]'
+        }else if(selectedTheme === "red-light"){
+            return 'bg-gradient-to-r from-[#f64e70] to-[#245b80]'
+        }
+
+
+    }
 
 
 const handleLogout = async () => {
@@ -84,39 +149,33 @@ const handleLogout = async () => {
     const date = fuldate + "/" + fullmonth + "/" + fullyear;
     return (
         <div>
-            <div className='flex w-full h-[60px]   bg-gray-700  border-b-2 border-gray-400    justify-between '>
-                <div className={`${clicked ? "md:w-[4%]" : "w-0 md:w-[17%]"}  bg-black justify-center hidden md:flex items-center`}>
+            <div className='flex w-full h-[10vh]   bg-gray-700  border-b-2 border-gray-400    justify-between '>
+            <div className={`${clicked ? "md:w-[4%]" : "w-0 md:w-[17%]"}   ${getColor()} justify-center hidden md:flex items-center`}>
+
                     {!clicked && <h1 className='text-xl text-center  text-white  '> EZI POINT OF SALE</h1>}
                 </div>
-                <div className={`w-full ${clicked ? " md:w-[96%]" : "w-[96%] md:w-[83%]"} flex justify-between bg-gradient-to-r from-[#3c3c4e] to-[#245b80]`}>
+                <div className={`w-full ${clicked ? " md:w-[96%]" : "w-[96%] md:w-[83%]"} flex justify-between ${themeColor()}`}>
+
                     <div className='w-[30%]  flex items-center '>
                         <div className='px-5  flex'>
                             <AiOutlineMenu onClick={handleMenu} className='text-white cursor-pointer text-xl ' />
-                            <BsInfoLg className='bg-white rounded-full cursor-pointer text-xl mx-2 ' />
                         </div>
                     </div>
                     <div className='w-[70%]   relative items-center rounded-r-2xl  flex lg:flex'>
                         <div className='w-[85%] h-full flex items-center justify-end'>
-                            <button id="tool-tip-1" className='py-1.5 px-1 relative mx-1 bg-blue-300 text-white' onMouseOver={() => { setArrow(true) }} onMouseLeave={() => { setArrow(false) }}><FaArrowAltCircleDown size={15} />
-                                {arrow && <div className="absolute text-sm top-8  rounded-sm flex z-10 w-10 md:w-16 text-white bg-black p-1">Clock In</div>}
-                            </button>
-                            <button className='py-1.5 px-1 relative mx-1 bg-green-300 text-white' ><FaPlusCircle size={15} /></button>
+                            
                             <button className='hidden md:flex py-1.5 px-2 relative mx-1 bg-green-300 text-white' onMouseOver={() => { setCal(true) }} onMouseLeave={() => { setCal(false) }} onClick={() => { setShcal(!shcal) }}><FaCalculator size={15} />
                                 {cal && <div className="absolute top-8 text-sm rounded-sm flex z-10 text-white bg-black p-1">Calculator</div>}
                             </button>
-                            {shcal && <Calculator />}
+                            {shcal && <div className='absolute top-14 right-80 z-20'> <Calculator /></div>}
                             <Link  onClick={()=>{openNewTab("/pos/create")}} className='py-1 md:px-1 relative mx-1 bg-green-300 text-white flex items-center justify-center' onMouseOver={() => { setPos(true) }} onMouseLeave={() => { setPos(false) }}><FaThLarge size={15} /> <span className='mx-2 font-semibold text-sm'>POS</span>
                                 {pos && <div to="/login" className="absolute text-sm rounded-sm flex top-8 z-10 text-white bg-black md:p-1">POS</div>}
                             </Link>
-                            <button onClick={() => { setIsCliked(true); setIsshow(true); }} className='py-1.5 px-1 relative mx-1 bg-green-300 text-white' onMouseOver={() => { setMoney(true) }} onMouseLeave={() => { setMoney(false) }}><FaMoneyBillAlt size={15} />
-                                {money && <div className="absolute text-sm rounded-sm w-16 md:w-24 flex top-8 z-10 text-white bg-black p-1">Today's Profit</div>}
-                            </button>
+                           
 
 
                             <h1 className='mx-2 text-white font-bold textsm'>{date}</h1>
-                            <div className='flex w-[5%]  h-[80%] justify-center items-center mx-2 hover:bg-black' >
-                                <h1 className=' text-white'><MdNotifications size={20} /></h1>
-                            </div>
+                            
                         </div>
                         <div className='flex w-[15%]  h-[80%] justify-center items-center mx-2 relative hover:bg-black' onClick={() => { setUsrcliked(!usrcliked) }}>
                             <h1 className='text-sm  text-white'>{userData.firstName+" "+userData.lastName}</h1>
@@ -156,9 +215,7 @@ const handleLogout = async () => {
                                 size={20}
                             />
                         </div>
-                        <div className="flex items-start justify-center">
-                            {displayData()}
-                        </div>
+                        
                     </div>
                 </div>
             )}

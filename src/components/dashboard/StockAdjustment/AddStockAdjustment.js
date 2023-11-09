@@ -18,7 +18,8 @@ import AddorEditContact from "../contacts/AddorEditContact";
 import ImportProduct from "../Product/ImportProduct";
 import axios from 'axios';
 import { useNavigate } from "react-router-dom"
-
+import { toast, ToastContainer } from 'react-toastify';
+import "react-toastify/dist/ReactToastify.css";
 
 const AddStockAdjustment = () => {
 
@@ -50,12 +51,12 @@ const AddStockAdjustment = () => {
   const handleIncDec = (index, type) => {
     const val = formData.inputData
     if (type === "Inc") {
-        val[index].quantity += 1
+      val[index].quantity += 1
     } else {
-        val[index].quantity -= 1
+      val[index].quantity -= 1
     }
     setFormData({ ...formData, inputData: val })
-}
+  }
   const handleChange = (e, index) => {
     const updatedData = formData.inputData.map((item, ind) => {
       if (ind === index) {
@@ -106,11 +107,11 @@ const AddStockAdjustment = () => {
 
     try {
       const token = localStorage.getItem('token');
-      const response = await axios.get(`http://localhost:8000/admin/business-locations`,{
+      const response = await axios.get(`http://localhost:8000/admin/business-locations`, {
         headers: {
-            'Authorization': token
+          'Authorization': token
         }
-    });
+      });
       console.log(response.data)
       setBusinessLocationData(response.data);
       // console.log(variationData)
@@ -123,11 +124,11 @@ const AddStockAdjustment = () => {
 
     try {
       const token = localStorage.getItem('token');
-      const response = await axios.get(`http://localhost:8000/admin/products`,{
+      const response = await axios.get(`http://localhost:8000/admin/products`, {
         headers: {
-            'Authorization': token
+          'Authorization': token
         }
-    });
+      });
       // console.log(response)
       setProductsData(response.data);
     } catch (error) {
@@ -138,11 +139,11 @@ const AddStockAdjustment = () => {
 
     try {
       const token = localStorage.getItem('token');
-      const response = await axios.get(`http://localhost:8000/admin/stock-adjustment/${id}`,{
+      const response = await axios.get(`http://localhost:8000/admin/stock-adjustment/${id}`, {
         headers: {
-            'Authorization': token
+          'Authorization': token
         }
-    });
+      });
       // console.log(response)
       response.data.date = new Date(response.data.date).toLocaleDateString("fr-CA")
 
@@ -168,17 +169,40 @@ const AddStockAdjustment = () => {
     try {
       const token = localStorage.getItem('token');
       // console.log(formData)
-      const response = await axios.post(`http://localhost:8000/admin/stock-adjustment`, formData,{
+      const response = await axios.post(`http://localhost:8000/admin/stock-adjustment`, formData, {
         headers: {
-            'Authorization': token
+          'Authorization': token
         }
-    });
+      });
       // console.log(response)
       if (response.status === 201) {
-        Navigate("/home/stock-transfer");
+        toast.success('Data Saved', {
+          position: "top-right",
+          autoClose: 2000,
+          hideProgressBar: false,
+          closeOnClick: true,
+          pauseOnHover: true,
+          draggable: true,
+          progress: undefined,
+          theme: "light",
+        });
+        setTimeout(() => {
+          Navigate("/home/stock-transfer");
+        }, 2000);
+
       }
     } catch (error) {
-      console.error('Error Adding Stock Tranfers:', error);
+      console.error('Error Adding Stock Adjustment:', error);
+      toast.error(error.response.data.message, {
+        position: "top-right",
+        autoClose: 2000,
+        hideProgressBar: false,
+        closeOnClick: true,
+        pauseOnHover: true,
+        draggable: true,
+        progress: undefined,
+        theme: "light",
+      });
     }
   };
   const addSAJById = async () => {
@@ -186,11 +210,11 @@ const AddStockAdjustment = () => {
     try {
       const token = localStorage.getItem('token');
       // console.log(formData)
-      const response = await axios.put(`http://localhost:8000/admin/stock-adjustment/${id}`, formData,{
+      const response = await axios.put(`http://localhost:8000/admin/stock-adjustment/${id}`, formData, {
         headers: {
-            'Authorization': token
+          'Authorization': token
         }
-    });
+      });
       // console.log(response)
       if (response.status === 200) {
         Navigate("/home/stock-transfer");
@@ -208,8 +232,16 @@ const AddStockAdjustment = () => {
       formData.inputData.length === 0
     ) {
       setIsserror(true);
-      console.log(isserror);
-    } else if (id) {
+      toast.error('Some fields are required', {
+        position: "top-right",
+        autoClose: 2000,
+        hideProgressBar: false,
+        closeOnClick: true,
+        pauseOnHover: true,
+        draggable: true,
+        progress: undefined,
+        theme: "light",
+    });    } else if (id) {
       addSAJById()
       console.log("Handle Update", formData);
     } else {
@@ -219,6 +251,18 @@ const AddStockAdjustment = () => {
   };
   return (
     <div className="w-full h-full p-3 bg-gray-100">
+      <ToastContainer
+        position="top-right"
+        autoClose={2000}
+        hideProgressBar={false}
+        newestOnTop={false}
+        closeOnClick
+        rtl={false}
+        pauseOnFocusLoss
+        draggable
+        pauseOnHover
+        theme="colored"
+      />
       <h1 className="text-xl text-start font-bold ">Add Stock Adjustment</h1>
 
       <div className="flex w-full  min-h-[100px] flex-col p-5 mt-5 bg-white border-t-[3px] rounded-md border-blue-600">
@@ -368,7 +412,7 @@ const AddStockAdjustment = () => {
               </div>
               {isClicked && (
                 <ul
-                  className={`bg-white w-full    border-[1px]   z-10 absolute top-8 border-gray-600  ${isClicked ? "max-h-60" : "max-h-0"
+                  className={`bg-white w-full    border-[1px]   z-10 absolute top-8 border-gray-600  ${isClicked ? "overflow-y-auto max-h-40" : "max-h-0"
                     } `}
                 >
                   {productsData?.map((data) => (
@@ -380,7 +424,7 @@ const AddStockAdjustment = () => {
                         "bg-sky-600 text-white"
                         }
                                  ${data?.productName?.toLowerCase().startsWith(
-                          inputValue
+                          inputValue1
                         )
                           ? "block"
                           : "hidden"

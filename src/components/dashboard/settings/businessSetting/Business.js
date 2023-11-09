@@ -91,7 +91,7 @@ const Business = () => {
 
   }, []);
   return (
-    <div className='flex flex-col bg-white p-5 '>
+    <div className='flex flex-col bg-white p-5 min-h-screen'>
       <div className='grid grid-cols-1 md:grid-cols-3 gap-5'>
         <div className='flex flex-col '>
           <h1 className='flex text-start font-bold'>Business Name:*

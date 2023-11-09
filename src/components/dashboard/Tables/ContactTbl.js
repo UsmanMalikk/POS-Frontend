@@ -10,6 +10,7 @@ import { MdCancel } from 'react-icons/md';
 import AddorEditContact from '../contacts/AddorEditContact';
 import { Link, useParams } from 'react-router-dom';
 import axios from 'axios';
+import { FcCheckmark } from 'react-icons/fc';
 
 
 const ContactTbl = () => {
@@ -56,6 +57,7 @@ const ContactTbl = () => {
     const record = data.slice(frstIndex, lasIndex)
     const npage = Math.ceil(data.length / rcrdprpg)
     const numbers = [...Array(npage + 1).keys()].slice(1)
+    const [contactPrefixData, setContactPrefixData] = useState([]);
 
     const [colvis, setColvis] = useState(false)
     const [col1, setCol1] = useState(true)
@@ -85,7 +87,25 @@ const ContactTbl = () => {
     const [isedit, setIsedit] = useState(false)
     const [editId, setEditId] = useState(0)
     const [isCliked, setIsCliked] = useState(false)
-    const [actionList, setActionList] = useState(Array(record.length).fill(false))
+    const [actionList, setActionList] = useState(Array(1000).fill(false))
+    const [permission, setPermission] = useState(false)
+    const [isAlert, setIsAlert] = useState(false)
+    const [isdelete, setIsdelete] = useState(false)
+    const [deleteId, setDeleteId] = useState(0)
+    const findTotalPurchaseDue = () => {
+        let total = 0
+        data.map(val => {
+            return total += (parseFloat(val.totalPurchaseDue))
+        })
+        return total
+    }
+    const findTotalSellDue = () => {
+        let total = 0
+        data.map(val => {
+            return total += (parseFloat(val.totalSaleDue))
+        })
+        return total
+    }
     // useEffect(() => {
 
     //     if (isedit && editId !== 0) {
@@ -110,7 +130,23 @@ const ContactTbl = () => {
     //     }
     //   }, [isedit, editId, updatedContactData,_id,type]);
 
+    const fetchPrefixes = async () => {
 
+        try {
+            const token = localStorage.getItem('token');
+            const response = await axios.get(`http://localhost:8000/admin/prefix`, {
+                headers: {
+                    'Authorization': token
+                }
+            });
+            // console.log(response.data)
+            setContactPrefixData(response.data);
+            // console.log(variationData)
+
+        } catch (error) {
+            console.error('Error fetching Prefixes:', error);
+        }
+    };
     const handleDeleteContact = async (purId) => {
         try {
             const token = localStorage.getItem('token');
@@ -137,14 +173,21 @@ const ContactTbl = () => {
 
     }
 
-    useEffect(() => {
-        getDataFromApi();
-    }, [type])
+    
 
 
     const toggleDropdown = (index) => {
         const dropDownAction = [...actionList];
-        dropDownAction[index] = !dropDownAction[index];
+        dropDownAction.map((val, i) => {
+            if (i === index) {
+                dropDownAction[i] = !dropDownAction[i];
+
+            } else {
+                dropDownAction[i] = false
+            }
+            return dropDownAction
+        })
+
         setActionList(dropDownAction);
     };
 
@@ -177,14 +220,36 @@ const ContactTbl = () => {
         }
     }
     const displayData = () => {
-       if (editId !== 0 && isedit === true) {
+        if (editId !== 0 && isedit === true) {
             return <AddorEditContact id={editId} />
-        }else{
+        } else {
             return <AddorEditContact />
-
         }
     }
+    useEffect(() => {
+        fetchPrefixes()
+        getDataFromApi();
+        const runDelete = () => {
+            if (permission === true) {
 
+                handleDeleteContact(deleteId)
+            }
+        }
+        runDelete()
+    }, [type,permission])
+    const Alert = () => {
+        return (
+            <div className="flex flex-col items-center px-4 justify-center w-[300px] py-5 h-[200px] bg-white rounded-md">
+                <FcCheckmark size={100} className="items-center justify-center" />
+                <h1 className="text-4xl text-gray-500 text-center ">Are you sure!</h1>
+                <div className="flex items-center w-full justify-between mt-5">
+                    <button onClick={() => { setPermission(false); setIsAlert(false); setIsdelete(false) }} className="text-md rounded-md mx-2 px-2 py-1 bg-red-500 text-white">Cancel</button>
+                    <button onClick={() => { setPermission(true); setIsAlert(false); setIsdelete(false) }} className="text-md rounded-md mx-2 px-2 py-1 bg-green-500 text-white">OK</button>
+
+                </div>
+            </div>
+        )
+    }
 
 
 
@@ -337,7 +402,11 @@ const ContactTbl = () => {
                                                     </div>
                                                 </li>
                                                 <li className='w-full'>
-                                                    <div onClick={() => { handleDeleteContact(value._id) }} className='flex px-2 py-1 w-full cursor-pointer hover:bg-gray-400 items-center '>
+                                                    <div onClick={() => {
+                                                        setIsAlert(!isCliked);
+                                                        setIsdelete(true)
+                                                        setDeleteId(value._id)
+                                                    }} className='flex px-2 py-1 w-full cursor-pointer hover:bg-gray-400 items-center '>
                                                         <FaTrash size={15} />
                                                         <h1 className='text-sm'>Delete</h1>
                                                     </div>
@@ -350,7 +419,7 @@ const ContactTbl = () => {
 
 
 
-                                {col2 && <td className="px-1 py-1 text-sm">{value.contact_id}</td>}
+                                {col2 && <td className="px-1 py-1 text-sm">{contactPrefixData.contacts + "" + value.contact_id}</td>}
                                 {col3 && <td className="px-1 py-1"> {value.businessName}</td>}
                                 {col4 && <td className="px-1 py-1">{value.firstName}</td>}
                                 {col5 && <td className=" py-1 px-1">{value.email}</td>}
@@ -361,7 +430,7 @@ const ContactTbl = () => {
                                 {col10 && <td className=" py-1 px-1">{value.addressLine1}</td>}
                                 {col11 && <td className=" py-1 px-1">{value.mobile}</td>}
                                 {col12 && <td className="px-1 py-1 text-sm">{value.purchaseDue}</td>}
-                                {col13 && <td className="px-1 py-1"> {(type === 'supplier')? value.totalSaleDue: value.totalPurchaseDue}</td>}
+                                {col13 && <td className="px-1 py-1"> {(type === 'supplier') ? value.totalPurchaseDue : value.totalSaleDue}</td>}
                                 {col14 && <td className="px-1 py-1">{value.customField1}</td>}
                                 {col15 && <td className=" py-1 px-1">{value.customField2}</td>}
                                 {col16 && <td className=" py-1 px-1">{value.customField3}</td>}
@@ -379,7 +448,34 @@ const ContactTbl = () => {
 
                     </tbody>
                     <tfoot>
-                        <tr></tr>
+                        <tr className='h-[100px] bg-gray-400 '>
+                            <td></td>
+
+                            <td></td>
+                            <td colSpan={5}>Total</td>
+
+                            <td>
+                                <h1 className='text-xs'> </h1>
+                            </td>
+                            <td>
+                            </td>
+                            <td>
+                            </td>
+                            <td>
+                            </td>
+                            <td>
+                            </td>
+                            <td>
+                                <h1 className='text-xs'> Rs. {(type === 'supplier') ? findTotalPurchaseDue() : findTotalSellDue()}</h1>
+                            </td>
+
+
+
+
+                            <td colSpan={6}>
+
+                            </td>
+                        </tr>
                     </tfoot>
                 </table>
 
@@ -403,13 +499,18 @@ const ContactTbl = () => {
             </nav>
             {isCliked &&
                 <div className='absolute top-0 flex flex-col items-center  justify-center right-0 bg-black/70 w-full min-h-screen'>
-                    <div className='flex items-end justify-end w-full md:w-[75%]  mt-10 bg-white px-5 pt-2'>
+                    <div className='flex flex-col items-end justify-end w-full md:w-[75%] rounded-md  mt-10 bg-white px-5 pt-2'>
                         <MdCancel onClick={() => { setIsCliked(!isCliked); setEditId(0);; setIsedit(false); }} size={20} />
 
+                        {displayData()}
                     </div>
-                    {displayData()}
                 </div>
 
+            }
+            {isAlert &&
+                <div className="absolute top-0 flex flex-col items-center  justify-center right-0 bg-black/70 w-full min-h-screen">
+                    {isdelete && <Alert />}
+                </div>
             }
         </div>
     )

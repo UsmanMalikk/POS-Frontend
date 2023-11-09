@@ -11,6 +11,7 @@ import { Link } from 'react-router-dom';
 import ViewPurchase from '../Purchases/ViewPurchase';
 import axios from 'axios';
 import BusinessLocation from './../settings/businesLocation/BusinessLocation';
+import { FcCheckmark } from 'react-icons/fc';
 
 
 const PurchasesTbl = () => {
@@ -43,7 +44,11 @@ const PurchasesTbl = () => {
 
     }
     const [purchasesData, setPurchasesData] = useState([]);
-
+    const [purchasePrefixData, setPurchasePrefixData] = useState([]);
+    const [permission, setPermission] = useState(false)
+    const [isAlert, setIsAlert] = useState(false)
+    const [isdelete, setIsdelete] = useState(false)
+    const [deleteId, setDeleteId] = useState(0)
     const [crpage, setCrpage] = useState(1)
     const rcrdprpg = 5
     const lasIndex = crpage * rcrdprpg
@@ -67,13 +72,23 @@ const PurchasesTbl = () => {
     const [isCliked, setIsCliked] = useState(false)
     const [showId, setShowId] = useState(0)
     const [isshow, setIsshow] = useState(false)
-    const [actionList, setActionList] = useState(Array(record.length).fill(false))
+    const [actionList, setActionList] = useState(Array(1000).fill(false))
 
     const toggleDropdown = (index) => {
         const dropDownAction = [...actionList];
-        dropDownAction[index] = !dropDownAction[index];
+        dropDownAction.map((val, i) => {
+            if (i === index) {
+                dropDownAction[i] = !dropDownAction[i];
+
+            } else {
+                dropDownAction[i] = false
+            }
+            return dropDownAction
+        })
+
         setActionList(dropDownAction);
     };
+
 
     const csvData = [
         ["Username", "Name", "Role", "Email"],
@@ -108,7 +123,21 @@ const PurchasesTbl = () => {
             return <ViewPurchase id={showId} />
         }
     }
-
+    const findTotal = () => {
+        let total = 0
+        purchasesData.map(val => {
+            return total += parseFloat(val.totalPurchaseAmount)
+        })
+        return total
+    }
+    // const total = findTotal()
+    const findTotalPurchaseDue = () => {
+        let total = 0
+        purchasesData.map(val => {
+            return total += (parseFloat(val.totalPurchaseAmount) - parseFloat(val.amount))
+        })
+        return total
+    }
     const fetchPurchases = async () => {
         // let final = "final"
         try {
@@ -118,7 +147,6 @@ const PurchasesTbl = () => {
                     'Authorization': token
                 }
             });
-            console.log(response)
             // console.log(response.data)
             setPurchasesData(response.data);
         } catch (error) {
@@ -141,13 +169,48 @@ const PurchasesTbl = () => {
             console.error('Error deleting Purchase:', error);
         }
     };
-    useEffect(() => {
+    const fetchPrefixes = async () => {
 
+        try {
+            const token = localStorage.getItem('token');
+            const response = await axios.get(`http://localhost:8000/admin/prefix`, {
+                headers: {
+                    'Authorization': token
+                }
+            });
+            // console.log(response.data)
+            setPurchasePrefixData(response.data);
+            // console.log(variationData)
+
+        } catch (error) {
+            console.error('Error fetching Prefixes:', error);
+        }
+    };
+    useEffect(() => {
+        fetchPrefixes()
         fetchPurchases();
 
+        const runDelete = () => {
+            if (permission === true) {
 
-    }, []);
-   
+                handleDeletePurchase(deleteId)
+            }
+        }
+        runDelete()
+    }, [permission]);
+    const Alert = () => {
+        return (
+            <div className="flex flex-col items-center px-4 justify-center w-[300px] py-5 h-[200px] bg-white rounded-md">
+                <FcCheckmark size={100} className="items-center justify-center" />
+                <h1 className="text-4xl text-gray-500 text-center ">Are you sure!</h1>
+                <div className="flex items-center w-full justify-between mt-5">
+                    <button onClick={() => { setPermission(false); setIsAlert(false); setIsdelete(false) }} className="text-md rounded-md mx-2 px-2 py-1 bg-red-500 text-white">Cancel</button>
+                    <button onClick={() => { setPermission(true); setIsAlert(false); setIsdelete(false) }} className="text-md rounded-md mx-2 px-2 py-1 bg-green-500 text-white">OK</button>
+
+                </div>
+            </div>
+        )
+    }
     return (
         <div>
 
@@ -250,12 +313,12 @@ const PurchasesTbl = () => {
                                                         <h1 className='text-sm'>View</h1>
                                                     </Link>
                                                 </li>
-                                                <li className='w-full'>
+                                                {/* <li className='w-full'>
                                                     <div onClick={() => { }} className='flex px-2 py-1 w-full cursor-pointer hover:bg-gray-400 items-center '>
                                                         <FaPrint size={15} />
                                                         <h1 className='text-sm'>Print</h1>
                                                     </div>
-                                                </li>
+                                                </li> */}
                                                 <li className='w-full'>
                                                     <Link to={`/home/purchase/edit/${value._id}`} className='flex px-2 py-1 w-full cursor-pointer hover:bg-gray-400 items-center '>
                                                         <FaEdit size={15} />
@@ -263,7 +326,11 @@ const PurchasesTbl = () => {
                                                     </Link>
                                                 </li>
                                                 <li className='w-full'>
-                                                    <div onClick={() => handleDeletePurchase(value._id)} className='flex px-2 py-1 w-full cursor-pointer hover:bg-gray-400 items-center '>
+                                                    <div onClick={() => {
+                                                        setIsAlert(!isCliked);
+                                                        setIsdelete(true)
+                                                        setDeleteId(value._id)
+                                                    }} className='flex px-2 py-1 w-full cursor-pointer hover:bg-gray-400 items-center '>
                                                         <FaTrash size={15} />
                                                         <h1 className='text-sm'>Delete</h1>
                                                     </div>
@@ -274,7 +341,7 @@ const PurchasesTbl = () => {
                                     </div>
                                 </td>}
                                 {col2 && <td className="px-1 py-1 text-sm">{date}</td>}
-                                {col3 && <td className="px-1 py-1"> {value.referenceNo}</td>}
+                                {col3 && <td className="px-1 py-1"> {purchasePrefixData.purchase + "" + value.referenceNo}</td>}
                                 {col4 && <td className="px-1 py-1">{value.businessLocation?.name}</td>}
                                 {col5 && <td className=" py-1 px-1">{value.supplier?.firstName}</td>}
                                 {col6 && <td className=" py-1 px-1">{value.status}</td>}
@@ -302,7 +369,32 @@ const PurchasesTbl = () => {
 
                     </tbody>
                     <tfoot>
-                        <tr></tr>
+                        <tr className='h-[100px] bg-gray-400 '>
+                            <td colSpan={5}>Total</td>
+                            <td></td>
+
+                            <td>
+                                <div className='flex flex-col'>
+                                    <h1 className='text-xs'> </h1>
+                                    <h1 className='text-xs'> </h1>
+                                </div>
+                            </td>
+
+
+                            <td>
+                                <h1 className='text-xs'> Rs. {findTotal()}</h1>
+                            </td>
+                            <td>
+                                <h1 className='text-xs'> Rs. {findTotalPurchaseDue()}</h1>
+                            </td>
+
+
+
+
+                            <td colSpan={6}>
+
+                            </td>
+                        </tr>
                     </tfoot>
                 </table>
             </div>
@@ -342,6 +434,11 @@ const PurchasesTbl = () => {
                     {displayData()}
                 </div>
 
+            }
+            {isAlert &&
+                <div className="absolute top-0 flex flex-col items-center  justify-center right-0 bg-black/70 w-full min-h-screen">
+                    {isdelete && <Alert />}
+                </div>
             }
         </div>
     )

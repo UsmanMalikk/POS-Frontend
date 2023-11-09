@@ -4,7 +4,6 @@ import { useReactToPrint } from 'react-to-print';
 import axios from 'axios';
 
 const ViewSell = (props) => {
-    console.log(props)
     const [saleData, setSaleData] = useState([]);
 
     const printRef = useRef()
@@ -46,12 +45,40 @@ const ViewSell = (props) => {
                 let paymentDate = new Date(response.data.paymentDate).toLocaleDateString()
 
                 setSaleData({ ...response.data, salesDate: date, paymentDate: paymentDate });
-            }
-            
-            
-                
+            }else if(props.name === 'Shipment'){
+                const response = await axios.get(`http://localhost:8000/admin/sales/shipments/${props.id}`, {
+                    headers: {
+                        'Authorization': token
+                    }
+                });
+                //   console.log(response.data)
+                let date = new Date(response.data.salesDate).toLocaleDateString()
+                let paymentDate = new Date(response.data.paymentDate).toLocaleDateString()
 
-                
+                setSaleData({ ...response.data, salesDate: date, paymentDate: paymentDate });
+            }else if(props.name === 'Draft'){
+                const response = await axios.get(`http://localhost:8000/admin/sales/draft/${props.id}`, {
+                    headers: {
+                        'Authorization': token
+                    }
+                });
+                //   console.log(response.data)
+                let date = new Date(response.data.salesDate).toLocaleDateString()
+                let paymentDate = new Date(response.data.paymentDate).toLocaleDateString()
+
+                setSaleData({ ...response.data, salesDate: date, paymentDate: paymentDate });
+            }else if(props.name === 'Quotation'){
+                const response = await axios.get(`http://localhost:8000/admin/sales/quotation/${props.id}`, {
+                    headers: {
+                        'Authorization': token
+                    }
+                });
+                //   console.log(response.data)
+                let date = new Date(response.data.salesDate).toLocaleDateString()
+                let paymentDate = new Date(response.data?.paymentDate).toLocaleDateString()
+
+                setSaleData({ ...response.data, salesDate: date, paymentDate: paymentDate });
+            }
             
         }
         catch (error) {

@@ -8,10 +8,11 @@ import * as htmlToImage from 'html-to-image';
 import { MdCancel } from 'react-icons/md';
 import AddorEditAccountTypes from '../PaymentsAccounts/AddorEditAccountTypes';
 import axios from 'axios';
+import { FcCheckmark } from 'react-icons/fc';
 
 
 const AccountTypeTbl = () => {
-    
+
     const printRef = useRef()
     let xlDatas = []
     //Export to Excel
@@ -52,8 +53,11 @@ const AccountTypeTbl = () => {
     const [colvis, setColvis] = useState(false)
     const [col1, setCol1] = useState(true)
     const [col2, setCol2] = useState(true)
-    
 
+    const [permission, setPermission] = useState(false)
+    const [isAlert, setIsAlert] = useState(false)
+    const [isdelete, setIsdelete] = useState(false)
+    const [deleteId, setDeleteId] = useState(0)
 
     const csvData = [
         ["Username", "Name", "Role", "Email"],
@@ -93,11 +97,11 @@ const AccountTypeTbl = () => {
     }
 
 
-const fetchAccountTypes = async () => {
+    const fetchAccountTypes = async () => {
 
         try {
             const token = localStorage.getItem('token');
-            const response = await axios.get(`http://localhost:8000/admin/accounttypes`,{
+            const response = await axios.get(`http://localhost:8000/admin/accounttypes`, {
                 headers: {
                     'Authorization': token
                 }
@@ -109,17 +113,49 @@ const fetchAccountTypes = async () => {
             console.error('Error fetching Accounnt types:', error);
         }
     };
-useEffect(() => {
-        // Make an API call to fetch SPG's records
-        
+    const handleDeleteAccountType = async (brandId) => {
+        try {
+            const token = localStorage.getItem('token');
+            const response = await axios.delete(`http://localhost:8000/admin/accounttypes/${brandId}`, {
+                headers: {
+                    'Authorization': token
+                }
+            });
+            console.log('Brand deleted:', response.data); // Handle success response
             fetchAccountTypes()
+        } catch (error) {
+            console.error('Error deleting brand:', error);
+        }
+    };
+    useEffect(() => {
+        // Make an API call to fetch SPG's records
 
-        
-    }, [])
+        fetchAccountTypes()
+        const runDelete = () => {
+            if (permission === true) {
 
+                handleDeleteAccountType(deleteId)
+            }
+        }
+        runDelete()
+
+    }, [permission])
+    const Alert = () => {
+        return (
+            <div className="flex flex-col items-center px-4 justify-center w-[300px] py-5 h-[200px] bg-white rounded-md">
+                <FcCheckmark size={100} className="items-center justify-center" />
+                <h1 className="text-4xl text-gray-500 text-center ">Are you sure!</h1>
+                <div className="flex items-center w-full justify-between mt-5">
+                    <button onClick={() => { setPermission(false); setIsAlert(false); setIsdelete(false) }} className="text-md rounded-md mx-2 px-2 py-1 bg-red-500 text-white">Cancel</button>
+                    <button onClick={() => { setPermission(true); setIsAlert(false); setIsdelete(false) }} className="text-md rounded-md mx-2 px-2 py-1 bg-green-500 text-white">OK</button>
+
+                </div>
+            </div>
+        )
+    }
     return (
         <div>
-           
+
             <div className='flex mt-5 flex-col md:flex-row  items-center justify-center md:justify-between mx-5'>
 
 
@@ -161,7 +197,7 @@ useEffect(() => {
                             <ul className='flex flex-col items-center justify-center'>
                                 <li className={` w-full py-1 ${col1 ? "" : "bg-blue-600"} hover:bg-blue-400 `} onClick={() => { setCol1(!col1) }}>Name</li>
                                 <li className={` w-full py-1 ${col2 ? "" : "bg-blue-600"} hover:bg-blue-400 `} onClick={() => { setCol2(!col2) }}>Action</li>
-                                
+
                             </ul>
                         </div>}
                     </button>
@@ -185,7 +221,7 @@ useEffect(() => {
                         <tr>
                             {col1 && <th className=" py-2 title-font  tracking-wider font-medium text-gray-900 text-sm bg-gray-200">Name</th>}
                             {col2 && <th className=" py-2 title-font  tracking-wider font-medium text-gray-900 text-sm bg-gray-200">Action</th>}
-                            
+
 
                         </tr>
                     </thead>
@@ -198,11 +234,15 @@ useEffect(() => {
                                         <FaEdit size={15} />
                                         <h1 className='text-sm mx-1'>Edit</h1>
                                     </button>
-                                    <button  className='flex mx-3 p-1 items-center bg-red-600 text-white justify-center'>
+                                    <button onClick={() => {
+                                        setIsAlert(!isClicked);
+                                        setIsdelete(true)
+                                        setDeleteId(value._id)
+                                    }} className='flex mx-3 p-1 items-center bg-red-600 text-white justify-center'>
                                         <FaEdit size={15} />
                                         <h1 className='text-sm mx-1'>Delete</h1>
                                     </button>
-                                    
+
                                 </td>}
                             </tr>
                         })}
@@ -232,7 +272,7 @@ useEffect(() => {
                     <div className='absolute top-0  flex flex-col  items-center  right-0 bg-black/50 w-full min-h-screen'>
                         <div className='w-full md:w-[50%]   mt-10 bg-white px-5 pt-2'>
                             <div className='flex items-end justify-end '>
-                                <MdCancel onClick={() => { setIsClicked(false);  setIsEdit(false); setIseidtId(0) }} size={20} />
+                                <MdCancel onClick={() => { setIsClicked(false); setIsEdit(false); setIseidtId(0) }} size={20} />
 
                             </div>
                             {displayData()}
@@ -240,6 +280,11 @@ useEffect(() => {
 
                     </div>
 
+                }
+                {isAlert &&
+                    <div className="absolute top-0 flex flex-col items-center  justify-center right-0 bg-black/70 w-full min-h-screen">
+                        {isdelete && <Alert />}
+                    </div>
                 }
             </div>
         </div>

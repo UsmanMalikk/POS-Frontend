@@ -1,12 +1,15 @@
-import React, { useRef, useState } from 'react'
+import React, { useRef, useState, useEffect } from 'react'
 import moment from 'moment';
 import { useReactToPrint } from 'react-to-print';
 import { LineChart, Line, XAxis, YAxis, ResponsiveContainer, CartesianGrid, Tooltip, Legend } from 'recharts'
 import { AiOutlineMenu } from 'react-icons/ai';
 import { jsPDF } from "jspdf";
+import axios from 'axios';
 
 import * as htmlToImage from 'html-to-image';
 const Chart1 = () => {
+      const [salesData, setSalesData] = useState([])
+
   const [chart1, setChart1] = useState(false)
   const chartRef = useRef(document.getElementById("chart"))
   const startDate = moment(moment().subtract(29, 'days')).format("DD-MMMM-YYYY")
@@ -89,7 +92,26 @@ const handlePrint = useReactToPrint({
   }
 });
 
-
+const fetchSales = async () => {
+  // let final = "final"
+  try {
+      const token = localStorage.getItem('token');
+      const response = await axios.get(`http://localhost:8000/admin/sales/final`, {
+          headers: {
+              'Authorization': token
+          }
+      });
+      console.log(response)
+      // console.log(response.data)
+      setSalesData(response.data);
+  } catch (error) {
+      console.error('Error fetching Drafts:', error);
+  }
+};
+useEffect(() => {
+  // Make an API call to fetch user's user records
+  fetchSales();
+}, []);
 return (
   <div  className=' w-[96%]  mx-[2%]  shadow-md my-5 shadow-gray-400 h-[500px] border-t-[2px] border-blue-600 rounded-xl'>
     <h1 className='text-xl font-semibold text-start p-5'>Sales Last 30 Days</h1>

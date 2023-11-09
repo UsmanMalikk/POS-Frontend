@@ -9,6 +9,7 @@ import * as htmlToImage from 'html-to-image';
 import { MdCancel } from 'react-icons/md';
 import AddorEditDiscount from '../discount/AddorEditDiscount';
 import axios from 'axios';
+import { FcCheckmark } from 'react-icons/fc';
 
 const DiscountTbl = () => {
     const [dummyData, setDummyData] = useState([
@@ -117,7 +118,10 @@ const DiscountTbl = () => {
 
     }
     const [discountsData, setDiscountsData] = useState([]);
-
+    const [permission, setPermission] = useState(false)
+    const [isAlert, setIsAlert] = useState(false)
+    const [isdelete, setIsdelete] = useState(false)
+    const [deleteId, setDeleteId] = useState(0)
     const [crpage, setCrpage] = useState(1)
     const rcrdprpg = 5
     const lasIndex = crpage * rcrdprpg
@@ -141,13 +145,23 @@ const DiscountTbl = () => {
     const [isCliked, setIsCliked] = useState(false)
     const [upid, setUpid] = useState(0)
     const [isEdit, setIsEdit] = useState(false)
-    const [actionList, setActionList] = useState(Array(record.length).fill(false))
+    const [actionList, setActionList] = useState(Array(100).fill(false))
 
     const toggleDropdown = (index) => {
         const dropDownAction = [...actionList];
-        dropDownAction[index] = !dropDownAction[index];
+        dropDownAction.map((val, i) => {
+            if (i === index) {
+                dropDownAction[i] = !dropDownAction[i];
+
+            } else {
+                dropDownAction[i] = false
+            }
+            return dropDownAction
+        })
+
         setActionList(dropDownAction);
     };
+
 
     const csvData = [
         ["Username", "Name", "Role", "Email"],
@@ -218,8 +232,27 @@ const DiscountTbl = () => {
 
         fetchDiscounts();
 
+        const runDelete = () => {
+            if (permission === true) {
 
-    }, []);
+                handleDeleteDiscount(deleteId)
+            }
+        }
+        runDelete()
+    }, [permission]);
+    const Alert = () => {
+        return (
+            <div className="flex flex-col items-center px-4 justify-center w-[300px] py-5 h-[200px] bg-white rounded-md">
+                <FcCheckmark size={100} className="items-center justify-center" />
+                <h1 className="text-4xl text-gray-500 text-center ">Are you sure!</h1>
+                <div className="flex items-center w-full justify-between mt-5">
+                    <button onClick={() => { setPermission(false); setIsAlert(false); setIsdelete(false) }} className="text-md rounded-md mx-2 px-2 py-1 bg-red-500 text-white">Cancel</button>
+                    <button onClick={() => { setPermission(true); setIsAlert(false); setIsdelete(false) }} className="text-md rounded-md mx-2 px-2 py-1 bg-green-500 text-white">OK</button>
+
+                </div>
+            </div>
+        )
+    }
     return (
         <div>
 
@@ -338,7 +371,11 @@ const DiscountTbl = () => {
                                                 <li className='w-full'>
                                                     <div onClick={() => { }} className='flex px-2 py-1 w-full cursor-pointer hover:bg-gray-400 items-center '>
                                                         <FaTrash size={15} />
-                                                        <h1 className='text-sm' onClick={() => handleDeleteDiscount(value._id)}>Delete</h1>
+                                                        <h1 className='text-sm' onClick={() => {
+                                                            setIsAlert(!isCliked);
+                                                            setIsdelete(true)
+                                                            setDeleteId(value._id)
+                                                        }}>Delete</h1>
                                                     </div>
                                                 </li>
                                             </ul>
@@ -398,6 +435,11 @@ const DiscountTbl = () => {
                     </div>
                 </div>
 
+            }
+            {isAlert &&
+                <div className="absolute top-0 flex flex-col items-center  justify-center right-0 bg-black/70 w-full min-h-screen">
+                    {isdelete && <Alert />}
+                </div>
             }
         </div>
     )

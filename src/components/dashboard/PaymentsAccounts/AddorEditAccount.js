@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react'
 import axios from 'axios';
-
+import { toast, ToastContainer } from 'react-toastify';
+import "react-toastify/dist/ReactToastify.css";
 const AddorEditAccount = (props) => {
     const [AccountTypesData, setAccountTypesData] = useState([]);
 
@@ -41,7 +42,7 @@ const AddorEditAccount = (props) => {
 
         try {
             const token = localStorage.getItem('token');
-            const response = await axios.get(`http://localhost:8000/admin/accounttypes`,{
+            const response = await axios.get(`http://localhost:8000/admin/accounttypes`, {
                 headers: {
                     'Authorization': token
                 }
@@ -57,7 +58,7 @@ const AddorEditAccount = (props) => {
 
         try {
             const token = localStorage.getItem('token');
-            const response = await axios.get(`http://localhost:8000/admin/add-accounts/${props.id}`,{
+            const response = await axios.get(`http://localhost:8000/admin/add-accounts/${props.id}`, {
                 headers: {
                     'Authorization': token
                 }
@@ -74,19 +75,41 @@ const AddorEditAccount = (props) => {
         try {
             const token = localStorage.getItem('token');
             // console.log(formData)
-            const response = await axios.post(`http://localhost:8000/admin/add-accounts`, formData,{
+            const response = await axios.post(`http://localhost:8000/admin/add-accounts`, formData, {
                 headers: {
                     'Authorization': token
                 }
             });
             console.log(response)
             if (response.status === 201) {
-                window.location.reload();
+                toast.success('Data Saved', {
+                    position: "top-right",
+                    autoClose: 2000,
+                    hideProgressBar: false,
+                    closeOnClick: true,
+                    pauseOnHover: true,
+                    draggable: true,
+                    progress: undefined,
+                    theme: "light",
+                });
+                setTimeout(() => {
+                    window.location.reload();
 
-                console.log("Success")
+                }, 2000);
+
             }
         } catch (error) {
             console.error('Error Adding Accounnt:', error);
+            toast.error(error.response.data.message, {
+                position: "top-right",
+                autoClose: 2000,
+                hideProgressBar: false,
+                closeOnClick: true,
+                pauseOnHover: true,
+                draggable: true,
+                progress: undefined,
+                theme: "light",
+            });
         }
     };
 
@@ -95,19 +118,41 @@ const AddorEditAccount = (props) => {
         try {
             const token = localStorage.getItem('token');
             // console.log(formData)
-            const response = await axios.put(`http://localhost:8000/admin/add-accounts/${props.id}`, formData,{
+            const response = await axios.put(`http://localhost:8000/admin/add-accounts/${props.id}`, formData, {
                 headers: {
                     'Authorization': token
                 }
             });
             console.log(response)
             if (response.status === 200) {
-                window.location.reload();
+                toast.success('Data Saved', {
+                    position: "top-right",
+                    autoClose: 2000,
+                    hideProgressBar: false,
+                    closeOnClick: true,
+                    pauseOnHover: true,
+                    draggable: true,
+                    progress: undefined,
+                    theme: "light",
+                });
+                setTimeout(() => {
+                    window.location.reload();
 
-                console.log("Success")
+                }, 2000);
+
             }
         } catch (error) {
             console.error('Error Adding Accounnt:', error);
+            toast.error(error.response.data.message, {
+                position: "top-right",
+                autoClose: 2000,
+                hideProgressBar: false,
+                closeOnClick: true,
+                pauseOnHover: true,
+                draggable: true,
+                progress: undefined,
+                theme: "light",
+            });
         }
     };
     useEffect(() => {
@@ -124,6 +169,18 @@ const AddorEditAccount = (props) => {
     }, [])
     return (
         <div className='flex flex-col w-full px-3 bg-white '>
+            <ToastContainer
+                position="top-right"
+                autoClose={2000}
+                hideProgressBar={false}
+                newestOnTop={false}
+                closeOnClick
+                rtl={false}
+                pauseOnFocusLoss
+                draggable
+                pauseOnHover
+                theme="colored"
+            />
             <div className='flex'>
                 <h1 className='text-2xl font-semibold text-start '>{props.id ? "Edit Account" : "Add Account"}</h1>
             </div>

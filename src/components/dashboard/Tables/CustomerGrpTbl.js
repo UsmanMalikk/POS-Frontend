@@ -8,32 +8,34 @@ import * as XLSX from 'xlsx'
 import { jsPDF } from 'jspdf';
 import * as htmlToImage from 'html-to-image';
 import AddorEditCustomerGrp from '../contacts/AddorEditCustomerGrp';
-import axios from'axios';
+import axios from 'axios';
+import { FcCheckmark } from 'react-icons/fc';
 
 
 const CustomerGrpTbl = () => {
-   const [data,setData]=useState([]);
-   const [loading, setLoading] = useState(true);
-   const getDataFromApi = async () => {
-    try {
-      const response = await axios.get('http://localhost:8000/admin/contact/customergroup');
-      setData(response.data);
-      console.log(response);
-      setLoading(false);
-    } catch (e) {
-      console.log('Error fetching data: ', e);
-    }
-  };
-   useEffect(() => {
+    const [permission, setPermission] = useState(false)
+    const [isAlert, setIsAlert] = useState(false)
+    const [isdelete, setIsdelete] = useState(false)
+    const [deleteId, setDeleteId] = useState(0)
+    const [data, setData] = useState([]);
+    const [loading, setLoading] = useState(true);
+    const getDataFromApi = async () => {
+        try {
+            const response = await axios.get('http://localhost:8000/admin/contact/customergroup');
+            setData(response.data);
+            console.log(response);
+            setLoading(false);
+        } catch (e) {
+            console.log('Error fetching data: ', e);
+        }
+    };
     
-    getDataFromApi();
-  }, []);
-   
 
-  
-  const printRef = useRef()
-  let xlDatas = []
-   
+
+
+    const printRef = useRef()
+    let xlDatas = []
+
     //Export to Excel
     const handleExportExcl = (userDatas) => {
         userDatas.map(xlData => {
@@ -110,6 +112,9 @@ const CustomerGrpTbl = () => {
     const displayData = () => {
         if (editId !== 0 && isedit === true) {
             return <AddorEditCustomerGrp id={editId} />
+        } else {
+            return <AddorEditCustomerGrp/>
+
         }
     }
     const handleDeleteCustomerGrp = async (custId) => {
@@ -126,7 +131,30 @@ const CustomerGrpTbl = () => {
             console.error('Error deleting Contact:', error);
         }
     };
+    useEffect(() => {
 
+        getDataFromApi();
+        const runDelete = () => {
+            if (permission === true) {
+
+                handleDeleteCustomerGrp(deleteId)
+            }
+        }
+        runDelete()
+    }, [permission]);
+    const Alert = () => {
+        return (
+            <div className="flex flex-col items-center px-4 justify-center w-[300px] py-5 h-[200px] bg-white rounded-md">
+                <FcCheckmark size={100} className="items-center justify-center" />
+                <h1 className="text-4xl text-gray-500 text-center ">Are you sure!</h1>
+                <div className="flex items-center w-full justify-between mt-5">
+                    <button onClick={() => { setPermission(false); setIsAlert(false); setIsdelete(false) }} className="text-md rounded-md mx-2 px-2 py-1 bg-red-500 text-white">Cancel</button>
+                    <button onClick={() => { setPermission(true); setIsAlert(false); setIsdelete(false) }} className="text-md rounded-md mx-2 px-2 py-1 bg-green-500 text-white">OK</button>
+
+                </div>
+            </div>
+        )
+    }
     return (
         <div className='w-full'>
             <div className='flex w-full items-center justify-between'>
@@ -225,7 +253,11 @@ const CustomerGrpTbl = () => {
                                         <h1 className='text-sm'>Edit</h1>
                                     </button>
 
-                                    <button onClick={() => { handleDeleteCustomerGrp(value._id) }} className='flex mx-1 p-1 items-center bg-red-500 text-white justify-center'>
+                                    <button onClick={() => {
+                                        setIsAlert(!isClike);
+                                        setIsdelete(true)
+                                        setDeleteId(value._id)
+                                    }} className='flex mx-1 p-1 items-center bg-red-500 text-white justify-center'>
                                         <AiOutlineDelete size={15} />
                                         <h1 className='text-sm'>Delete</h1>
                                     </button>
@@ -266,6 +298,11 @@ const CustomerGrpTbl = () => {
                     </div>
                 </div>
 
+            }
+            {isAlert &&
+                <div className="absolute top-0 flex flex-col items-center  justify-center right-0 bg-black/70 w-full min-h-screen">
+                    {isdelete && <Alert />}
+                </div>
             }
         </div>
     )

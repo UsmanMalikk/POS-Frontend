@@ -1,7 +1,8 @@
 import React, { useState, useEffect } from 'react'
 import { FaCheckCircle, FaInfo, FaInfoCircle } from 'react-icons/fa';
 import axios from 'axios';
-
+import { toast, ToastContainer } from 'react-toastify';
+import "react-toastify/dist/ReactToastify.css";
 const AddorEditInvoiceScheme = (props) => {
     const [formData, setFormData] = useState({
         invoiceNumberFormat: "",
@@ -18,8 +19,16 @@ const AddorEditInvoiceScheme = (props) => {
             formData.name.length === 0
         ) {
             setIsserror(true);
-            console.log(isserror);
-        } else if (props.id) {
+            toast.error('Some fields are required', {
+                position: "top-right",
+                autoClose: 2000,
+                hideProgressBar: false,
+                closeOnClick: true,
+                pauseOnHover: true,
+                draggable: true,
+                progress: undefined,
+                theme: "light",
+            });        } else if (props.id) {
             addInvoiceById()
             console.log("Handle Update", formData);
         } else {
@@ -65,11 +74,34 @@ const AddorEditInvoiceScheme = (props) => {
             });
             console.log(response)
             if (response.status === 201) {
-                window.location.reload();
+                toast.success('Data Saved', {
+                    position: "top-right",
+                    autoClose: 2000,
+                    hideProgressBar: false,
+                    closeOnClick: true,
+                    pauseOnHover: true,
+                    draggable: true,
+                    progress: undefined,
+                    theme: "light",
+                });
+                setTimeout(() => {
+                    window.location.reload();
+                }, 2000);
+
             }
 
         } catch (error) {
             console.error('Error Adding Invoice:', error);
+            toast.error(error.response.data.message, {
+                position: "top-right",
+                autoClose: 2000,
+                hideProgressBar: false,
+                closeOnClick: true,
+                pauseOnHover: true,
+                draggable: true,
+                progress: undefined,
+                theme: "light",
+            });
         }
     };
     const addInvoiceById = async () => {
@@ -84,16 +116,51 @@ const AddorEditInvoiceScheme = (props) => {
             });
             // console.log(response)
             if (response.status === 200) {
-                window.location.reload();
+                toast.success('Data Saved', {
+                    position: "top-right",
+                    autoClose: 2000,
+                    hideProgressBar: false,
+                    closeOnClick: true,
+                    pauseOnHover: true,
+                    draggable: true,
+                    progress: undefined,
+                    theme: "light",
+                });
+                setTimeout(() => {
+                    window.location.reload();
+                }, 2000);
+
             }
         } catch (error) {
             console.error('Error Adding Invoice:', error);
+            toast.error(error.response.data.message, {
+                position: "top-right",
+                autoClose: 2000,
+                hideProgressBar: false,
+                closeOnClick: true,
+                pauseOnHover: true,
+                draggable: true,
+                progress: undefined,
+                theme: "light",
+            });
         }
     };
 
 
     return (
         <div className='flex flex-col w-full bg-white p-3'>
+            <ToastContainer
+                position="top-right"
+                autoClose={2000}
+                hideProgressBar={false}
+                newestOnTop={false}
+                closeOnClick
+                rtl={false}
+                pauseOnFocusLoss
+                draggable
+                pauseOnHover
+                theme="colored"
+            />
             <h1 className="text-xl text-start font-bold ">{props.id ? "Edit" : "Add"} Invoice Scheme</h1>
 
             <div className='grid mt-5 grid-cols-1 md:grid-cols-3 gap-5'>

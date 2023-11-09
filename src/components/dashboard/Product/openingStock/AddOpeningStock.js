@@ -3,7 +3,8 @@ import { FaPlus } from 'react-icons/fa'
 import { useLocation } from 'react-router-dom';
 import axios from 'axios';
 import { useNavigate } from "react-router-dom"
-
+import { toast, ToastContainer } from 'react-toastify';
+import "react-toastify/dist/ReactToastify.css";
 const AddOpeningStock = () => {
     const Navigate = useNavigate();
 
@@ -72,7 +73,7 @@ const AddOpeningStock = () => {
 
         try {
             const token = localStorage.getItem('token');
-            const response = await axios.get(`http://localhost:8000/admin/products/${formDataFromPreviousPage._id}`,{
+            const response = await axios.get(`http://localhost:8000/admin/products/${formDataFromPreviousPage._id}`, {
                 headers: {
                     'Authorization': token
                 }
@@ -90,7 +91,7 @@ const AddOpeningStock = () => {
         try {
             const token = localStorage.getItem('token');
             if (formDataFromPreviousPage._id) {
-                const response = await axios.get(`http://localhost:8000/admin/units/${formDataFromPreviousPage.unit._id}`,{
+                const response = await axios.get(`http://localhost:8000/admin/units/${formDataFromPreviousPage.unit._id}`, {
                     headers: {
                         'Authorization': token
                     }
@@ -98,7 +99,7 @@ const AddOpeningStock = () => {
                 setUnitData(response.data);
 
             } else {
-                const response = await axios.get(`http://localhost:8000/admin/units/${formDataFromPreviousPage.unit}`,{
+                const response = await axios.get(`http://localhost:8000/admin/units/${formDataFromPreviousPage.unit}`, {
                     headers: {
                         'Authorization': token
                     }
@@ -135,7 +136,7 @@ const AddOpeningStock = () => {
             formDataForSubmission.append('dfltSellingPrice', formDataFromPreviousPage.dfltSellingPrice);
             formDataForSubmission.append('margin', formDataFromPreviousPage.margin);
 
-            if(formDataFromPreviousPage.grpPrices){
+            if (formDataFromPreviousPage.grpPrices) {
                 formDataFromPreviousPage.grpPrices.forEach((grpPrice, index) => {
                     formDataForSubmission.append(`grpPrices[${index}][spg]`, grpPrice.spg);
                     formDataForSubmission.append(`grpPrices[${index}][amount]`, grpPrice.amount);
@@ -154,17 +155,40 @@ const AddOpeningStock = () => {
                 formDataForSubmission.append(`openingStock[${index}][subTotalBfrTax]`, stock.subTotalBfrTax);
                 formDataForSubmission.append(`openingStock[${index}][date]`, stock.date);
                 formDataForSubmission.append(`openingStock[${index}][note]`, stock.note);
-            });            const response = await axios.post(`http://localhost:8000/admin/products`, formDataForSubmission,{
+            }); const response = await axios.post(`http://localhost:8000/admin/products`, formDataForSubmission, {
                 headers: {
                     'Authorization': token
                 }
             });
             console.log(response)
             if (response.status === 201) {
-                Navigate("/home/products");
+                toast.success('Data Saved', {
+                    position: "top-right",
+                    autoClose: 2000,
+                    hideProgressBar: false,
+                    closeOnClick: true,
+                    pauseOnHover: true,
+                    draggable: true,
+                    progress: undefined,
+                    theme: "light",
+                });
+                setTimeout(() => {
+                    Navigate("/home/products");
+                }, 2000);
+
             }
         } catch (error) {
             console.error('Error Adding Product:', error);
+            toast.error(error.response.data.message, {
+                position: "top-right",
+                autoClose: 2000,
+                hideProgressBar: false,
+                closeOnClick: true,
+                pauseOnHover: true,
+                draggable: true,
+                progress: undefined,
+                theme: "light",
+            });
         }
     };
     const addProductById = async () => {
@@ -172,9 +196,9 @@ const AddOpeningStock = () => {
         try {
             const token = localStorage.getItem('token');
             // console.log(formData)
-            
 
-            const response = await axios.put(`http://localhost:8000/admin/products/${formDataFromPreviousPage._id}`, formData,{
+
+            const response = await axios.put(`http://localhost:8000/admin/products/${formDataFromPreviousPage._id}`, formData, {
                 headers: {
                     'Authorization': token
                 }
@@ -182,11 +206,33 @@ const AddOpeningStock = () => {
             //   console.log(response)
 
             if (response.status === 200) {
-                Navigate("/home/products")
-                console.log("Success")
+                toast.success('Data Saved', {
+                    position: "top-right",
+                    autoClose: 2000,
+                    hideProgressBar: false,
+                    closeOnClick: true,
+                    pauseOnHover: true,
+                    draggable: true,
+                    progress: undefined,
+                    theme: "light",
+                });
+                setTimeout(() => {
+                    Navigate("/home/products")
+                }, 2000);
+
             }
         } catch (error) {
             console.error('Error Adding Product:', error);
+            toast.error(error.response.data.message, {
+                position: "top-right",
+                autoClose: 2000,
+                hideProgressBar: false,
+                closeOnClick: true,
+                pauseOnHover: true,
+                draggable: true,
+                progress: undefined,
+                theme: "light",
+            });
         }
     };
     const handleSaveorEdit = () => {
@@ -214,6 +260,18 @@ const AddOpeningStock = () => {
 
     return (
         <div className='flex flex-col w-full px-5 bg-white '>
+            <ToastContainer
+                position="top-right"
+                autoClose={2000}
+                hideProgressBar={false}
+                newestOnTop={false}
+                closeOnClick
+                rtl={false}
+                pauseOnFocusLoss
+                draggable
+                pauseOnHover
+                theme="colored"
+            />
             <div className='flex'>
                 <h1 className='text-2xl font-semibold text-start '>Add Opening Stock</h1>
             </div>

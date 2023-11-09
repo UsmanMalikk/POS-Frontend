@@ -14,8 +14,8 @@ const Home1 = () => {
       <div className={`flex max-h-[90vh]`}>
         <div
           className={`${
-            clicked ? "w-[50%] md:w-[4%]" : "md:w-[17%]"
-          }  overflow-y-auto`}
+            clicked ? "w-[50%] md:w-[4%]" : "md:w-[17%] "
+          }  overflow-y-auto `}
         >
           <SideBar />
         </div>

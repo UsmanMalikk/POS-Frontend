@@ -7,7 +7,8 @@ import { useNavigate, useParams } from 'react-router-dom';
 import axios from 'axios';
 import { MdCancel } from 'react-icons/md';
 import AddorEditUnits from './units/AddorEditUnits';
-
+import { toast, ToastContainer } from 'react-toastify';
+import "react-toastify/dist/ReactToastify.css";
 const AddorEditProduct = () => {
   const editor = useRef(null)
   const params = useParams()
@@ -55,21 +56,25 @@ const AddorEditProduct = () => {
     unitName: "",
     businessLocation: [],
     manageStock: false,
-    // alertQuantity: 0,
     productDescription: "",
     productImage: "",
-    // productBroucher: "",
-    // imeiSerialNumber: false,
-    // notforSelling: false,
-    // weight: 0,
-    // servieStaffTime: "",
-    // woocommerceSync: false,
+  
     productType: "",
     variationType: [{ variationTempleateID: null, variation: [{ subSKU: "", value: "" }] }],
     combo: [],
     netTotal: 0,
     dfltSellingPrice: 0,
-    margin: 0
+    margin: 0,
+    // customField1: "",
+    // customField2: "",
+    // customField3: "",
+    // customField4: "",
+    // customField5: "",
+    // customField6: "",
+    // customField7: "",
+    // customField8: "",
+    // customField9: "",
+    // customField10: "",
   })
   const handleDelete = (index) => {
     let newArray = [...formData.businessLocation]
@@ -247,7 +252,7 @@ const AddorEditProduct = () => {
     try {
       const token = localStorage.getItem('token');
 
-      const response = await axios.get(`http://localhost:8000/admin/product-custom-label`, {
+      const response = await axios.get(`http://localhost:8000/admin/product-custom-label/withdropdown`, {
         headers: {
           'Authorization': token
         }
@@ -318,8 +323,19 @@ const AddorEditProduct = () => {
           'Authorization': token
         }
       });
-      console.log(response)
-      setFormData(response.data);
+      const customLable1 = response.data.customLable1
+      const customLable2 = response.data.customLable2
+      const customLable3 = response.data.customLable3
+      const customLable4 = response.data.customLable4
+      const customLable5 = response.data.customLable5
+      const customLable6 = response.data.customLable6
+      const customLable7 = response.data.customLable7
+      const customLable8 = response.data.customLable8
+      const customLable9 = response.data.customLable9
+      const customLable10 = response.data.customLable10
+      const unitName = `${response.data.unit?.name} ${response.data.unit?.shortName}`
+
+      setFormData({ ...response.data, unitName: unitName, customField1: customLable1, customField2: customLable2, customField3: customLable3, customField4: customLable4, customField5: customLable5, customField6: customLable6, customField7: customLable7, customField8: customLable8, customField9: customLable9, customField10: customLable10 });
 
     } catch (error) {
       console.error('Error fetching Product:', error);
@@ -386,6 +402,16 @@ const AddorEditProduct = () => {
       formDataForSubmission.append('netTotal', formData.netTotal);
       formDataForSubmission.append('dfltSellingPrice', formData.dfltSellingPrice);
       formDataForSubmission.append('margin', formData.margin);
+      formDataForSubmission.append('customLable1', formData.customField1);
+      formDataForSubmission.append('customLable2', formData.customField2);
+      formDataForSubmission.append('customLable3', formData.customField3);
+      formDataForSubmission.append('customLable4', formData.customField4);
+      formDataForSubmission.append('customLable5', formData.customField5);
+      formDataForSubmission.append('customLable6', formData.customField6);
+      formDataForSubmission.append('customLable7', formData.customField7);
+      formDataForSubmission.append('customLable8', formData.customField8);
+      formDataForSubmission.append('customLable9', formData.customField9);
+      formDataForSubmission.append('customLable10', formData.customField10);
 
       // console.log(formDataForSubmission)
       const response = await axios.post(`http://localhost:8000/admin/products`, formDataForSubmission, {
@@ -395,11 +421,33 @@ const AddorEditProduct = () => {
       });
       // console.log(response)
       if (response.status === 201) {
-        navigate("/home/products")
-        console.log("Success")
+        toast.success('Data Saved', {
+          position: "top-right",
+          autoClose: 2000,
+          hideProgressBar: false,
+          closeOnClick: true,
+          pauseOnHover: true,
+          draggable: true,
+          progress: undefined,
+          theme: "light",
+        });
+        setTimeout(() => {
+          navigate("/home/products")
+        }, 2000);
+
       }
     } catch (error) {
       console.error('Error Adding Product:', error);
+      toast.error(error.response.data.message, {
+        position: "top-right",
+        autoClose: 2000,
+        hideProgressBar: false,
+        closeOnClick: true,
+        pauseOnHover: true,
+        draggable: true,
+        progress: undefined,
+        theme: "light",
+      });
     }
   };
 
@@ -415,11 +463,33 @@ const AddorEditProduct = () => {
       });
       console.log(response)
       if (response.status === 200) {
-        navigate("/home/products")
-        console.log("Success")
+        toast.success('Data Saved', {
+          position: "top-right",
+          autoClose: 2000,
+          hideProgressBar: false,
+          closeOnClick: true,
+          pauseOnHover: true,
+          draggable: true,
+          progress: undefined,
+          theme: "light",
+        });
+        setTimeout(() => {
+          navigate("/home/products")
+        }, 2000);
+
       }
     } catch (error) {
       console.error('Error Adding Product:', error);
+      toast.error(error.response.data.message, {
+        position: "top-right",
+        autoClose: 2000,
+        hideProgressBar: false,
+        closeOnClick: true,
+        pauseOnHover: true,
+        draggable: true,
+        progress: undefined,
+        theme: "light",
+      });
     }
   };
   const [isserror, setIsserror] = useState(false)
@@ -427,6 +497,18 @@ const AddorEditProduct = () => {
 
   return (
     <div className='w-full flex flex-col bg-gray-100 p-5 min-h-screen'>
+      <ToastContainer
+        position="top-right"
+        autoClose={2000}
+        hideProgressBar={false}
+        newestOnTop={false}
+        closeOnClick
+        rtl={false}
+        pauseOnFocusLoss
+        draggable
+        pauseOnHover
+        theme="colored"
+      />
       <h1 className='text-xl  text-start mb-4'>{_id ? "Edit" : "Add new"}  Product</h1>
       <div className='w-full p-5 border-t-[3px] bg-white  border-blue-600 pb-[100px] rounded-xl'>
         <div className='grid grid-cols-1 md:grid-cols-3 gap-4'>
@@ -453,67 +535,7 @@ const AddorEditProduct = () => {
             </div>
             <input type='text' value={formData.sku} onChange={(e) => { setFormData({ ...formData, sku: e.target.value }) }} placeholder='SKU' className='border-[1px] px-2 py-1 border-gray-400 focus:outline-none' />
           </div>
-          {/* <div className='flex flex-col '>
-
-            <h1 className='flex text-start font-bold'>
-              Barcode Type:*
-              <span className='text-red-400'>{isserror && formData.barcodeType.length === 0 ? "Required field" : ""}</span>
-
-            </h1>
-            <div className='flex flex-col relative'>
-              <div className='flex '>
-                <input
-                  onClick={() => { setIsOpen1(!isOpen1); }}
-                  className='bg-white w-full  flex items-center  focus:outline-none justify-between px-2  border-[1px] border-gray-600'
-                  value={formData.barcodeType}
-                  onChange={(e) => { setFormData({ ...formData, barcodeType: e.target.value }) }}
-                  placeholder='Select Value'
-                />
-                <BiChevronDown size={20} className={`${isOpen1 && "rotate-180"} absolute top-1 right-3`} />
-
-
-              </div>
-              {isOpen1 &&
-                <ul
-
-                  className={`bg-white  w-[245px] mx-[30px] border-[1px] absolute top-6 z-10 right-0 border-gray-600 overflow-y-auto ${isOpen1 ? "max-h-60" : "max-h-0"} `}
-                >
-                  <div className="flex items-center px-2 sticky top-0 bg-white">
-                    <input
-                      type="text"
-                      value={inputValue1}
-                      onChange={(e) => setInputValue1(e.target.value.toLowerCase())}
-                      className="placeholder:text-gray-700 p-1 outline-none border-[1px] border-gray-500"
-                    />
-                  </div>
-                  {dummyData?.map((data) => (
-                    <li
-                      key={data?.Name}
-                      className={`p-2 text-sm hover:bg-sky-600 hover:text-white
-                                        ${data?.Name?.toLowerCase() === formData.barcodeType?.toLowerCase() &&
-                        "bg-sky-600 text-white"
-                        }
-                                         ${data?.Name?.toLowerCase().startsWith(inputValue1)
-                          ? "block"
-                          : "hidden"
-                        }`}
-                      onClick={() => {
-                        if (data?.Name?.toLowerCase() !== formData.barcodeType.toLowerCase()) {
-
-                          setFormData({ ...formData, barcodeType: data?.Name })
-                          setIsOpen1(false);
-                          setInputValue("");
-                        }
-                      }}
-                    >
-                      {data?.Name}
-                    </li>
-                  ))}
-                </ul>
-              }
-            </div>
-
-          </div> */}
+          
           <div className='flex flex-col '>
             <h1 className='flex text-start font-bold'>
               Unit:*
@@ -525,7 +547,7 @@ const AddorEditProduct = () => {
                 <input
                   onClick={() => setOpen(!open)}
                   className='bg-white w-full  flex items-center  focus:outline-none justify-between px-2  border-[1px] border-gray-600'
-                  value={(_id) ? (formData.unit?.name + ' ' + formData.unit?.shortName) : formData.unitName}
+                  value={formData.unitName}
                   onChange={(e) => { setFormData({ ...formData, unit: e.target.value }) }}
                   placeholder='Select Value'
                 />
@@ -559,7 +581,7 @@ const AddorEditProduct = () => {
                         }`}
                       onClick={() => {
                         if (data?.name?.toLowerCase() !== formData.unitName?.toLowerCase()) {
-                          setFormData({ ...formData, unit: data?._id, unitName: data?.name + ' ' + data?.shortName })
+                          setFormData({ ...formData, unit: data?._id, unitName: `${data?.name} ${data?.shortName}` })
                           setOpen(false);
                           setInputValue("");
                         }
@@ -701,75 +723,159 @@ const AddorEditProduct = () => {
         </div>
 
       </div>
-      {/* <div className='w-full p-5 border-t-[3px] bg-white  mt-5 border-blue-600 pb-[100px] rounded-xl'>
+      <div className='grid grid-cols-1 md:grid-cols-3 gap-5 mt-5 bg-white '>
 
-        <div className='grid grid-cols-1 md:grid-cols-3 mt-3 gap-4'>
+        {contactCustomData.customLable1 !== "" ? <div className='flex flex-col'>
+          <h1 className='text-start font-bold my-1'>{contactCustomData.customLable1}</h1>
+          {contactCustomData.customLableType1 === "Dropdown" ?
+            <select value={formData.customField1} onChange={(e) => { setFormData({ ...formData, customField1: e.target.value }) }} placeholder={"Custom Lable 1"} className='px-2 py-[2px] w-full border-[1px] border-gray-600 focus:outline-none'>
+              <option value={""}>Please Select</option>
+              {contactCustomData.dropdownOptions1.map((val, index) => {
+                return <option key={index} value={val}>{val}</option>
 
-
-          <div className='flex flex-col relative mt-7'>
-            <div className='flex'>
-              <input value={formData.imeiSerialNumber} onChange={(e) => { setFormData({ ...formData, imeiSerialNumber: e.target.value }) }} type='checkbox' className='w-6 h-6 border-[1px] px-2 py-1 border-gray-400 focus:outline-none' />
-              <div className='flex mx-2'>
-                <h1 className='text-start text-xs font-semibold'>Enable Product description, IMEI or Serial Number</h1>
-              </div>
-
-            </div>
-            <FaInfoCircle onMouseOver={() => { setProductImei(true) }} onMouseLeave={() => { setProductImei(false) }} size={15} style={{ color: "skyblue" }} className='mx-1 mt-1 cursor-help' />
-            {productImei &&
-              <div className='flex flex-col w-[280px] rounded-md border-[2px] border-gray-400 absolute top-12 left-4 p-2 z-10 bg-white shadow-md shadow-gray-300'>
-                <p className='text-start'>Enable or disable stock management for product</p>
-                <p className='text-start mt-2 text-gray-600'>Stock management should be disable mostly for services. Example Hair Cutting, Repairing etc</p>
-
-              </div>
-            }
-
-          </div>
-          <div className='flex flex-col relative mt-7'>
-            <div className='flex'>
-              <input value={formData.notforSelling} onChange={(e) => { setFormData({ ...formData, notforSelling: e.target.value }) }} type='checkbox' className='w-6 h-6 border-[1px] px-2 py-1 border-gray-400 focus:outline-none' />
-              <div className='flex mx-2'>
-                <h1 className='text-start font-bold'>Not for Selling</h1>
-                <FaInfoCircle onMouseOver={() => { setIsSelling(true) }} onMouseLeave={() => { setIsSelling(false) }} size={15} style={{ color: "skyblue" }} className='mx-1 mt-1 cursor-help' />
-                {isSelling &&
-                  <div className='flex flex-col w-[280px] rounded-md border-[2px] border-gray-400 absolute top-8 p-2 z-10 bg-white shadow-md shadow-gray-300'>
-                    <p className='text-start mt-2 text-gray-600'>If Checked Product will not be displayed in sales screen for selling purposes.</p>
-
-                  </div>
-                }
-              </div>
-
-            </div>
-
-          </div>
-
-
+              })}
+            </select> :
+            <input type={contactCustomData.customLableType1} value={formData.customField1} onChange={(e) => { setFormData({ ...formData, customField1: e.target.value }) }} placeholder={`Custom Lable 1`} className='px-2 py-[2px] w-full border-[1px] border-gray-600 focus:outline-none' />
+          }
         </div>
-        <div className='flex flex-col mt-5 w-1/3'>
-          <div className='flex flex-col mt-2'>
-            <h1 className='flex text-start font-bold'>Weight:</h1>
-            <input value={formData.weight} onChange={(e) => { setFormData({ ...formData, weight: e.target.value }) }} type='text' placeholder='Weight' className='border-[1px] px-2 py-1 border-gray-400 focus:outline-none' />
-          </div>
-          <div className='flex flex-col mt-2'>
-            <h1 className='flex text-start font-bold'>Service staff timer/Preparation time (In minutes)::</h1>
-            <input value={formData.servieStaffTime} onChange={(e) => { setFormData({ ...formData, servieStaffTime: e.target.value }) }} type='text' placeholder='Service staff timer/Preparation time (In minutes):' className='border-[1px] px-2 py-1 border-gray-400 focus:outline-none' />
-          </div>
+          : ""}
+        {contactCustomData.customLable2 !== "" ? <div className='flex flex-col'>
+          <h1 className='text-start font-bold my-1'>{contactCustomData.customLable2}</h1>
+          {contactCustomData.customLableType2 === "Dropdown" ?
+            <select value={formData.customField2} onChange={(e) => { setFormData({ ...formData, customField2: e.target.value }) }} placeholder={"Custom Lable 2"} className='px-2 py-[2px] w-full border-[1px] border-gray-600 focus:outline-none'>
+              <option value={""}>Please Select</option>
+              {contactCustomData.dropdownOptions2.map((val, index) => {
+                return <option key={index} value={val}>{val}</option>
+
+              })}
+            </select> :
+            <input type={contactCustomData.customLableType2} value={formData.customField2} onChange={(e) => { setFormData({ ...formData, customField2: e.target.value }) }} placeholder={`Custom Lable 2`} className='px-2 py-[2px] w-full border-[1px] border-gray-600 focus:outline-none' />
+          }
         </div>
-        <div className='flex'>
-          <input value={formData.woocommerceSync} onChange={(e) => { setFormData({ ...formData, woocommerceSync: e.target.value }) }} type='checkbox' className='w-6 h-6 border-[1px] px-2 py-1 border-gray-400 focus:outline-none' />
-          <div className='flex mx-2'>
-            <h1 className='text-start font-bold'>Disable Woocommerce Sync</h1>
-            <FaInfoCircle onMouseOver={() => { setIsWoocommerce(true) }} onMouseLeave={() => { setIsWoocommerce(false) }} size={15} style={{ color: "skyblue" }} className='mx-1 mt-1 cursor-help' />
-            {isWoocommerce &&
-              <div className='flex flex-col w-[280px] rounded-md border-[2px] border-gray-400 absolute top-8 p-2 z-10 bg-white shadow-md shadow-gray-300'>
-                <p className='text-start mt-2 text-gray-600'>If Checked Product will not be displayed in sales screen for selling purposes.</p>
+          : ""}
 
-              </div>
-            }
-          </div>
+        {contactCustomData.customLable3 !== "" ? <div className='flex flex-col'>
+          <h1 className='text-start font-bold my-1'>{contactCustomData.customLable3}</h1>
+          {contactCustomData.customLableType3 === "Dropdown" ?
+            <select value={formData.customField3} onChange={(e) => { setFormData({ ...formData, customField3: e.target.value }) }} placeholder={"Custom Lable 3"} className='px-2 py-[2px] w-full border-[1px] border-gray-600 focus:outline-none'>
+              <option value={""}>Please Select</option>
+              {contactCustomData.dropdownOptions3.map((val, index) => {
+                return <option key={index} value={val}>{val}</option>
 
+              })}
+            </select> :
+            <input type={contactCustomData.customLableType3} value={formData.customField3} onChange={(e) => { setFormData({ ...formData, customField3: e.target.value }) }} placeholder={`Custom Lable 3`} className='px-2 py-[2px] w-full border-[1px] border-gray-600 focus:outline-none' />
+          }
         </div>
+          : ""}
+        {contactCustomData.customLable4 !== "" ? <div className='flex flex-col'>
+          <h1 className='text-start font-bold my-1'>{contactCustomData.customLable4}</h1>
+          {contactCustomData.customLableType4 === "Dropdown" ?
+            <select value={formData.customField4} onChange={(e) => { setFormData({ ...formData, customField4: e.target.value }) }} placeholder={"Custom Lable 4"} className='px-2 py-[2px] w-full border-[1px] border-gray-600 focus:outline-none'>
+              <option value={""}>Please Select</option>
+              {contactCustomData.dropdownOptions4.map((val, index) => {
+                return <option key={index} value={val}>{val}</option>
 
-      </div> */}
+              })}
+            </select> :
+            <input type={contactCustomData.customLableType4} value={formData.customField4} onChange={(e) => { setFormData({ ...formData, customField4: e.target.value }) }} placeholder={`Custom Lable 4`} className='px-2 py-[2px] w-full border-[1px] border-gray-600 focus:outline-none' />
+          }
+        </div>
+          : ""}
+
+        {contactCustomData.customLable5 !== "" ? <div className='flex flex-col'>
+          <h1 className='text-start font-bold my-1'>{contactCustomData.customLable5}</h1>
+          {contactCustomData.customLableType5 === "Dropdown" ?
+            <select value={formData.customField5} onChange={(e) => { setFormData({ ...formData, customField5: e.target.value }) }} placeholder={"Custom Lable 5"} className='px-2 py-[2px] w-full border-[1px] border-gray-600 focus:outline-none'>
+              <option value={""}>Please Select</option>
+              {contactCustomData.dropdownOptions5.map((val, index) => {
+                return <option key={index} value={val}>{val}</option>
+
+              })}
+            </select> :
+            <input type={contactCustomData.customLableType5} value={formData.customField5} onChange={(e) => { setFormData({ ...formData, customField5: e.target.value }) }} placeholder={`Custom Lable 5`} className='px-2 py-[2px] w-full border-[1px] border-gray-600 focus:outline-none' />
+          }
+        </div>
+          : ""}
+
+        {contactCustomData.customLable6 !== "" ? <div className='flex flex-col'>
+          <h1 className='text-start font-bold my-1'>{contactCustomData.customLable6}</h1>
+          {contactCustomData.customLableType6 === "Dropdown" ?
+            <select value={formData.customField6} onChange={(e) => { setFormData({ ...formData, customField6: e.target.value }) }} placeholder={"Custom Lable 6"} className='px-2 py-[2px] w-full border-[1px] border-gray-600 focus:outline-none'>
+              <option value={""}>Please Select</option>
+              {contactCustomData.dropdownOptions6.map((val, index) => {
+                return <option key={index} value={val}>{val}</option>
+
+              })}
+            </select> :
+            <input type={contactCustomData.customLableType6} value={formData.customField6} onChange={(e) => { setFormData({ ...formData, customField6: e.target.value }) }} placeholder={`Custom Lable 6`} className='px-2 py-[2px] w-full border-[1px] border-gray-600 focus:outline-none' />
+          }
+        </div>
+          : ""}
+
+        {contactCustomData.customLable7 !== "" ? <div className='flex flex-col'>
+          <h1 className='text-start font-bold my-1'>{contactCustomData.customLable7}</h1>
+          {contactCustomData.customLableType7 === "Dropdown" ?
+            <select value={formData.customField7} onChange={(e) => { setFormData({ ...formData, customField7: e.target.value }) }} placeholder={"Custom Lable 7"} className='px-2 py-[2px] w-full border-[1px] border-gray-600 focus:outline-none'>
+              <option value={""}>Please Select</option>
+              {contactCustomData.dropdownOptions7.map((val, index) => {
+                return <option key={index} value={val}>{val}</option>
+
+              })}
+            </select> :
+            <input type={contactCustomData.customLableType7} value={formData.customField7} onChange={(e) => { setFormData({ ...formData, customField7: e.target.value }) }} placeholder={`Custom Lable 7`} className='px-2 py-[2px] w-full border-[1px] border-gray-600 focus:outline-none' />
+          }
+        </div>
+          : ""}
+
+        {contactCustomData.customLable8 !== "" ? <div className='flex flex-col'>
+          <h1 className='text-start font-bold my-1'>{contactCustomData.customLable8}</h1>
+          {contactCustomData.customLableType8 === "Dropdown" ?
+            <select value={formData.customField8} onChange={(e) => { setFormData({ ...formData, customField8: e.target.value }) }} placeholder={"Custom Lable 8"} className='px-2 py-[2px] w-full border-[1px] border-gray-600 focus:outline-none'>
+              <option value={""}>Please Select</option>
+              {contactCustomData.dropdownOptions8.map((val, index) => {
+                return <option key={index} value={val}>{val}</option>
+
+              })}
+            </select> :
+            <input type={contactCustomData.customLableType8} value={formData.customField8} onChange={(e) => { setFormData({ ...formData, customField8: e.target.value }) }} placeholder={`Custom Lable 8`} className='px-2 py-[2px] w-full border-[1px] border-gray-600 focus:outline-none' />
+          }
+        </div>
+          : ""}
+
+        {contactCustomData.customLable9 !== "" ? <div className='flex flex-col'>
+          <h1 className='text-start font-bold my-1'>{contactCustomData.customLable9}</h1>
+          {contactCustomData.customLableType9 === "Dropdown" ?
+            <select value={formData.customField9} onChange={(e) => { setFormData({ ...formData, customField9: e.target.value }) }} placeholder={"Custom Lable 1"} className='px-2 py-[2px] w-full border-[1px] border-gray-600 focus:outline-none'>
+              <option value={""}>Please Select</option>
+              {contactCustomData.dropdownOptions9.map((val, index) => {
+                return <option key={index} value={val}>{val}</option>
+
+              })}
+            </select> :
+            <input type={contactCustomData.customLableType9} value={formData.customField9} onChange={(e) => { setFormData({ ...formData, customField1: e.target.value }) }} placeholder={`Custom Lable 1`} className='px-2 py-[2px] w-full border-[1px] border-gray-600 focus:outline-none' />
+          }
+        </div>
+          : ""}
+
+        {contactCustomData.customLable10 !== "" ? <div className='flex flex-col'>
+          <h1 className='text-start font-bold my-1'>{contactCustomData.customLable10}</h1>
+          {contactCustomData.customLableType10 === "Dropdown" ?
+            <select value={formData.customField10} onChange={(e) => { setFormData({ ...formData, customField10: e.target.value }) }} placeholder={"Custom Lable 10"} className='px-2 py-[2px] w-full border-[1px] border-gray-600 focus:outline-none'>
+              <option value={""}>Please Select</option>
+              {contactCustomData.dropdownOptions10.map((val, index) => {
+                return <option key={index} value={val}>{val}</option>
+
+              })}
+            </select> :
+            <input type={contactCustomData.customLableType10} value={formData.customField10} onChange={(e) => { setFormData({ ...formData, customField10: e.target.value }) }} placeholder={`Custom Lable 10`} className='px-2 py-[2px] w-full border-[1px] border-gray-600 focus:outline-none' />
+          }
+        </div>
+          : ""}
+      </div>
+
+
+
       <div className='w-full p-5 border-t-[3px] bg-white  mt-5 border-blue-600 pb-[100px] rounded-xl'>
         <div className='grid grid-cols-1 md:grid-cols-3 gap-4'>
           <div className='flex flex-col'>

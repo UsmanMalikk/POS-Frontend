@@ -14,7 +14,10 @@ import {
     FaTrash,
     FaTruck,
     FaUndo,
+
 } from "react-icons/fa";
+import { FcCheckmark } from 'react-icons/fc';
+
 import { useReactToPrint } from "react-to-print";
 import { CSVLink } from "react-csv";
 import * as XLSX from "xlsx";
@@ -26,6 +29,7 @@ import ViewSell from "../sell/ViewSell";
 import EditShipping from "../sell/EditShipping";
 import ViewPayment from "../payments/ViewPayment";
 import axios from 'axios';
+import Invoice from "../sell/Invoice";
 
 
 const SalesTbl = () => {
@@ -57,7 +61,7 @@ const SalesTbl = () => {
 
     }
     const [salesData, setSalesData] = useState([]);
-    const [contactNo, setContactNo] = useState([]);
+    const [printInvoice, setPrintInvoice] = useState(false)
 
     const [search, setSearch] = useState('')
     const [recordPerpage, setRecordPerpage] = useState(25)
@@ -91,17 +95,26 @@ const SalesTbl = () => {
     const [col17, setCol17] = useState(true)
     const [col18, setCol18] = useState(true)
     const [isedit, setIsedit] = useState(false)
+
     const [isShowPayment, setIsShowPayment] = useState(false);
     const [paymentId, setPaymentId] = useState(0);
     const [editShipId, setEditShipId] = useState(0);
     const [iseditship, setIseditship] = useState(false);
     const [editId, setEditId] = useState(0)
     const [isCliked, setIsCliked] = useState(false)
-    const [actionList, setActionList] = useState(Array(record.length).fill(false))
-
+    const [actionList, setActionList] = useState(Array(1000).fill(false))
     const toggleDropdown = (index) => {
         const dropDownAction = [...actionList];
-        dropDownAction[index] = !dropDownAction[index];
+        dropDownAction.map((val, i) => {
+            if (i === index) {
+                dropDownAction[i] = !dropDownAction[i];
+
+            } else {
+                dropDownAction[i] = false
+            }
+            return dropDownAction
+        })
+
         setActionList(dropDownAction);
     };
 
@@ -133,27 +146,49 @@ const SalesTbl = () => {
             setCrpage(crpage + 1)
         }
     }
+    const [permission, setPermission] = useState(false)
+    const [isAlert, setIsAlert] = useState(false)
+    const [isdelete, setIsdelete] = useState(false)
+    const [deleteId, setDeleteId] = useState(0)
+
     const [isshow, setIsshow] = useState(false);
     const [showId, setShowId] = useState(0);
     const displayData = () => {
-        if (showId !== 0 && isshow === true) {
-            return <ViewSell id={showId} name={"Sale"}/>;
-        } else if (iseditship === true && editShipId !== 0) {
+        console.log("");
+        if (isshow === true) {
+            return <ViewSell id={showId} name={"Sale"} />;
+        } else if (iseditship === true) {
             return <EditShipping id={editShipId} />;
+        } else if (printInvoice === true) {
+            return <Invoice number={showId} name={"Sale"} />;
         }
     }
-    // const fetchContactById = async () => {         Instead .populate
 
-    //     try {
-    //         // const token = localStorage.getItem('token');
-    //         const response = await axios.get(`http://localhost:8000/admin/contact/customer/${salesData.customer}`); //Give the path to get contact by id
-    //         // console.log(response)
-    //         setContactNo(response.data);
+    const findTotalAmount = () => {
+        let total = 0
+        salesData.map(val => {
+            return total += parseFloat(val.totalSaleAmount)
+        })
+        return total
+    }
+    // const total = findTotal()
+    const findTotalPaid = () => {
+        let total = 0
+        salesData.map(val => {
+            return total += parseFloat(val.amount)
+        })
+        return total
+    }
+    // const total = findTotal()
+    const findTotalSellDue = () => {
+        let total = 0
+        salesData.map(val => {
+            return total += (parseFloat(val.totalSaleAmount) - parseFloat(val.amount))
+        })
+        return total
+    }
+    // const total = findTotal()
 
-    //     } catch (error) {
-    //         console.error('Error fetching Contact:', error);
-    //     }
-    // };
     const fetchSales = async () => {
         // let final = "final"
         try {
@@ -170,38 +205,55 @@ const SalesTbl = () => {
             console.error('Error fetching Drafts:', error);
         }
     };
-    // useEffect(() => {
-    //     if(salesData){
-    //         fetchContactById()
 
-    //     }
-    //     else{
-    //         fetchSales();
-
-    //     }
-    // }, []);
 
     const handleDeleteSale = async (saleId) => {
-        try {
-            const token = localStorage.getItem('token');
-            const response = await axios.delete(`http://localhost:8000/admin/sales/final/${saleId}`, {
-                headers: {
-                    'Authorization': token
-                }
-            });
-            console.log('Sale deleted:', response.data);
-            fetchSales()
-        } catch (error) {
-            console.error('Error deleting Sale:', error);
-        }
+        
+            try {
+                const token = localStorage.getItem('token');
+                const response = await axios.delete(`http://localhost:8000/admin/sales/final/${saleId}`, {
+                    headers: {
+                        'Authorization': token
+                    }
+                });
+                console.log('Sale deleted:', response.data);
+                fetchSales()
+            } catch (error) {
+                console.error('Error deleting Sale:', error);
+            }
+        
+
+       
     };
+    
     useEffect(() => {
 
         fetchSales();
+        const runDelete = () =>{
+            if(permission === true){
+        
+                handleDeleteSale(deleteId)
+            }
+        }
+        runDelete()
+    
+    }, [permission]);
 
 
-    }, []);
+    const Alert = () => {
+        return (
+            <div className="flex flex-col items-center px-4 justify-center w-[300px] py-5 h-[200px] bg-white rounded-md">
+                <FcCheckmark size={100} className="items-center justify-center" />
+                <h1 className="text-4xl text-gray-500 text-center ">Are you sure!</h1>
+                <div className="flex items-center w-full justify-between mt-5">
+                    <button onClick={() => { setPermission(false); setIsAlert(false); setIsdelete(false) }} className="text-md rounded-md mx-2 px-2 py-1 bg-red-500 text-white">Cancel</button>
+                    <button onClick={() => { setPermission(true); setIsAlert(false); setIsdelete(false) }} className="text-md rounded-md mx-2 px-2 py-1 bg-green-500 text-white">OK</button>
 
+                </div>
+            </div>
+        )
+    }
+    console.log("Delete Permission is ", permission)
     return (
         <div>
             <div className="flex  flex-col md:flex-row  items-center justify-center mt-3 md:justify-between mx-5">
@@ -574,21 +626,22 @@ const SalesTbl = () => {
                                                         <li className="w-full">
                                                             <div
                                                                 onClick={() => {
-                                                                    setIsedit(!isedit);
-                                                                    setIsCliked(!isCliked);
+                                                                    setPrintInvoice(true);
+                                                                    setShowId(value._id)
+                                                                    setIsCliked(true);
                                                                 }}
                                                                 className="flex px-2 py-1 w-full cursor-pointer hover:bg-gray-400 items-center "
                                                             >
                                                                 <FaPrint size={15} />
-                                                                <h1 className="text-sm">Print</h1>
+                                                                <h1 className="text-sm">Print Invoice</h1>
                                                             </div>
                                                         </li>
                                                         <li className="w-full">
                                                             <Link
                                                                 to={`/home/sells/edit/${value._id}`}
                                                                 onClick={() => {
-                                                                    setIsedit(!isedit);
-                                                                    setIsCliked(!isCliked);
+                                                                    setIsedit(true);
+                                                                    setIsCliked(true);
                                                                 }}
                                                                 className="flex px-2 py-1 w-full cursor-pointer hover:bg-gray-400 items-center "
                                                             >
@@ -599,8 +652,9 @@ const SalesTbl = () => {
                                                         <li className="w-full">
                                                             <div
                                                                 onClick={() => {
-
-                                                                    handleDeleteSale(value._id)
+                                                                    setIsAlert(!isCliked);
+                                                                    setIsdelete(true)
+                                                                    setDeleteId(value._id)
                                                                 }}
                                                                 className="flex px-2 py-1 w-full cursor-pointer hover:bg-gray-400 items-center "
                                                             >
@@ -612,8 +666,8 @@ const SalesTbl = () => {
                                                             <div
                                                                 onClick={() => {
                                                                     setEditShipId(value._id);
-                                                                    setIseditship(!iseditship);
-                                                                    setIsCliked(!isCliked);
+                                                                    setIseditship(true);
+                                                                    setIsCliked(true);
                                                                 }}
                                                                 className="flex px-2 py-1 w-full cursor-pointer hover:bg-gray-400 items-center "
                                                             >
@@ -630,7 +684,7 @@ const SalesTbl = () => {
                                     )}
                                     {col2 && <td className="px-1 py-1 text-sm">{date}</td>}
                                     {col3 && <td className="px-1 py-1"> {value.invoiceNumber}</td>}
-                                    {col4 && <td className="px-1 py-1">{value.customer?.prefix+" "+value.customer?.firstName}</td>}
+                                    {col4 && <td className="px-1 py-1">{value.customer?.prefix + " " + value.customer?.firstName}</td>}
                                     {col5 && <td className=" py-1 px-1">{value.customer?.mobile}</td>}
 
                                     {col6 && <td className=" py-1 px-1">{value.businesLocation?.name}</td>}
@@ -669,30 +723,30 @@ const SalesTbl = () => {
                     <tfoot>
                         <tr className='h-[100px] bg-gray-400 '>
                             <td colSpan={5}>Total</td>
+                            <td></td>
+
                             <td>
                                 <div className='flex flex-col'>
-                                    <h1 className='text-xs'> Paid - 19</h1>
-                                    <h1 className='text-xs'> Due - 1</h1>
+                                    <h1 className='text-xs'> </h1>
+                                    <h1 className='text-xs'> </h1>
                                 </div>
                             </td>
                             <td>
-                                <h1 className='text-xs'> Cash - 11</h1>
+                                <h1 className='text-xs'> </h1>
                             </td>
                             <td>
-                                <h1 className='text-xs'> Rs. 0.00</h1>
+                                <h1 className='text-xs'> Rs. {findTotalAmount()}</h1>
                             </td>
                             <td>
-                                <h1 className='text-xs'> Rs. 0.00</h1>
+                                <h1 className='text-xs'> Rs. {findTotalPaid()}</h1>
                             </td>
                             <td>
-                                <h1 className='text-xs'> Rs. 0.00</h1>
+                                <h1 className='text-xs'> Rs. {findTotalSellDue()}</h1>
                             </td>
-                            <td>
-                                <h1 className='text-xs'> Rs. 0.00</h1>
-                            </td>
-                            <td>
 
-                            </td>
+
+
+
                             <td colSpan={6}>
 
                             </td>
@@ -747,6 +801,8 @@ const SalesTbl = () => {
                                 onClick={() => {
                                     setIsCliked(!isCliked);
                                     setIsedit(false);
+                                    setPrintInvoice(false)
+                                    setIseditship(false)
                                     setIsshow(false);
                                     setShowId(0);
                                 }}
@@ -760,7 +816,13 @@ const SalesTbl = () => {
 
 
                 </div>
+
             )}
+            {isAlert &&
+                <div className="absolute top-0 flex flex-col items-center  justify-center right-0 bg-black/70 w-full min-h-screen">
+                    {isdelete && <Alert />}
+                </div>
+            }
         </div>
     )
 }

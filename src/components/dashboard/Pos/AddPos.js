@@ -23,19 +23,14 @@ import moment from 'moment'
 import axios from 'axios';
 
 import { useNavigate } from "react-router-dom"
-
-
-
-
-
-
-
+import { toast, ToastContainer } from 'react-toastify';
+import "react-toastify/dist/ReactToastify.css";
 
 
 const AddPos = () => {
   const Navigate = useNavigate();
 
-  
+
 
   const [productsData, setProductsData] = useState([]);
   const [customersData, setCustomersData] = useState([]);
@@ -233,29 +228,29 @@ const AddPos = () => {
   const subtotal = (q, p, d, dt) => {
     let total = 0
     if (dt === "Percentage") {
-        total = (q * p) - (d / 100) * (q * p)
-        return total
+      total = (q * p) - (d / 100) * (q * p)
+      return total
     } else if (dt === "Fixed") {
-        total = (q * p) - d
-        return total
+      total = (q * p) - d
+      return total
     } else {
-        total = q * p
-        return total
+      total = q * p
+      return total
     }
-}
-const finalDiscount = (p, d, dt) => {
+  }
+  const finalDiscount = (p, d, dt) => {
     let total = 0
     if (dt === "Percentage") {
-        total = (d / 100) * (p)
-        return total
+      total = (d / 100) * (p)
+      return total
     } else if (dt === "Fixed") {
-        total = d
-        return total
-    }else{
-        return total
+      total = d
+      return total
+    } else {
+      return total
 
     }
-}
+  }
   const findTotal = () => {
     let total = 0
     formData.inputData.map(val => {
@@ -265,7 +260,7 @@ const finalDiscount = (p, d, dt) => {
   }
   let total = findTotal()
   const totalPayable = (ttl) => {
-    ttl = parseFloat(ttl) - parseFloat(finalDiscount(total,formData.discountAmount, formData.discountType));
+    ttl = parseFloat(ttl) - parseFloat(finalDiscount(total, formData.discountAmount, formData.discountType));
     ttl = parseFloat(ttl) + parseFloat(formData.shippingCharges);
     ttl = parseFloat(ttl) + parseFloat(formData.additionalExpenseAmount)
     ttl = parseFloat(ttl) + parseFloat(formData.additionalExpenseAmount1)
@@ -318,7 +313,7 @@ const finalDiscount = (p, d, dt) => {
     } else if (closeRegister === true) {
       return <CloseRegister />
     } else if (updateDiscount === true) {
-      return <EditDiscount onSubmit={handleDiscountData}/>
+      return <EditDiscount onSubmit={handleDiscountData} />
     } else if (updateShipping === true) {
       return <EditShipping onSubmit={handleShippingFormData} />
     } else if (recentTrx === true) {
@@ -370,8 +365,10 @@ const finalDiscount = (p, d, dt) => {
           'Authorization': token
         }
       });
-      console.log(response)
-      setFormData(response.data);
+      // console.log(response)
+      const customerName = `${response.data.customer?.prefix} ${response.data.customer?.firstName}`
+            const sellingPriceName = response.data.sellingPrice?.name
+      setFormData({...response.data, customerName: customerName, sellingPriceName:sellingPriceName});
     } catch (error) {
       console.error('Error fetching sale:', error);
     }
@@ -391,17 +388,7 @@ const finalDiscount = (p, d, dt) => {
       console.error('Error fetching products:', error);
     }
   };
-  //   const fetchCustomers = async () => {
-
-  //     try {
-  //       // const token = localStorage.getItem('token');
-  //       const response = await axios.get(`http://localhost:8000/admin/contacts/customer`);
-  //       // console.log(response)
-  //       setCustomersData(response.data);
-  //     } catch (error) {
-  //       console.error('Error fetching customers:', error);
-  //     }
-  //   };
+ 
   const fetchSPGs = async () => {
 
     try {
@@ -411,8 +398,6 @@ const finalDiscount = (p, d, dt) => {
           'Authorization': token
         }
       });
-      // console.log(response)
-
 
       setSPGsData(response.data);
     } catch (error) {
@@ -447,14 +432,36 @@ const finalDiscount = (p, d, dt) => {
           'Authorization': token
         }
       });
-      console.log(response)
+
       if (response.status === 201) {
-        window.location.reload();
+        toast.success('Data Saved', {
+          position: "top-right",
+          autoClose: 2000,
+          hideProgressBar: false,
+          closeOnClick: true,
+          pauseOnHover: true,
+          draggable: true,
+          progress: undefined,
+          theme: "light",
+        });
+        setTimeout(() => {
+          window.location.reload();
+        }, 2000);
 
       }
 
     } catch (error) {
       console.error('Error Adding Sale:', error);
+      toast.error(error.response.data.message, {
+        position: "top-right",
+        autoClose: 2000,
+        hideProgressBar: false,
+        closeOnClick: true,
+        pauseOnHover: true,
+        draggable: true,
+        progress: undefined,
+        theme: "light",
+      });
     }
   };
 
@@ -470,22 +477,67 @@ const finalDiscount = (p, d, dt) => {
       });
       console.log(response)
       if (response.status === 201 && type === "draft") {
-        // Navigate("/home/draft");
-        console.log("draft")
+        toast.success('Data Saved', {
+          position: "top-right",
+          autoClose: 2000,
+          hideProgressBar: false,
+          closeOnClick: true,
+          pauseOnHover: true,
+          draggable: true,
+          progress: undefined,
+          theme: "light",
+        });
+        setTimeout(() => {
+          
+          window.location.reload();
+        }, 2000);
 
       }
       else if (response.status === 201 && type === "quotations") {
-        // Navigate("/home/quotations");
-        console.log("quotations")
+        toast.success('Data Saved', {
+          position: "top-right",
+          autoClose: 2000,
+          hideProgressBar: false,
+          closeOnClick: true,
+          pauseOnHover: true,
+          draggable: true,
+          progress: undefined,
+          theme: "light",
+        });
+        setTimeout(() => {
+          window.location.reload();
+
+        }, 2000);
 
       }
       else {
-        // console.log("final")
-        window.location.reload();
+        toast.success('Data Saved', {
+          position: "top-right",
+          autoClose: 2000,
+          hideProgressBar: false,
+          closeOnClick: true,
+          pauseOnHover: true,
+          draggable: true,
+          progress: undefined,
+          theme: "light",
+        });
+        setTimeout(() => {
+          window.location.reload();
+        }, 2000);
 
       }
     } catch (error) {
       console.error('Error Adding Sale:', error);
+      toast.error(error.response.data.message, {
+        position: "top-right",
+        autoClose: 2000,
+        hideProgressBar: false,
+        closeOnClick: true,
+        pauseOnHover: true,
+        draggable: true,
+        progress: undefined,
+        theme: "light",
+      });
     }
   };
   useEffect(() => {
@@ -560,7 +612,18 @@ const finalDiscount = (p, d, dt) => {
   }
   return (
     <div id='POS' className='w-full p-3 bg-gray-300'>
-
+      <ToastContainer
+        position="top-right"
+        autoClose={2000}
+        hideProgressBar={false}
+        newestOnTop={false}
+        closeOnClick
+        rtl={false}
+        pauseOnFocusLoss
+        draggable
+        pauseOnHover
+        theme="colored"
+      />
       <div className='header w-full flex justify-between'>
         <div className='flex justify-between '>
           <div className='flex items-center'>
@@ -681,7 +744,7 @@ const finalDiscount = (p, d, dt) => {
                     <input
                       onClick={() => setOpen(!open)}
                       className='bg-white w-full  flex items-center  focus:outline-none justify-between px-2  border-[1px] border-gray-600'
-                      value={(id) ? formData.customer?.firstName : formData.customerName}
+                      value={formData.customerName}
                       onChange={(e) => { setFormData({ ...formData, customer: e.target.value }) }}
                       placeholder='Customer'
                     />
@@ -693,7 +756,7 @@ const finalDiscount = (p, d, dt) => {
                   {open &&
                     <ul
 
-                      className={`bg-white  w-[278px] mx-[30px] border-[1px] absolute top-8 border-gray-600 overflow-y-auto ${open ? "max-h-60" : "max-h-0"} `}
+                      className={`bg-white  w-full border-[1px] z-10 absolute top-8 border-gray-600 overflow-y-auto ${open ? "max-h-32" : "max-h-0"} `}
                     >
                       <div className="flex items-center px-2 sticky top-0 bg-white">
                         <AiOutlineSearch size={18} className="text-gray-700" />
@@ -717,7 +780,7 @@ const finalDiscount = (p, d, dt) => {
                             }`}
                           onClick={() => {
                             if (data?.firstName?.toLowerCase() !== formData.customerName.toLowerCase()) {
-                              setFormData({ ...formData, customer: data?._id, customerName: data?.prefix + " " + data?.firstName });
+                              setFormData({ ...formData, customer: data?._id, customerName: `${data?.prefix} ${data?.firstName}` });
                               setOpen(false);
                               setInputValue("");
                             }
@@ -736,8 +799,9 @@ const finalDiscount = (p, d, dt) => {
                 <select value={formData.sellingPrice} onChange={(e) => { setFormData({ ...formData, sellingPrice: e.target.value }) }} type="text" className='px-2 py-1 w-full border-[1px] border-gray-600 focus:outline-none'>
                   <option value={""}>Select SPG</option>
                   {spgsData.map((spg) => (
+                    
                     <option key={spg._id} value={spg._id}>
-                      {spg.name}
+                      {(spg.isDefault) ?  "Default SPG" : spg?.name}
                     </option>
                   ))}
 
@@ -763,7 +827,7 @@ const finalDiscount = (p, d, dt) => {
                   {isClicked &&
                     <ul
 
-                      className={`bg-white w-full    border-[1px]   z-10 absolute top-8 border-gray-600  ${isClicked ? "max-h-60" : "max-h-0"} `}
+                      className={`bg-white w-full    border-[1px]   z-10 absolute top-8 border-gray-600 overflow-y-auto  ${isClicked ? "max-h-32" : "max-h-0"} `}
                     >
 
                       {productsData?.map((data) => (
@@ -773,7 +837,7 @@ const finalDiscount = (p, d, dt) => {
                                 ${data?.productName?.toLowerCase() === inputValue1?.toLowerCase() &&
                             "bg-sky-600 text-white"
                             }
-                                 ${data?.productName?.toLowerCase().startsWith(inputValue)
+                                 ${data?.productName?.toLowerCase().startsWith(inputValue1)
                               ? "block"
                               : "hidden"
                             }`}

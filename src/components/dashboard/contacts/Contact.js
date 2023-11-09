@@ -19,22 +19,7 @@ const Contact = () => {
         assignedTo: '',
         status: '',
       });
-      const applyFilters = async () => {
-        try {
-          const response = await axios.get(`http://localhost:8000/admin/contacts/${type}`, { params: filters });
-          // Handle the response - update UI with filtered contacts
-          console.log(response.data); 
-          setIsFilter(response.data);// You can update your UI with the fetched contacts
-        } catch (error) {
-          console.error('Error fetching contacts:', error);
-          // Handle errors here
-        }
-      };
-      useEffect(() => {
-        if (isFilter) {
-          applyFilters();
-        }
-      }, [isFilter, filters]);
+     
     
       // Function to handle filter option changes
       const handleFilterChange = (filterName, value) => {
@@ -46,7 +31,7 @@ const Contact = () => {
                 <h1 className='text-2xl font-semibold text-start'>{type=== "supplier"? "Suppliers" :"Customer"}</h1>
                 <p className='text-sm text-gray-500 mt-2 mx-2'>Manage your {type=== "supplier"? "Suppliers" :"Customer"}</p>
             </div>
-            <div className='flex flex-col mt-4 w-full bg-white rounded-md p-3 items-start justify-start'>
+            {/* <div className='flex flex-col mt-4 w-full bg-white rounded-md p-3 items-start justify-start'>
                 <div className='flex cursor-pointer' onClick={() => { setIsFilter(!isFilter) }}>
                     <FaFilter size={20} style={{ color: 'blue' }} />
                     <h1 className='text-xl text-blue-600 font-semibold'>Filters</h1>
@@ -106,7 +91,7 @@ const Contact = () => {
 
                 </div>}
                 
-            </div>
+            </div> */}
 
             <div className='flex flex-col bg-white border-t-[3px] rounded-md w-full mt-5 border-blue-500'>
                <ContactTbl  data={filters} /> 

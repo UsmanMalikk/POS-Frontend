@@ -9,10 +9,10 @@ const ListAccounts = () => {
                 <h1 className='text-sm mx-2 mt-2 '>Manage Your Accounts</h1>
             </div>
 
-            <div className='flex bg-red-500 mt-2 items-center rounded-md w-full text-white p-3'>
+            {/* <div className='flex bg-red-500 mt-2 items-center rounded-md w-full text-white p-3'>
                 <h1>Total 34 payments are not linked with any Account</h1>
                 <Link to={"/home/accounts/payment-account-report"} className='underline mx-2'>View Details</Link>
-            </div>
+            </div> */}
 
 
             <div className='flex  mt-3 p-2 bg-white'>

@@ -6,7 +6,7 @@ const BusinessSetting = () => {
     const [info3, setInfo3] = useState(false)
     
     return (
-        <div className='flex flex-col bg-gray-100 p-5'>
+        <div className='flex flex-col bg-gray-100 p-5 min-h-[90vh]'>
             <h1 className='text-start text-2xl font-semibold'>Business Setting</h1>
             <div className='flex m-10 bg-white shadow-xl shadow-gray-400'>
                 <div className='flex flex-col w-1/6'>

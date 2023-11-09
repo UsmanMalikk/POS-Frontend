@@ -7,58 +7,10 @@ import { jsPDF } from 'jspdf';
 import * as htmlToImage from 'html-to-image';
 
 
-const PrchspmntDueTbl = () => {
-    const dummyData = [
-        {
-            id: 1,
-            Username: "username",
-            Name: "User",
-            Role: "Admin",
-            Email: "username@gmail.com"
-        },
-        {
-            id: 2,
-            Username: "username1",
-            Name: "User1",
-            Role: "Admin",
-            Email: "username@gmail.com"
-        },
-        {
-            id: 3,
-            Username: "username2",
-            Name: "User2",
-            Role: "Admin",
-            Email: "username2@gmail.com"
-        },
-        {
-            id: 4,
-            Username: "username3",
-            Name: "User3",
-            Role: "Admin",
-            Email: "username3@gmail.com"
-        },
-        {
-            id: 5,
-            Username: "username4",
-            Name: "User4",
-            Role: "Admin",
-            Email: "username4@gmail.com"
-        },
-        {
-            id: 6,
-            Username: "username5",
-            Name: "User5",
-            Role: "Admin",
-            Email: "username5@gmail.com"
-        },
-        {
-            id: 7,
-            Username: "username6",
-            Name: "User6",
-            Role: "Admin",
-            Email: "username6@gmail.com"
-        }
-    ]
+const PrchspmntDueTbl = (props) => {
+    const purchaseDuesData = props.purchaseDuesData
+
+    
     const printRef = useRef()
     let xlDatas = []
     //Export to Excel
@@ -91,8 +43,8 @@ const PrchspmntDueTbl = () => {
     const rcrdprpg = 5
     const lasIndex = crpage * rcrdprpg
     const frstIndex = lasIndex - rcrdprpg
-    const record = dummyData.slice(frstIndex, lasIndex)
-    const npage = Math.ceil(dummyData.length / rcrdprpg)
+    const record = purchaseDuesData.slice(frstIndex, lasIndex)
+    const npage = Math.ceil(purchaseDuesData.length / rcrdprpg)
     const numbers = [...Array(npage + 1).keys()].slice(1)
 
     const [colvis, setColvis] = useState(false)
@@ -103,7 +55,7 @@ const PrchspmntDueTbl = () => {
 
     const csvData = [
         ["Username", "Name", "Role", "Email"],
-        ...dummyData.map(({ Username, Name, Role, Email }) => [
+        ...purchaseDuesData.map(({ Username, Name, Role, Email }) => [
             Username,
             Name,
             Role,
@@ -143,7 +95,7 @@ const PrchspmntDueTbl = () => {
 
                         </CSVLink>
                     </button>
-                    <button onClick={() => { handleExportExcl(dummyData) }} className='flex border-[1px] px-2 py-1 hover:bg-gray-400 border-gray-600 bg-gray-200 '>
+                    <button onClick={() => { handleExportExcl(purchaseDuesData) }} className='flex border-[1px] px-2 py-1 hover:bg-gray-400 border-gray-600 bg-gray-200 '>
                         <FaFileExcel size={15} className=' mt-1 pr-[2px]' />
                         <h1 className='text-sm'>Export to Excle</h1>
                     </button>
@@ -187,9 +139,9 @@ const PrchspmntDueTbl = () => {
                     <tbody >
                         {record.map((value, index) => {
                             return <tr key={index} className=''>
-                                {col1 && <td className="px-1 py-1 text-sm">{value.Username}</td>}
-                                {col2 && <td className="px-1 py-1"> {value.Name}</td>}
-                                {col3 && <td className="px-1 py-1">{value.Role}</td>}
+                                {col1 && <td className="px-1 py-1 text-sm">{value.prefix + " " + value.firstName}</td>}
+                                {col2 && <td className="px-1 py-1"> {value.invoiceNumber}</td>}
+                                {col3 && <td className="px-1 py-1">{value.totalPurchaseDue}</td>}
                                 {col5 && <td className='py-1 flex '>
                                     <div className='flex mx-1 p-1 items-center bg-blue-600 text-white justify-center'>
                                         <FaMoneyBillAlt size={15} />

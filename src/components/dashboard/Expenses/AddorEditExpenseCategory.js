@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react'
 import axios from 'axios';
-
+import { toast, ToastContainer } from 'react-toastify';
+import "react-toastify/dist/ReactToastify.css";
 const AddorEditExpenseCategory = (props) => {
     const [expenseCategoryData, setExpenseCategoryData] = useState([]); //update dropdown py use hogi
 
@@ -16,8 +17,16 @@ const AddorEditExpenseCategory = (props) => {
             formData.categoryName.length === 0
         ) {
             setIsserror(true);
-            console.log(isserror);
-        } else if (props.id) {
+            toast.error('Some fields are required', {
+                position: "top-right",
+                autoClose: 2000,
+                hideProgressBar: false,
+                closeOnClick: true,
+                pauseOnHover: true,
+                draggable: true,
+                progress: undefined,
+                theme: "light",
+            });        } else if (props.id) {
             addExpenseCategoryById()
             console.log("Handle Update", formData);
         } else {
@@ -51,7 +60,6 @@ const AddorEditExpenseCategory = (props) => {
                 }
             });
 
-            console.log(response)
             setFormData(response.data);
         } catch (error) {
             console.error('Error fetching expense-categories:', error);
@@ -67,14 +75,34 @@ const AddorEditExpenseCategory = (props) => {
                     'Authorization': token
                 }
             });
-            console.log(response)
             if (response.status === 201) {
-                window.location.reload();
+                toast.success('Data Saved', {
+                    position: "top-right",
+                    autoClose: 2000,
+                    hideProgressBar: false,
+                    closeOnClick: true,
+                    pauseOnHover: true,
+                    draggable: true,
+                    progress: undefined,
+                    theme: "light",
+                });
+                setTimeout(() => {
+                    window.location.reload();
+                }, 2000);
 
-                console.log("Success")
             }
         } catch (error) {
             console.error('Error Adding expense-categories:', error);
+            toast.error(error.response.data.message, {
+                position: "top-right",
+                autoClose: 2000,
+                hideProgressBar: false,
+                closeOnClick: true,
+                pauseOnHover: true,
+                draggable: true,
+                progress: undefined,
+                theme: "light",
+            });
         }
     };
 
@@ -88,10 +116,35 @@ const AddorEditExpenseCategory = (props) => {
                     'Authorization': token
                 }
             });
-            console.log(response)
+            if (response.status === 200) {
+                toast.success('Data Saved', {
+                    position: "top-right",
+                    autoClose: 2000,
+                    hideProgressBar: false,
+                    closeOnClick: true,
+                    pauseOnHover: true,
+                    draggable: true,
+                    progress: undefined,
+                    theme: "light",
+                });
+                setTimeout(() => {
+                    window.location.reload();
+                }, 2000);
+
+            }
 
         } catch (error) {
             console.error('Error Adding expense-categories:', error);
+            toast.error(error.response.data.message, {
+                position: "top-right",
+                autoClose: 2000,
+                hideProgressBar: false,
+                closeOnClick: true,
+                pauseOnHover: true,
+                draggable: true,
+                progress: undefined,
+                theme: "light",
+            });
         }
     };
     useEffect(() => {
@@ -109,6 +162,18 @@ const AddorEditExpenseCategory = (props) => {
 
     return (
         <div className='flex flex-col w-full bg-white p-3'>
+            <ToastContainer
+                position="top-right"
+                autoClose={2000}
+                hideProgressBar={false}
+                newestOnTop={false}
+                closeOnClick
+                rtl={false}
+                pauseOnFocusLoss
+                draggable
+                pauseOnHover
+                theme="colored"
+            />
             <h1 className="text-xl text-start font-bold ">{props.id ? "Edit" : "Add"} Expense Category</h1>
 
             <div className='flex flex-col'>

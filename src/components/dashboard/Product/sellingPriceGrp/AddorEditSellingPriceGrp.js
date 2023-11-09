@@ -1,7 +1,8 @@
-import React, { useState,useEffect } from 'react'
+import React, { useState, useEffect } from 'react'
 import axios from 'axios';
 import { useNavigate } from "react-router-dom"
-
+import { toast, ToastContainer } from 'react-toastify';
+import "react-toastify/dist/ReactToastify.css";
 
 const AddorEditSellingPriceGrp = (props) => {
 
@@ -12,15 +13,15 @@ const AddorEditSellingPriceGrp = (props) => {
     const [formData, setFormData] = useState({
         name: "",
         description: "",
-        
+
     })
 
-    
+
     const fetchSPGById = async () => {
 
         try {
             const token = localStorage.getItem('token');
-            const response = await axios.get(`http://localhost:8000/admin/selling-price-groups/${_id}`,{
+            const response = await axios.get(`http://localhost:8000/admin/selling-price-groups/${_id}`, {
                 headers: {
                     'Authorization': token
                 }
@@ -46,17 +47,40 @@ const AddorEditSellingPriceGrp = (props) => {
         try {
             const token = localStorage.getItem('token');
             // console.log(formData)
-            const response = await axios.post(`http://localhost:8000/admin/selling-price-groups`, formData,{
+            const response = await axios.post(`http://localhost:8000/admin/selling-price-groups`, formData, {
                 headers: {
                     'Authorization': token
                 }
             });
             // console.log(response)
             if (response.status === 201) {
-            console.log("Success")
-        }
+                toast.success('Data Saved', {
+                    position: "top-right",
+                    autoClose: 2000,
+                    hideProgressBar: false,
+                    closeOnClick: true,
+                    pauseOnHover: true,
+                    draggable: true,
+                    progress: undefined,
+                    theme: "light",
+                });
+                setTimeout(() => {
+                    window.location.reload();
+                }, 2000);
+
+            }
         } catch (error) {
             console.error('Error Adding SPG:', error);
+            toast.error(error.response.data.message, {
+                position: "top-right",
+                autoClose: 2000,
+                hideProgressBar: false,
+                closeOnClick: true,
+                pauseOnHover: true,
+                draggable: true,
+                progress: undefined,
+                theme: "light",
+            });
         }
     };
 
@@ -65,20 +89,43 @@ const AddorEditSellingPriceGrp = (props) => {
         try {
             const token = localStorage.getItem('token');
             // console.log(formData)
-            const response = await axios.put(`http://localhost:8000/admin/selling-price-groups/${_id}`, formData,{
+            const response = await axios.put(`http://localhost:8000/admin/selling-price-groups/${_id}`, formData, {
                 headers: {
                     'Authorization': token
                 }
             });
-            console.log(response)
+
+            toast.success('Data Saved', {
+                position: "top-right",
+                autoClose: 2000,
+                hideProgressBar: false,
+                closeOnClick: true,
+                pauseOnHover: true,
+                draggable: true,
+                progress: undefined,
+                theme: "light",
+            });
+            setTimeout(() => {
+                window.location.reload();
+            }, 2000);
 
         } catch (error) {
             console.error('Error Adding SPG:', error);
+            toast.error(error.response.data.message, {
+                position: "top-right",
+                autoClose: 2000,
+                hideProgressBar: false,
+                closeOnClick: true,
+                pauseOnHover: true,
+                draggable: true,
+                progress: undefined,
+                theme: "light",
+            });
         }
     };
 
     const handleSaveorEdit = () => {
-        if (formData.name.length === 0 ) {
+        if (formData.name.length === 0) {
             setIsserror(true)
         } else if (props.id) {
             addSPGById()
@@ -91,6 +138,18 @@ const AddorEditSellingPriceGrp = (props) => {
     }
     return (
         <div className='flex flex-col w-full px-5 bg-white '>
+            <ToastContainer
+                position="top-right"
+                autoClose={2000}
+                hideProgressBar={false}
+                newestOnTop={false}
+                closeOnClick
+                rtl={false}
+                pauseOnFocusLoss
+                draggable
+                pauseOnHover
+                theme="colored"
+            />
             <div className='flex'>
                 <h1 className='text-2xl font-semibold text-start '>{props.id ? "Edit Selling Price Group" : "Add Selling Price Group"}</h1>
             </div>

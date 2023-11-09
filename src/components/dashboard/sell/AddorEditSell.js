@@ -1,6 +1,6 @@
 import React, { useRef, useState, useEffect } from 'react'
 import { FaCalendar, FaChevronCircleDown, FaGift, FaInfo, FaInfoCircle, FaMapMarker, FaMinus, FaMoneyBillAlt, FaPlus, FaPlusCircle, FaSearch, FaTable, FaTimes, FaTrash, FaUser, FaUserSecret } from 'react-icons/fa'
-import { useParams } from 'react-router-dom'
+import { useParams, Link } from 'react-router-dom'
 import { BiChevronDown } from 'react-icons/bi'
 import { AiOutlineSearch, AiTwotoneFolderOpen } from 'react-icons/ai'
 import { MdCancel } from 'react-icons/md'
@@ -9,7 +9,8 @@ import AddorEditContact from "../contacts/AddorEditContact"
 import ImportProduct from '../Product/ImportProduct'
 import axios from 'axios';
 import { useNavigate } from "react-router-dom"
-
+import { toast, ToastContainer } from 'react-toastify';
+import "react-toastify/dist/ReactToastify.css";
 
 const AddorEditSell = () => {
     const Navigate = useNavigate();
@@ -189,11 +190,7 @@ const AddorEditSell = () => {
     const [newProduct, setNewProduct] = useState(false)
     const [isProductUpload, setIsProductUpload] = useState(false)
     const displayData = () => {
-        if (newProduct === true) {
-            return <AddProduct />
-        } else if (isProductUpload === true) {
-            return <ImportProduct />
-        } else if (isAddSupplier === true) {
+        if (isAddSupplier === true) {
             return <AddorEditContact id={0} />
         }
     }
@@ -226,8 +223,10 @@ const AddorEditSell = () => {
             // console.log(response)
             response.data.salesDate = new Date(response.data.salesDate).toLocaleDateString("fr-CA")
             response.data.paymentDate = new Date(response.data.paymentDate).toLocaleDateString("fr-CA")
+            const customerName = `${response.data.customer?.prefix} ${response.data.customer?.firstName}`
+            const sellingPriceName = response.data.sellingPrice?.name
 
-            setFormData(response.data);
+            setFormData({ ...response.data, customerName: customerName, sellingPriceName:sellingPriceName });
         } catch (error) {
             console.error('Error fetching sale:', error);
         }
@@ -247,17 +246,7 @@ const AddorEditSell = () => {
             console.error('Error fetching products:', error);
         }
     };
-    //   const fetchCustomers = async () => {
 
-    //     try {
-    //       // const token = localStorage.getItem('token');
-    //       const response = await axios.get(`http://localhost:8000/admin/contacts/customer`);
-    //       // console.log(response)
-    //       setCustomersData(response.data);
-    //     } catch (error) {
-    //       console.error('Error fetching customers:', error);
-    //     }
-    //   };
     const fetchSPGs = async () => {
 
         try {
@@ -307,18 +296,7 @@ const AddorEditSell = () => {
             console.error('Error fetching Accounnt:', error);
         }
     };
-    // const fetchUnitsById = async () => {
 
-    //     try {
-    //         // const token = localStorage.getItem('token');
-    //         const response = await axios.get(`http://localhost:8000/admin/units/${_id}`);
-    //         // console.log(response)
-    //         setData(response.data);
-
-    //     } catch (error) {
-    //         console.error('Error fetching Selling price Group:', error);
-    //     }
-    // };
     const fetchCustomers = async () => {
         try {
             const token = localStorage.getItem('token');
@@ -328,7 +306,6 @@ const AddorEditSell = () => {
                     'Authorization': token
                 }
             });
-            // console.log(response);
             setCustomersData(response.data);
 
         } catch (e) {
@@ -347,9 +324,21 @@ const AddorEditSell = () => {
                         'Authorization': token
                     }
                 });
-                console.log(response)
+                // console.log(response)
                 if (response.status === 201) {
-                    Navigate("/home/sells");
+                    toast.success('Data Saved', {
+                        position: "top-right",
+                        autoClose: 2000,
+                        hideProgressBar: false,
+                        closeOnClick: true,
+                        pauseOnHover: true,
+                        draggable: true,
+                        progress: undefined,
+                        theme: "light",
+                    });
+                    setTimeout(() => {
+                        Navigate("/home/sells");
+                    }, 2000);
 
                 }
             } else {
@@ -360,11 +349,35 @@ const AddorEditSell = () => {
                 });
                 // console.log(response)
                 if (response.status === 201 && type === "draft") {
-                    Navigate("/home/sell/draft");
+                    toast.success('Data Saved', {
+                        position: "top-right",
+                        autoClose: 2000,
+                        hideProgressBar: false,
+                        closeOnClick: true,
+                        pauseOnHover: true,
+                        draggable: true,
+                        progress: undefined,
+                        theme: "light",
+                    });
+                    setTimeout(() => {
+                        Navigate("/home/sell/draft");
+                    }, 2000);
 
                 }
                 else if (response.status === 201 && type === "quotations") {
-                    Navigate("/home/sell/quotations");
+                    toast.success('Data Saved', {
+                        position: "top-right",
+                        autoClose: 2000,
+                        hideProgressBar: false,
+                        closeOnClick: true,
+                        pauseOnHover: true,
+                        draggable: true,
+                        progress: undefined,
+                        theme: "light",
+                    });
+                    setTimeout(() => {
+                        Navigate("/home/sell/quotations");
+                    }, 2000);
 
                 }
 
@@ -374,6 +387,16 @@ const AddorEditSell = () => {
 
         } catch (error) {
             console.error('Error Adding Sale:', error);
+            toast.error(error.response.data.message, {
+                position: "top-right",
+                autoClose: 2000,
+                hideProgressBar: false,
+                closeOnClick: true,
+                pauseOnHover: true,
+                draggable: true,
+                progress: undefined,
+                theme: "light",
+            });
         }
     };
 
@@ -389,19 +412,65 @@ const AddorEditSell = () => {
             });
             // console.log(response)
             if (response.status === 200 && type === "draft") {
-                Navigate("/home/draft");
+                toast.success('Data Saved', {
+                    position: "top-right",
+                    autoClose: 2000,
+                    hideProgressBar: false,
+                    closeOnClick: true,
+                    pauseOnHover: true,
+                    draggable: true,
+                    progress: undefined,
+                    theme: "light",
+                });
+                setTimeout(() => {
+                    Navigate("/home/draft");
+                }, 2000);
 
             }
             else if (response.status === 200 && type === "quotations") {
-                Navigate("/home/quotations");
+                toast.success('Data Saved', {
+                    position: "top-right",
+                    autoClose: 2000,
+                    hideProgressBar: false,
+                    closeOnClick: true,
+                    pauseOnHover: true,
+                    draggable: true,
+                    progress: undefined,
+                    theme: "light",
+                });
+                setTimeout(() => {
+                    Navigate("/home/quotations");
+                }, 2000);
 
             }
             else {
-                Navigate("/home/sells");
+                toast.success('Data Saved', {
+                    position: "top-right",
+                    autoClose: 2000,
+                    hideProgressBar: false,
+                    closeOnClick: true,
+                    pauseOnHover: true,
+                    draggable: true,
+                    progress: undefined,
+                    theme: "light",
+                });
+                setTimeout(() => {
+                    Navigate("/home/sells");
+                }, 2000);
 
             }
         } catch (error) {
             console.error('Error Adding Sale:', error);
+            toast.error(error.response.data.message, {
+                position: "top-right",
+                autoClose: 2000,
+                hideProgressBar: false,
+                closeOnClick: true,
+                pauseOnHover: true,
+                draggable: true,
+                progress: undefined,
+                theme: "light",
+            });
         }
     };
     useEffect(() => {
@@ -433,8 +502,16 @@ const AddorEditSell = () => {
 
             formData.amount.length === 0) {
             setIsserror(true)
-            console.log(isserror)
-        } else if (id) {
+            toast.error('Some fields are required', {
+                position: "top-right",
+                autoClose: 2000,
+                hideProgressBar: false,
+                closeOnClick: true,
+                pauseOnHover: true,
+                draggable: true,
+                progress: undefined,
+                theme: "light",
+            });        } else if (id) {
             addSaleById()
             console.log("Handle Update", formData)
         } else {
@@ -445,6 +522,18 @@ const AddorEditSell = () => {
 
     return (
         <div className='w-full p-5 bg-gray-100'>
+            <ToastContainer
+                position="top-right"
+                autoClose={2000}
+                hideProgressBar={false}
+                newestOnTop={false}
+                closeOnClick
+                rtl={false}
+                pauseOnFocusLoss
+                draggable
+                pauseOnHover
+                theme="colored"
+            />
             <h1 className='text-xl text-start font-bold '>{id ? `Edit ${type ? type : "Sale"}` : `Add ${type ? type : "Sale"}`}</h1>
             <div className='flex my-3 w-full md:w-1/3 relative'>
                 < FaMapMarker size={15} className='w-8 h-8 p-2 border-[1px] border-gray-600' />
@@ -475,7 +564,7 @@ const AddorEditSell = () => {
                     <input
                         onClick={() => setOpen1(!open1)}
                         className='bg-white w-full  flex items-center  focus:outline-none justify-between px-2  border-[1px] border-gray-600'
-                        value={(id) ? formData.sellingPrice?.name : formData.sellingPriceName}
+                        value={formData.sellingPriceName}
                         onChange={(e) => { setFormData({ ...formData, sellingPrice: e.target.value }) }}
                         placeholder='Select Value'
                     />
@@ -526,7 +615,7 @@ const AddorEditSell = () => {
                                         }
                                     }}
                                 >
-                                    {data?.name}
+                                    {data?.isDefault? "Default SPG" : data?.name}
                                 </li>
                             ))}
                         </ul>
@@ -544,7 +633,7 @@ const AddorEditSell = () => {
                                 <input
                                     onClick={() => setOpen(!open)}
                                     className='bg-white w-full  flex items-center  focus:outline-none justify-between px-2  border-[1px] border-gray-600'
-                                    value={(id) ? formData.customer?.firstName : formData.customerName}
+                                    value={formData.customerName}
                                     onChange={(e) => { setFormData({ ...formData, customer: e.target.value }) }}
                                     placeholder='Select Value'
                                 />
@@ -571,7 +660,7 @@ const AddorEditSell = () => {
                                         <li
                                             key={data?.firstName}
                                             className={`p-2 text-sm hover:bg-sky-600 hover:text-white
-                                        ${data?.firstName?.toLowerCase() === (formData.customerName?.toLowerCase() || formData.customer?.firstName.toLowerCase()) &&
+                                        ${data?.firstName?.toLowerCase() === formData.customerName?.toLowerCase() &&
                                                 "bg-sky-600 text-white"
                                                 }
                                          ${data?.firstName?.toLowerCase().startsWith(inputValue)
@@ -579,8 +668,8 @@ const AddorEditSell = () => {
                                                     : "hidden"
                                                 }`}
                                             onClick={() => {
-                                                if (data?.firstName?.toLowerCase() !== (formData.customerName?.toLowerCase()||formData.customer?.firstName.toLowerCase())) {
-                                                    setFormData({ ...formData, customer: data?._id, customerName: data?.prefix + " " + data?.firstName });
+                                                if (data?.firstName?.toLowerCase() !== formData.customerName?.toLowerCase()) {
+                                                    setFormData({ ...formData, customer: data?._id, customerName: `${data?.prefix} ${data?.firstName}` });
                                                     setOpen(false);
                                                     setInputValue("");
                                                 }
@@ -684,43 +773,8 @@ const AddorEditSell = () => {
                     </div>
 
 
-                    {/* <div className=' flex flex-col '>
-                        <h2 className='text-start font-bold '> Attatch Document:</h2>
-                        <div className='flex'>
-                            value={formData.img_data} onChange={ (e)=>setFormData({...formData,  img_data: e.target.value})}
-                            <input type='text' className='px-3  border-[1px] border-gray-700  focus:outline-none w-[60%]' />
-                            <input className='px-3   focus:outline-none w-[60%] hidden' type='file' ref={inpuRef} accept='application/pdf,text/csv,application/zip,application/msword,application/vnd.openxmlformats-officedocument.wordprocessingml.document,image/jpeg,image/jpg,image/png' />
-                            <div onClick={() => { inpuRef.current?.click(); }} className='flex cursor-pointersu bg-blue-600 text-white w-[40%] items-center justify-center'>
-                                <AiTwotoneFolderOpen size={32} />
-                                Browse
-                            </div>
-                        </div>
-                        <p className='text-start  flex '>Max File size: 5MB:
-                            <br />
-                            Allowed File: .pdf, .csv, .zip,	.doc, .docx, .jpeg,	.jpg, .png
-                        </p>
-
-                    </div> */}
                 </div>
-                {/* <div className='grid grid-cols-1 md:grid-cols-3 mt-3 gap-4'>
 
-                    <div className='flex '>
-                        < FaTable size={15} className='w-8 h-8 p-2 border-[1px] border-gray-600' />
-                        <select value={formData.tables} onChange={(e) => { setFormData({ ...formData, tables: e.target.value }) }} type='text' className='px-2 w-full py-[3px]  border-[1px] border-gray-600 focus:outline-none'>
-                            <option value={""}>Please Select</option>
-                            <option value={"woo"}>woo</option>
-                            <option value={"pepsi"}>pepsi</option>
-                        </select>
-                    </div>
-                    <div className='flex '>
-                        < FaUserSecret size={15} className='w-8 h-8 p-2 border-[1px] border-gray-600' />
-                        <select value={formData.serviceStaff} onChange={(e) => { setFormData({ ...formData, serviceStaff: e.target.value }) }} type='text' className='px-2 w-full py-[3px]  border-[1px] border-gray-600 focus:outline-none'>
-                            <option value={""}>Select Service Staff</option>
-
-                        </select>
-                    </div>
-
-                </div> */}
             </div>
             <div className='flex  w-full   flex-col  p-5 mt-5 bg-white border-t-[3px] rounded-md border-blue-600'>
                 <div className='flex flex-col items-center justify-center md:flex-row w-full'>
@@ -743,7 +797,7 @@ const AddorEditSell = () => {
                                 ${data?.productName?.toLowerCase() === inputValue1?.toLowerCase() &&
                                                 "bg-sky-600 text-white"
                                                 }
-                                 ${data?.productName?.toLowerCase().startsWith(inputValue)
+                                 ${data?.productName?.toLowerCase().startsWith(inputValue1)
                                                     ? "block"
                                                     : "hidden"
                                                 }`}
@@ -766,8 +820,9 @@ const AddorEditSell = () => {
                                 </ul>
                             }
                         </div>
-                        <FaPlusCircle onClick={() => { setNewProduct(true); setIsCliked(true) }} size={20} style={{ color: "blue" }} className='w-8 h-8 p-1 border-[1px] border-gray-600' />
-
+                        <Link to="home/products/create">
+                            <FaPlusCircle size={20} style={{ color: "blue" }} className='w-8 h-8 p-1 border-[1px] border-gray-600' />
+                        </Link>
                     </div>
 
                 </div>
@@ -895,55 +950,7 @@ const AddorEditSell = () => {
 
                     </div>
                 </div>
-                {/* <div className='grid grid-cols-1 md:grid-cols-3 gap-5 mt-5 border-[1px] border-gray-300 p-3'>
-                    <div className='flex flex-col '>
-                        <h1 className='flex text-sm text-start font-bold'>Redeemed:</h1>
-                        <div className='flex'>
-                            < FaGift size={15} className='w-8 h-8 p-2 border-[1px] border-gray-600' />
 
-                            <input disabled="disabled" value={formData.redeemed} onChange={(e) => { setFormData({ ...formData, redeemed: e.target.value }) }} type='number' className='px-2 cursor-not-allowed py-[2px] w-full border-[1px] border-gray-600 focus:outline-none' />
-                        </div>
-
-                    </div>
-                    <div className='flex flex-col '>
-                        <h1 className='flex text-sm text-start font-bold'>Available:</h1>
-                        <h1 className=' text-sm text-start '>{formData.available}</h1>
-
-                    </div>
-                    <div className='flex flex-col '>
-                        <h1 className='flex text-sm  font-bold'>Redeemed Amount <p className='mx-2'>(-) Rs {formData.redeemedAmount}</p> </h1>
-                    </div>
-                </div>
-                <div className='w-full h-[1px] bg-gray-300 my-5'></div>
-                <div className='grid grid-cols-1 md:grid-cols-3 gap-5'>
-                    <div className='flex flex-col '>
-                        <div className='flex text-sm text-start font-bold'>
-                            <h1>Order Tax:*</h1>
-                            <h2 className='text-red-400'>{isserror && formData.orderTaxType.length === 0 ? "Required field" : ""}</h2>
-
-                        </div>
-                        <div className='flex'>
-                            < FaInfo size={15} className='w-8 h-8 p-2 border-[1px] border-gray-600' />
-
-                            <select value={formData.orderTaxType} onChange={(e) => { setFormData({ ...formData, orderTaxType: e.target.value }) }} type='Text' placeholder='Enter Product name / SKU / Scan bar code' className='px-2 py-[2px] w-full border-[1px] border-gray-600 focus:outline-none'>
-                                <option value={""}>None</option>
-                                <option value={"sss"}>sss</option>f
-                                <option value={"Nikki Wolf"}>Nikki Wolf</option>
-                                <option value={"Nikki Wolf"}>Nikki Wolf</option>
-                                <option value={"Pepsi"}>Pepsi</option>
-
-                            </select>
-                        </div>
-
-                    </div>
-                    <div className='flex flex-col '>
-
-                    </div>
-                    <div className='flex flex-col items-end'>
-                        <h1 className='flex text-sm  font-bold'>Order Tax <p className='mx-2'>(+) {formData.orderTax}</p> </h1>
-
-                    </div>
-                </div> */}
                 <div className='w-full h-[1px] bg-gray-300 my-5'></div>
                 <div className='w-full flex flex-col'>
                     <h1 className='flex text-sm  font-bold'>Sell Note</h1>

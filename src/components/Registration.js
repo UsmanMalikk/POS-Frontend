@@ -146,7 +146,7 @@ const Registration = () => {
         userName:formData.username,
         email:formData.email,
         password:formData.password,
-        cpassword:formData.c_password
+        cPassword:formData.c_password
     }
     const [frmstatus, setFrmstatus] = useState(true)
     const [bs_status, setBs_status] = useState(true)
@@ -160,9 +160,12 @@ const [psstatus, setPsstatus] = useState(true)
 
         try {
             // const token = localStorage.getItem('token');
-            console.log(finalFormData)
             const response = await axios.post(`http://localhost:8000/admin/auth/register`,finalFormData);
             console.log(response)
+            if(response.status === 201){
+                Navigate("/Login");
+
+            }
             //navigate to login
         } catch (error) {
             console.error('Error Registering Admin:', error);
@@ -177,7 +180,6 @@ const [psstatus, setPsstatus] = useState(true)
               setPsstatus(false)
             }else{
                 registerAdmin()
-                console.log(formData)
             }
         
     }
@@ -185,13 +187,10 @@ const [psstatus, setPsstatus] = useState(true)
         if (page < 3) {
             if(page===1){
               if(formData.business_name.length ===0 ||
-                formData.currency.length ===0 || 
+               
                 formData.country.length ===0 || 
-                formData.city.length ===0 || 
-                formData.state.length ===0 ||
-                formData.zip_code.length===0 ||
-                formData.time_zone.length ===0 ||
-                formData.landmark.length === 0){
+              
+                formData.state.length ===0 ){
                     setFrmstatus(false)
                 }else{
                     setPage(page + 1)

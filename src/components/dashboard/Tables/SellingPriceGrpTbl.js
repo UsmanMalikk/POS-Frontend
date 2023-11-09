@@ -9,6 +9,7 @@ import { AiOutlinePlus } from 'react-icons/ai';
 import { MdCancel } from 'react-icons/md';
 import AddorEditSellingPriceGrp from '../Product/sellingPriceGrp/AddorEditSellingPriceGrp';
 import axios from 'axios';
+import { FcCheckmark } from 'react-icons/fc';
 
 const SellingPriceGrpTbl = () => {
 
@@ -55,7 +56,10 @@ const SellingPriceGrpTbl = () => {
     const [col2, setCol2] = useState(true)
     const [col3, setCol3] = useState(true)
 
-
+    const [permission, setPermission] = useState(false)
+    const [isAlert, setIsAlert] = useState(false)
+    const [isdelete, setIsdelete] = useState(false)
+    const [deleteId, setDeleteId] = useState(0)
 
     const csvData = [
         ["Username", "Name", "Role", "Email"],
@@ -168,7 +172,27 @@ const SellingPriceGrpTbl = () => {
     useEffect(() => {
         // Make an API call to fetch user's user records
         fetchSPG();
-    }, []);
+        const runDelete = () => {
+            if (permission === true) {
+
+                handleDeleteSPG(deleteId)
+            }
+        }
+        runDelete()
+    }, [permission]);
+    const Alert = () => {
+        return (
+            <div className="flex flex-col items-center px-4 justify-center w-[300px] py-5 h-[200px] bg-white rounded-md">
+                <FcCheckmark size={100} className="items-center justify-center" />
+                <h1 className="text-4xl text-gray-500 text-center ">Are you sure!</h1>
+                <div className="flex items-center w-full justify-between mt-5">
+                    <button onClick={() => { setPermission(false); setIsAlert(false); setIsdelete(false) }} className="text-md rounded-md mx-2 px-2 py-1 bg-red-500 text-white">Cancel</button>
+                    <button onClick={() => { setPermission(true); setIsAlert(false); setIsdelete(false) }} className="text-md rounded-md mx-2 px-2 py-1 bg-green-500 text-white">OK</button>
+
+                </div>
+            </div>
+        )
+    }
     return (
         <div>
             <div className='flex justify-between mt-2 text-sm mx-5'>
@@ -263,7 +287,11 @@ const SellingPriceGrpTbl = () => {
                                         <FaEdit size={15} />
                                         <h1 className='text-sm mx-1'>Edit</h1>
                                     </button>
-                                    <button onClick={() => handleDeleteSPG(value._id)} className='flex mx-3 p-1 items-center bg-red-600 text-white justify-center'>
+                                    <button onClick={() => {
+                                        setIsAlert(!isClicked);
+                                        setIsdelete(true)
+                                        setDeleteId(value._id)
+                                    }} className='flex mx-3 p-1 items-center bg-red-600 text-white justify-center'>
                                         <FaEdit size={15} />
                                         <h1 className='text-sm mx-1'>Delete</h1>
                                     </button>
@@ -310,6 +338,11 @@ const SellingPriceGrpTbl = () => {
 
                     </div>
 
+                }
+                {isAlert &&
+                    <div className="absolute top-0 flex flex-col items-center  justify-center right-0 bg-black/70 w-full min-h-screen">
+                        {isdelete && <Alert />}
+                    </div>
                 }
             </div>
         </div>

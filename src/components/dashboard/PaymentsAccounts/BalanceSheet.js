@@ -5,7 +5,8 @@ import axios from 'axios';
 
 const BalanceSheet = () => {
     const [balanceSheetData, setBalanceSheetData] = useState([]);
-
+const [purchaseDue, setPurchaseDue] = useState([]);
+    const [sellDue, setSellDue] = useState([]);
     const [isFilter, setIsFilter] = useState(false)
     const [businesLocation, setBusinesLocation] = useState('')
     const [date, setDate] = useState('')
@@ -39,6 +40,49 @@ const BalanceSheet = () => {
             console.error('Error fetching Drafts:', error);
         }
     };
+        const findTotalPurchaseDue = () => {
+        let total = 0
+        purchaseDue.map(val => {
+            return total += (parseFloat(val.totalPurchaseDue))
+        })
+        return total
+    }
+    const findTotalSellDue = () => {
+        let total = 0
+        sellDue.map(val => {
+            return total += (parseFloat(val.totalSaleDue))
+        })
+        return total
+    }
+    const fetchSellDue = async () => {
+        try {
+            const response = await axios.get(`http://localhost:8000/admin/contacts/supplier`);
+            // console.log(response);
+            setPurchaseDue(response.data);
+
+        } catch (e) {
+            console.error(e)
+        }
+
+    }
+    const fetchPurchaseDue = async () => {
+        try {
+            const response = await axios.get(`http://localhost:8000/admin/contacts/customer`);
+            // console.log(response);
+            setSellDue(response.data);
+
+        } catch (e) {
+            console.error(e)
+        }
+
+    }
+    useEffect(() => {
+
+        fetchSellDue()
+        fetchPurchaseDue()
+
+
+    }, []);
     useEffect(() => {
 
         fetchBalanceSheet();
@@ -88,7 +132,7 @@ const BalanceSheet = () => {
                                     <tbody>
                                         <tr >
                                             <th className='text-start '>Supplier Due</th>
-                                            <td className='text-center '>₨ 336,220.50</td>
+                                            <td className='text-center '>₨ {findTotalPurchaseDue()}</td>
                                         </tr>
 
                                     </tbody>
@@ -100,15 +144,14 @@ const BalanceSheet = () => {
                                     <tbody>
                                         <tr>
                                             <th className='text-start'>Customer Due</th>
-                                            <td className='text-center'>₨ 336,220.50</td>
+                                            <td className='text-center'>₨ {findTotalSellDue()}</td>
                                         </tr>
-                                        <tr>
+                                        {/* <tr>
                                             <th className='text-start'>Closing Stock</th>
                                             <td className='text-center'>₨ 336,220.50</td>
-                                        </tr>
+                                        </tr> */}
                                         <tr>
                                             <th className='text-start'>Account Balances</th>
-                                            <td className='text-center'>₨ 336,220.50</td>
                                         </tr>
 
                                     </tbody>
@@ -135,7 +178,7 @@ const BalanceSheet = () => {
                                     <tbody>
                                         <tr>
                                             <th className='text-start px-2'>Total Liability</th>
-                                            <td>₨ 336,220.50</td>    {/*Same as Supplier Due */}
+                                            <td>₨ {findTotalPurchaseDue()}</td>    {/*Same as Supplier Due */}
                                         </tr>
 
                                     </tbody>

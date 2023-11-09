@@ -18,7 +18,8 @@ import AddorEditContact from "../contacts/AddorEditContact";
 import ImportProduct from "../Product/ImportProduct";
 import axios from 'axios';
 import { useNavigate } from "react-router-dom"
-
+import { toast, ToastContainer } from 'react-toastify';
+import "react-toastify/dist/ReactToastify.css";
 const AddStockTransfer = () => {
   const Navigate = useNavigate();
 
@@ -174,10 +175,33 @@ const AddStockTransfer = () => {
       });
       // console.log(response)
       if (response.status === 201) {
-        Navigate("/home/stock-transfer");
+        toast.success('Data Saved', {
+          position: "top-right",
+          autoClose: 2000,
+          hideProgressBar: false,
+          closeOnClick: true,
+          pauseOnHover: true,
+          draggable: true,
+          progress: undefined,
+          theme: "light",
+        });
+        setTimeout(() => {
+          Navigate("/home/stock-transfer");
+        }, 2000);
+
       }
     } catch (error) {
-      console.error('Error Adding Product:', error);
+      console.error('Error Adding Stock Transfer:', error);
+      toast.error(error.response.data.message, {
+        position: "top-right",
+        autoClose: 2000,
+        hideProgressBar: false,
+        closeOnClick: true,
+        pauseOnHover: true,
+        draggable: true,
+        progress: undefined,
+        theme: "light",
+      });
     }
   };
 
@@ -193,10 +217,34 @@ const AddStockTransfer = () => {
       });
       // console.log(response)
       if (response.status === 200) {
-        Navigate("/home/stock-transfer");
+        toast.success('Data Saved', {
+          position: "top-right",
+          autoClose: 2000,
+          hideProgressBar: false,
+          closeOnClick: true,
+          pauseOnHover: true,
+          draggable: true,
+          progress: undefined,
+          theme: "light",
+        });
+        setTimeout(() => {
+          Navigate("/home/stock-transfer");
+        }, 2000);
+
       }
     } catch (error) {
+
       console.error('Error Adding Product:', error);
+      toast.error(error.response.data.message, {
+        position: "top-right",
+        autoClose: 2000,
+        hideProgressBar: false,
+        closeOnClick: true,
+        pauseOnHover: true,
+        draggable: true,
+        progress: undefined,
+        theme: "light",
+      });
     }
   };
 
@@ -207,7 +255,16 @@ const AddStockTransfer = () => {
       formData.status.length === 0
     ) {
       setIsserror(true);
-      console.log(isserror);
+      toast.error('Some fields are required', {
+        position: "top-right",
+        autoClose: 2000,
+        hideProgressBar: false,
+        closeOnClick: true,
+        pauseOnHover: true,
+        draggable: true,
+        progress: undefined,
+        theme: "light",
+      });
     } else if (id) {
       addSTKById()
       console.log("Handle Update", formData);
@@ -218,6 +275,18 @@ const AddStockTransfer = () => {
   };
   return (
     <div className="w-full p-3 bg-gray-100">
+      <ToastContainer
+        position="top-right"
+        autoClose={2000}
+        hideProgressBar={false}
+        newestOnTop={false}
+        closeOnClick
+        rtl={false}
+        pauseOnFocusLoss
+        draggable
+        pauseOnHover
+        theme="colored"
+      />
       <h1 className="text-xl text-start font-bold ">Add Stock Transfer</h1>
 
       <div className="flex w-full  min-h-[225px] flex-col p-5 mt-5 bg-white border-t-[3px] rounded-md border-blue-600">
@@ -428,7 +497,7 @@ const AddStockTransfer = () => {
               </div>
               {isClicked && (
                 <ul
-                  className={`bg-white w-full    border-[1px]   z-10 absolute top-8 border-gray-600  ${isClicked ? "max-h-60" : "max-h-0"
+                  className={`bg-white w-full    border-[1px]   z-10 absolute top-8 border-gray-600  ${isClicked ? "overflow-y-auto max-h-40" : "max-h-0"
                     } `}
                 >
                   {productsData?.map((data) => (
@@ -440,7 +509,7 @@ const AddStockTransfer = () => {
                         "bg-sky-600 text-white"
                         }
                                  ${data?.productName?.toLowerCase().startsWith(
-                          inputValue
+                          inputValue1
                         )
                           ? "block"
                           : "hidden"
