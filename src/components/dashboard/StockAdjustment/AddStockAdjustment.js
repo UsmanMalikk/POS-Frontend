@@ -241,7 +241,8 @@ const AddStockAdjustment = () => {
         draggable: true,
         progress: undefined,
         theme: "light",
-    });    } else if (id) {
+      });
+    } else if (id) {
       addSAJById()
       console.log("Handle Update", formData);
     } else {

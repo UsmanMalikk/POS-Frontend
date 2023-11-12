@@ -4,10 +4,14 @@ import { FaEdit, FaEye, FaSearch } from 'react-icons/fa'
 import { Link } from 'react-router-dom'
 import axios from 'axios';
 
-import { Button} from 'react-bootstrap';
+import { Button } from 'react-bootstrap';
+import { FcCheckmark } from 'react-icons/fc';
 
 const RolesTable = () => {
-    
+    const [permission, setPermission] = useState(false)
+    const [isAlert, setIsAlert] = useState(false)
+    const [isdelete, setIsdelete] = useState(false)
+    const [deleteId, setDeleteId] = useState(0)
     const [rolesData, setRolesData] = useState([]);
     const fetchRoles = async () => {
 
@@ -24,11 +28,7 @@ const RolesTable = () => {
             console.error('Error fetching roles:', error);
         }
     };
-    useEffect(() => {
-        // Make an API call to fetch user's roles records
-        fetchRoles();
 
-    }, []);
     const [crpage, setCrpage] = useState(1)
     const rcrdprpg = 5
     const lasIndex = crpage * rcrdprpg
@@ -50,7 +50,47 @@ const RolesTable = () => {
             setCrpage(crpage + 1)
         }
     }
+    const Alert = () => {
+        return (
+            <div className="flex flex-col items-center px-4 justify-center w-[300px] py-5 h-[200px] bg-white rounded-md">
+                <FcCheckmark size={100} className="items-center justify-center" />
+                <h1 className="text-4xl text-gray-500 text-center ">Are you sure!</h1>
+                <div className="flex items-center w-full justify-between mt-5">
+                    <button onClick={() => { setPermission(false); setIsAlert(false); setIsdelete(false) }} className="text-md rounded-md mx-2 px-2 py-1 bg-red-500 text-white">Cancel</button>
+                    <button onClick={() => { setPermission(true); setIsAlert(false); setIsdelete(false) }} className="text-md rounded-md mx-2 px-2 py-1 bg-green-500 text-white">OK</button>
 
+                </div>
+            </div>
+        )
+    }
+    const handleDeleteRole = async (userId) => {
+
+        try {
+                const token = localStorage.getItem('token');
+                // Make an API call to delete attendance for a specific record
+                const response = await axios.delete(`http://localhost:8000/admin/roles/${userId}`, {
+                    headers: {
+                        'Authorization': token
+                    }
+                });
+                console.log('Role deleted:', response.data); // Handle success response
+                fetchRoles()
+
+        } catch (error) {
+            console.error('Error deleting role:', error);
+        }
+    };
+    useEffect(() => {
+        // Make an API call to fetch user's roles records
+        fetchRoles();
+        const runDelete = () => {
+            if (permission === true) {
+
+                handleDeleteRole(deleteId)
+            }
+        }
+        runDelete()
+    }, [permission]);
 
     return (
         <div>
@@ -92,16 +132,20 @@ const RolesTable = () => {
 
                                 <td className=" py-1 px-1">{value.roleName}</td>
                                 <td className='py-1 flex '>
-                                    
+
                                     <Button as={Link} to={`/home/roles/editroles/${value._id}`} className='flex mx-1 p-1 items-center bg-blue-600 text-white justify-center'>
                                         <FaEdit size={15} />
                                         <h1 className='text-sm'>Edit</h1>
                                     </Button>
-                                    
-                                    <div onClick = {() => {}}className='flex mx-1 p-1 items-center bg-red-500 text-white justify-center'>
+
+                                    <Button onClick={() => {
+                                        setIsAlert(true);
+                                        setIsdelete(true)
+                                        setDeleteId(value._id)
+                                    }} className='flex mx-1 p-1 items-center bg-red-500 text-white justify-center'>
                                         <AiOutlineDelete size={15} />
                                         <h1 className='text-sm'>Delete</h1>
-                                    </div>
+                                    </Button>
                                 </td>
                             </tr>
                         })}
@@ -126,7 +170,11 @@ const RolesTable = () => {
                         </li>
                     </ul>
                 </nav>
-                
+                {isAlert &&
+                    <div className="absolute top-0 flex flex-col items-center  justify-center right-0 bg-black/70 w-full min-h-screen">
+                        {isdelete && <Alert />}
+                    </div>
+                }
             </div>
         </div>
     )

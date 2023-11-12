@@ -233,6 +233,7 @@ const AddorEditUsers = () => {
                     <div className='flex flex-col items-start w-full md:w-[300px]'>
                         <h1 className='text-lg'>Prefix:</h1>
                         <select value={userData.prefix} onChange={(e) => { setUserData({ ...userData, prefix: e.target.value }) }} type='text' className='px-2 py-[3px] w-full border-[1px] border-gray-600 focus:outline-none' >
+                            <option value={""}>Select Option</option>
                             <option value={"Mr"}>Mr</option>
                             <option value={"Mrs"}>Mrs</option>
                             <option value={"Miss"}>Miss</option>
@@ -460,64 +461,7 @@ const AddorEditUsers = () => {
                         </div>
                     </div>
                 </div>
-                {/* HRM Details
-                <div className='flex flex-col mt-5 w-[96%] mx-[2%] bg-white shadow-sm p-5 shadow-gray-400'>
-                    <h1 className='text-2xl items-start flex mx-2 justify-start  font-semibold'>HRM Details</h1>
-                    <div className='grid grid-cols-1 md:grid-cols-2 gap-10 mt-5 '>
-
-                        <div className='flex flex-col items-start w-full '>
-                            <h1 className='text-lg'>Department:</h1>
-                            <select value={userData.department} onChange={(e) => setUserData({ ...userData, department: e.target.value })} type='text' className='focus:outline-none w-full border-[1px] border-gray-300 px-2  rounded-sm p-1' >
-                                <option value={""}>-- Please Select --</option>
-
-
-                            </select>
-                        </div>
-                        <div className='flex flex-col items-start w-full '>
-                            <h1 className='text-lg'>Designation:</h1>
-                            <select value={userData.designation} onChange={(e) => setUserData({ ...userData, designation: e.target.value })} type='text' className='focus:outline-none w-full border-[1px] border-gray-300 px-2  rounded-sm p-1' >
-                                <option value={""}>-- Please Select --</option>
-
-
-                            </select>
-                        </div>
-                    </div>
-                </div> */}
-
-                {/* Payroll
-                <div className='flex flex-col mt-5 w-[96%] mx-[2%] bg-white shadow-sm p-5 shadow-gray-400'>
-                    <h1 className='text-2xl items-start flex mx-2 justify-start  font-semibold'>Payroll</h1>
-                    <div className='grid grid-cols-1 md:grid-cols-3 gap-10 mt-5 '>
-
-                        <div className='flex flex-col items-start w-full '>
-                            <h1 className='text-lg'>Primary Work Location:</h1>
-                            <select value={userData.woprimaryWorkLocation} onChange={(e) => setUserData({ ...userData, primaryWorkLocation: e.target.value })} type='text' className='focus:outline-none w-full border-[1px] border-gray-300 px-2  rounded-sm p-1' >
-                                <option value={""}>-- Please Select --</option>
-                                <option value={"Ezline Softwar House (Pvt). Ltd(BL001)"}>Ezline Softwar House (Pvt). Ltd(BL001)</option>
-
-
-                            </select>
-                        </div>
-                        <div className='flex flex-col items-start w-full '>
-                            <h1 className='text-lg'>Basic Salary:</h1>
-                            <div className='flex'>
-                                <input value={userData.basicSalary} onChange={(e) => setUserData({ ...userData, basicSalary: e.target.value })} type='text' placeholder='Basic Salary' className='focus:outline-none w-full border-[1px] border-gray-300 px-2  rounded-sm p-1' />
-                                <select value={userData.basicSalary2} onChange={(e) => setUserData({ ...userData, basicSalary2: e.target.value })} type='text' className='focus:outline-none w-full border-[1px] border-gray-300 px-2  rounded-sm p-1' >
-                                    <option value={"Per Month"}>Per Month</option>
-                                    <option value={"Per Week"}>Per Week</option>
-                                    <option value={"Per Day"}>Per Day</option>
-
-
-                                </select>
-                            </div>
-
-                        </div>
-                        <div className='flex flex-col items-start w-full '>
-                            <h1 className='text-lg'>Pay Components:</h1>
-                            <input value={userData.payComponent} onChange={(e) => setUserData({ ...userData, payComponent: e.target.value })} type='text' placeholder='Pay Components' className='focus:outline-none w-full   border-[1px] border-gray-300 px-2  rounded-sm p-1' />
-                        </div>
-                    </div>
-                </div> */}
+                
 
                 <button onClick={handleClick} className='flex items-center  text-white w-20 bg-green-400 rounded-sm px-3 py-1 justify-start m-5'>{_id ? "Update" : "Save"}</button>
             </form>

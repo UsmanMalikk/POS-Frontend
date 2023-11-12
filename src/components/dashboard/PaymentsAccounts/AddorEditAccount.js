@@ -64,7 +64,6 @@ const AddorEditAccount = (props) => {
                 }
             });
 
-            console.log(response)
             setFormData(response.data);
         } catch (error) {
             console.error('Error fetching Accounnt:', error);

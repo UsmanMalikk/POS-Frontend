@@ -9,6 +9,7 @@ import * as htmlToImage from 'html-to-image';
 import { Link } from 'react-router-dom';
 import { Button } from 'react-bootstrap';
 import axios from 'axios';
+import { FcCheckmark } from 'react-icons/fc';
 
 
 const UserTable1 = () => {
@@ -41,7 +42,10 @@ const UserTable1 = () => {
 
     }
     const [usersData, setUsersData] = useState([]);
-
+    const [permission, setPermission] = useState(false)
+    const [isAlert, setIsAlert] = useState(false)
+    const [isdelete, setIsdelete] = useState(false)
+    const [deleteId, setDeleteId] = useState(0)
     const [crpage, setCrpage] = useState(1)
     const rcrdprpg = 5
     const lasIndex = crpage * rcrdprpg
@@ -49,7 +53,6 @@ const UserTable1 = () => {
     const record = usersData.slice(frstIndex, lasIndex)
     const npage = Math.ceil(usersData.length / rcrdprpg)
     const numbers = [...Array(npage + 1).keys()].slice(1)
-
     const [colvis, setColvis] = useState(false)
     const [col1, setCol1] = useState(true)
     const [col2, setCol2] = useState(true)
@@ -72,10 +75,7 @@ const UserTable1 = () => {
             console.error('Error fetching users:', error);
         }
     };
-    useEffect(() => {
-        // Make an API call to fetch user's user records
-        fetchUsers();
-    }, []);
+   
 
 
     const csvData = [
@@ -92,8 +92,6 @@ const UserTable1 = () => {
     const handleDeleteUser = async (userId) => {
 
         try {
-            const shouldDelete = window.confirm('Are you sure you want to delete this user?');
-            if (shouldDelete) {
                 const token = localStorage.getItem('token');
 
                 // Make an API call to delete attendance for a specific record
@@ -104,7 +102,6 @@ const UserTable1 = () => {
                 });
                 console.log('User deleted:', response.data); // Handle success response
                 fetchUsers()
-            }
 
         } catch (error) {
             console.error('Error deleting user:', error);
@@ -128,8 +125,30 @@ const UserTable1 = () => {
             setCrpage(crpage + 1)
         }
     }
+    const Alert = () => {
+        return (
+            <div className="flex flex-col items-center px-4 justify-center w-[300px] py-5 h-[200px] bg-white rounded-md">
+                <FcCheckmark size={100} className="items-center justify-center" />
+                <h1 className="text-4xl text-gray-500 text-center ">Are you sure!</h1>
+                <div className="flex items-center w-full justify-between mt-5">
+                    <button onClick={() => { setPermission(false); setIsAlert(false); setIsdelete(false) }} className="text-md rounded-md mx-2 px-2 py-1 bg-red-500 text-white">Cancel</button>
+                    <button onClick={() => { setPermission(true); setIsAlert(false); setIsdelete(false) }} className="text-md rounded-md mx-2 px-2 py-1 bg-green-500 text-white">OK</button>
 
+                </div>
+            </div>
+        )
+    }
+    useEffect(() => {
+        // Make an API call to fetch user's user records
+        fetchUsers();
+        const runDelete = () => {
+            if (permission === true) {
 
+                handleDeleteUser(deleteId)
+            }
+        }
+        runDelete()
+    }, [permission]);
     return (
         <div>
             <div className='flex  flex-col md:flex-row  items-center justify-center md:justify-between mx-5'>
@@ -217,7 +236,12 @@ const UserTable1 = () => {
                                         <FaEye size={15} />
                                         <h1 className='text-sm'>View</h1>
                                     </Link>
-                                    <Button className='flex mx-1 p-1 items-center bg-red-500 text-white justify-center' onClick={() => handleDeleteUser(value._id)}>
+                                    <Button onClick={() => {
+                                        setIsAlert(true);
+                                        setIsdelete(true)
+                                        setDeleteId(value._id)
+                                    }}
+                                        className='flex mx-1 p-1 items-center bg-red-500 text-white justify-center' >
                                         <AiOutlineDelete size={15} />
                                         <h1 className='text-sm'>Delete</h1>
                                     </Button>
@@ -245,6 +269,11 @@ const UserTable1 = () => {
                         </li>
                     </ul>
                 </nav>
+                {isAlert &&
+                    <div className="absolute top-0 flex flex-col items-center  justify-center right-0 bg-black/70 w-full min-h-screen">
+                        {isdelete && <Alert />}
+                    </div>
+                }
             </div>
         </div>
     )
